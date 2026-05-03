@@ -1,0 +1,12 @@
+{
+  "name": "Alex Morgan — Portfolio",
+  "short_name": "Alex Morgan",
+  "description": "Software Engineer & Systems Designer",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080a0f",
+  "theme_color": "#63d2be",
+  "icons": [
+    { "src": "/favicon.ico", "sizes": "48x48", "type": "image/x-icon" }
+  ]
+}
