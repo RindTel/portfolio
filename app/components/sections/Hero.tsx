@@ -1,36 +1,36 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-
+ 
 function AnimatedGrid() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
+ 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-
+ 
     let animId: number;
     let t = 0;
-
+ 
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
     resize();
     window.addEventListener("resize", resize);
-
+ 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       t += 0.003;
-
+ 
       // Draw perspective grid
       const vp = { x: canvas.width / 2, y: canvas.height * 0.55 };
       const gridColor = "rgba(99,210,190,0.06)";
       ctx.strokeStyle = gridColor;
       ctx.lineWidth = 1;
-
+ 
       // Horizontal lines
       for (let i = 0; i <= 12; i++) {
         const y = vp.y + (i - 6) * 60 + Math.sin(t + i * 0.3) * 5;
@@ -42,7 +42,7 @@ function AnimatedGrid() {
         ctx.lineTo(canvas.width, y);
         ctx.stroke();
       }
-
+ 
       // Vertical lines converging to vanishing point
       const numV = 20;
       for (let i = 0; i <= numV; i++) {
@@ -54,7 +54,7 @@ function AnimatedGrid() {
         ctx.lineTo(x, canvas.height);
         ctx.stroke();
       }
-
+ 
       // Floating particles
       for (let i = 0; i < 30; i++) {
         const x = ((Math.sin(t * 0.4 + i * 2.1) * 0.5 + 0.5) * canvas.width);
@@ -66,17 +66,17 @@ function AnimatedGrid() {
         ctx.arc(x, y, size, 0, Math.PI * 2);
         ctx.fill();
       }
-
+ 
       animId = requestAnimationFrame(draw);
     };
     draw();
-
+ 
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", resize);
     };
   }, []);
-
+ 
   return (
     <canvas
       ref={canvasRef}
@@ -90,13 +90,13 @@ function AnimatedGrid() {
     />
   );
 }
-
+ 
 const titleWords = ["Software", "Engineer"];
-
+ 
 export default function Hero() {
   const [typedSubtitle, setTypedSubtitle] = useState("");
   const subtitle = "Computer Science and Engineering student at UBT · AI Systems · Distributed Architectures · Full-Stack Engineering";
-
+ 
   useEffect(() => {
     let i = 0;
     const interval = setInterval(() => {
@@ -109,7 +109,7 @@ export default function Hero() {
     }, 28);
     return () => clearInterval(interval);
   }, []);
-
+ 
   return (
     <section
       id="hero"
@@ -123,7 +123,7 @@ export default function Hero() {
       }}
     >
       <AnimatedGrid />
-
+ 
       {/* Radial glow */}
       <div
         style={{
@@ -137,7 +137,7 @@ export default function Hero() {
           pointerEvents: "none",
         }}
       />
-
+ 
       <div
         style={{
           position: "relative",
@@ -177,7 +177,7 @@ export default function Hero() {
           />
           Available
         </motion.div>
-
+ 
         <div style={{ marginBottom: "1.5rem" }}>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -209,7 +209,7 @@ export default function Hero() {
             Rindrit Telaku
           </motion.h1>
         </div>
-
+ 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -236,7 +236,7 @@ export default function Hero() {
             </span>
           ))}
         </motion.div>
-
+ 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -264,7 +264,7 @@ export default function Hero() {
             }}
           />
         </motion.div>
-
+ 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -281,7 +281,7 @@ export default function Hero() {
           to enterprise network architectures. Focused on engineering solutions that are
           both technically rigorous and beautifully crafted.
         </motion.p>
-
+ 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -337,17 +337,17 @@ export default function Hero() {
             Get in Touch
           </a>
         </motion.div>
-
+ 
         {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2 }}
+          className="scroll-indicator"
           style={{
             position: "absolute",
             bottom: "3rem",
             left: "2rem",
-            display: "flex",
             alignItems: "center",
             gap: "0.75rem",
           }}
@@ -373,13 +373,15 @@ export default function Hero() {
           </span>
         </motion.div>
       </div>
-
+ 
       <style>{`
         @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes fadeUpDown { 0%,100%{opacity:0.3;transform:translateY(0)} 50%{opacity:1;transform:translateY(8px)} }
         .btn-primary:hover { opacity:0.85; transform:translateY(-1px); box-shadow:0 8px 30px rgba(99,210,190,0.25); }
         .btn-secondary:hover { background:rgba(99,210,190,0.08); border-color:var(--accent); }
+        .scroll-indicator { display: flex; }
+        @media (max-width: 640px) { .scroll-indicator { display: none; } }
       `}</style>
     </section>
   );
