@@ -25,13 +25,9 @@ function AnimatedGrid() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       t += 0.003;
  
-      // Draw perspective grid
       const vp = { x: canvas.width / 2, y: canvas.height * 0.55 };
-      const gridColor = "rgba(99,210,190,0.06)";
-      ctx.strokeStyle = gridColor;
       ctx.lineWidth = 1;
  
-      // Horizontal lines
       for (let i = 0; i <= 12; i++) {
         const y = vp.y + (i - 6) * 60 + Math.sin(t + i * 0.3) * 5;
         const perspective = Math.abs(i - 6) / 6;
@@ -43,7 +39,6 @@ function AnimatedGrid() {
         ctx.stroke();
       }
  
-      // Vertical lines converging to vanishing point
       const numV = 20;
       for (let i = 0; i <= numV; i++) {
         const x = (i / numV) * canvas.width;
@@ -55,7 +50,6 @@ function AnimatedGrid() {
         ctx.stroke();
       }
  
-      // Floating particles
       for (let i = 0; i < 30; i++) {
         const x = ((Math.sin(t * 0.4 + i * 2.1) * 0.5 + 0.5) * canvas.width);
         const y = ((Math.cos(t * 0.3 + i * 1.7) * 0.5 + 0.5) * canvas.height * 0.8);
@@ -95,9 +89,11 @@ const titleWords = ["Software", "Engineer"];
  
 export default function Hero() {
   const [typedSubtitle, setTypedSubtitle] = useState("");
+  const [mounted, setMounted] = useState(false);
   const subtitle = "Computer Science and Engineering student at UBT · AI Systems · Distributed Architectures · Full-Stack Engineering";
  
   useEffect(() => {
+    setMounted(true);
     let i = 0;
     const interval = setInterval(() => {
       if (i < subtitle.length) {
@@ -122,9 +118,9 @@ export default function Hero() {
         background: "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(99,210,190,0.04) 0%, transparent 70%)",
       }}
     >
-      <AnimatedGrid />
+      {/* Defer canvas until after mount so it doesn't block LCP */}
+      {mounted && <AnimatedGrid />}
  
-      {/* Radial glow */}
       <div
         style={{
           position: "absolute",
@@ -180,8 +176,8 @@ export default function Hero() {
  
         <div style={{ marginBottom: "1.5rem" }}>
           <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.3 }}
             style={{
               fontFamily: "var(--font-mono)",
@@ -193,9 +189,9 @@ export default function Hero() {
             Hello, I&apos;m
           </motion.p>
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.9, delay: 0.4 }}
             style={{
               fontFamily: "var(--font-display)",
               fontSize: "clamp(3.5rem, 9vw, 7rem)",
@@ -211,8 +207,8 @@ export default function Hero() {
         </div>
  
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.6 }}
           style={{
             display: "flex",
@@ -248,7 +244,7 @@ export default function Hero() {
             letterSpacing: "0.02em",
             maxWidth: 560,
             marginBottom: "3rem",
-            minHeight: "1.2em",
+            minHeight: "3.5em",
           }}
         >
           {typedSubtitle}
@@ -266,8 +262,8 @@ export default function Hero() {
         </motion.div>
  
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.7, delay: 1.0 }}
           style={{
             fontSize: "1.05rem",
@@ -277,14 +273,14 @@ export default function Hero() {
             marginBottom: "3rem",
           }}
         >
-          I build intelligent systems and elegant software.From RAG powered AI pipelines
+          I build intelligent systems and elegant software. From RAG powered AI pipelines
           to enterprise network architectures. Focused on engineering solutions that are
           both technically rigorous and beautifully crafted.
         </motion.p>
  
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.7, delay: 1.1 }}
           style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}
         >
@@ -338,7 +334,7 @@ export default function Hero() {
           </a>
         </motion.div>
  
-        {/* Scroll indicator */}
+        {/* Scroll indicator - hidden on mobile */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

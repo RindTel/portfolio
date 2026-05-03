@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Serif:ital@0;1&display=swap');
 @import "tailwindcss";
-
+ 
 :root {
   --bg: #080a0f;
   --bg-secondary: #0c0f17;
@@ -22,16 +22,16 @@
   --font-mono: 'DM Mono', 'Courier New', monospace;
   --font-serif: 'Instrument Serif', Georgia, serif;
 }
-
+ 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+ 
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
-
+ 
 body {
   background-color: var(--bg);
   color: var(--text-primary);
@@ -39,24 +39,24 @@ body {
   overflow-x: hidden;
   min-height: 100vh;
 }
-
+ 
 ::selection { background: var(--accent-dim); color: var(--accent); }
-
-::-webkit-scrollbar { width: 10px; }
+ 
+::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--accent) 0%, rgba(99,210,190,0.3) 100%);
+  background: linear-gradient(180deg, var(--accent) 0%, rgba(99,210,190,0.5) 100%);
   border-radius: 2px;
   box-shadow: 0 0 6px var(--accent-glow);
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-
-* { scrollbar-width: thin; scrollbar-color: rgba(99,210,190,0.4) transparent; }
-
+ 
+* { scrollbar-width: thin; scrollbar-color: rgba(99,210,190,0.7) transparent; }
+ 
 a { color: inherit; }
 button { font-family: inherit; }
 input, textarea { font-family: inherit; }
-
+ 
 /* Grain film overlay */
 @keyframes grain {
   0%, 100% { transform: translate(0, 0); }
@@ -70,7 +70,7 @@ input, textarea { font-family: inherit; }
   80% { transform: translate(2%, 2%); }
   90% { transform: translate(-1%, 1%); }
 }
-
+ 
 .grain-overlay {
   position: fixed;
   inset: -50%;
@@ -80,10 +80,9 @@ input, textarea { font-family: inherit; }
   opacity: 0.022;
   pointer-events: none;
   z-index: 9999;
-  animation: grain 0.4s steps(1) infinite;
-  will-change: transform;
+  animation: grain 0.8s steps(1) infinite;
 }
-
+ 
 /* Utility classes */
 .section-label {
   display: block;
@@ -94,37 +93,33 @@ input, textarea { font-family: inherit; }
   color: var(--accent);
   opacity: 0.9;
 }
-
+ 
 .gradient-text {
   background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
-/* Focus styles for accessibility */
+ 
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 2px;
 }
-
-/* Responsive container */
+ 
 @media (max-width: 640px) {
   section {
     padding-left: 1.25rem !important;
     padding-right: 1.25rem !important;
   }
 }
-
-/* Smooth image loading */
+ 
 img {
   max-width: 100%;
   height: auto;
   display: block;
 }
-
-/* Print styles */
+ 
 @media print {
   .grain-overlay { display: none; }
   nav { display: none; }
