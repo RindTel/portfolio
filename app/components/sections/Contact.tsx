@@ -1,12 +1,13 @@
 "use client";
 import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import emailjs from "@emailjs/browser";
 
 const socials = [
-   { label: "GitHub", handle: "@RindTel-dev", href: "https://github.com/RindTel", icon: "GH" },
-    { label: "LinkedIn", handle: "in/rindrittelaku", href: "https://linkedin.com/in/rindrittelaku", icon: "LI" },
-     { label: "Location", handle: "Pristina",icon:"⌯✈︎"},
-      { label: "Email", handle: "rindritelaku@gmail.com", href: "mailto: rindritelaku@gmail.com", icon: "EM" },
+  { label: "GitHub", handle: "@RindTel-dev", href: "https://github.com/RindTel", icon: "GH" },
+  { label: "LinkedIn", handle: "in/rindrittelaku", href: "https://linkedin.com/in/rindrittelaku", icon: "LI" },
+  { label: "Location", handle: "Pristina", icon: "⌯✈︎" },
+  { label: "Email", handle: "rindritelaku@gmail.com", href: "mailto:rindritelaku@gmail.com", icon: "EM" },
 ];
 
 export default function Contact() {
@@ -14,6 +15,7 @@ export default function Contact() {
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -44,27 +46,29 @@ export default function Contact() {
     marginBottom: "0.5rem",
   };
 
-  // ✅ backend wiring (only real logic change)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      await emailjs.send(
+        "service_wcw7b5i",
+        "template_xo5oupn",
+        {
+          from_name: form.name,
+          from_email: form.email,
+          subject: form.subject,
+          message: form.message,
         },
-        body: JSON.stringify(form),
-      });
+        "JI5fIGa9Fh8wNFVQL"
+      );
 
-      if (res.ok) {
-        setSent(true);
-        setForm({ name: "", email: "", subject: "", message: "" });
-      } else {
-        alert("Failed to send message");
-      }
+      setSent(true);
+      setForm({ name: "", email: "", subject: "", message: "" });
     } catch (err) {
-      alert("Something went wrong");
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -160,7 +164,6 @@ export default function Contact() {
                       required
                     />
                   </div>
-
                   <div>
                     <label style={labelStyle}>Email</label>
                     <input
@@ -195,6 +198,7 @@ export default function Contact() {
 
                 <button
                   type="submit"
+                  disabled={loading}
                   style={{
                     fontFamily: "var(--font-mono)",
                     fontSize: "0.78rem",
@@ -205,17 +209,18 @@ export default function Contact() {
                     border: "none",
                     padding: "0.9rem 2rem",
                     borderRadius: "4px",
-                    cursor: "pointer",
+                    cursor: loading ? "not-allowed" : "pointer",
                     fontWeight: 500,
+                    opacity: loading ? 0.7 : 1,
                   }}
                 >
-                  Send Message
+                  {loading ? "Sending..." : "Send Message"}
                 </button>
               </form>
             )}
           </motion.div>
 
-          {/* SOCIALS (RESTORED + STYLED) */}
+          {/* SOCIALS */}
           <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             {socials.map((s) => (
               <a
@@ -249,7 +254,6 @@ export default function Contact() {
                     {s.icon}
                   </span>
                 </div>
-
                 <div>
                   <p style={{ fontWeight: 600 }}>{s.label}</p>
                   <p style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>{s.handle}</p>
