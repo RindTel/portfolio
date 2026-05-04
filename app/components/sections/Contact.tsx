@@ -65,10 +65,11 @@ export default function Contact() {
   }
 );
 
-      setSent(true);
+ setSent(true);
       setForm({ name: "", email: "", subject: "", message: "" });
-    } catch (err) {
-      alert("Something went wrong. Please try again.");
+    } catch (err: any) {
+      console.error("EmailJS error:", JSON.stringify(err));
+      alert(err?.text || err?.message || JSON.stringify(err));
     } finally {
       setLoading(false);
     }
