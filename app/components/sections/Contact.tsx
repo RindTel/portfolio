@@ -65,16 +65,15 @@ export default function Contact() {
   }
 );
 
- setSent(true);
+setSent(true);
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch (err: any) {
-      console.error("EmailJS error:", JSON.stringify(err));
-      alert(err?.text || err?.message || JSON.stringify(err));
+      alert("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <section id="contact" style={{ padding: "8rem 2rem" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
