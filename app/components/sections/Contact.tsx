@@ -51,17 +51,19 @@ export default function Contact() {
     setLoading(true);
 
     try {
-      await emailjs.send(
-        "service_wcw7b5i",
-        "template_xo5oupn",
-        {
-          from_name: form.name,
-          from_email: form.email,
-          subject: form.subject,
-          message: form.message,
-        },
-        "JI5fIGa9Fh8wNFVQL"
-      );
+    await emailjs.send(
+  "service_wcw7b5i",
+  "template_xo5oupn",
+  {
+    from_name: form.name,
+    from_email: form.email,
+    subject: form.subject,
+    message: form.message,
+  },
+  {
+    publicKey: "JI5fIGa9Fh8wNFVQL",
+  }
+);
 
       setSent(true);
       setForm({ name: "", email: "", subject: "", message: "" });
