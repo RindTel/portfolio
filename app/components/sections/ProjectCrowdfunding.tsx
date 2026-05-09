@@ -2,20 +2,20 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-
+ 
 const stack = ["TypeScript", "Next.js", "PostgreSQL", "Stripe", "Prisma", "Vercel", "Tailwind"];
-
+ 
 const features = [
   "Stripe Connect for multi-party payment processing",
   "Real-time funding progress with WebSocket updates",
   "Creator dashboard with analytics and payout management",
   "KYC verification flow and fraud detection layer",
 ];
-
+ 
 export default function ProjectCrowdfunding({ index }: { index: number }) {
   const [hovered, setHovered] = useState(false);
   const [expanded, setExpanded] = useState(false);
-
+ 
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -53,10 +53,10 @@ export default function ProjectCrowdfunding({ index }: { index: number }) {
             letterSpacing: "0.1em",
           }}
         >
-          fundorge — Dashboard
+          fundforge — Dashboard
         </span>
       </div>
-
+ 
       {/* Screenshot */}
       <div
         style={{
@@ -82,7 +82,7 @@ export default function ProjectCrowdfunding({ index }: { index: number }) {
           priority
         />
       </div>
-
+ 
       {/* Body */}
       <div style={{ padding: "1.5rem" }}>
         <h3
@@ -96,7 +96,7 @@ export default function ProjectCrowdfunding({ index }: { index: number }) {
         >
           Crowdfunding Platform
         </h3>
-
+ 
         <p
           style={{
             fontSize: "0.88rem",
@@ -108,7 +108,7 @@ export default function ProjectCrowdfunding({ index }: { index: number }) {
           A full-featured crowdfunding platform with Stripe Connect, real-time analytics,
           and a creator dashboard built for scalable fintech systems.
         </p>
-
+ 
         {/* Stack */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "1rem" }}>
           {stack.map((t) => (
@@ -128,7 +128,7 @@ export default function ProjectCrowdfunding({ index }: { index: number }) {
             </span>
           ))}
         </div>
-
+ 
         {/* Expand */}
         <button
           onClick={() => setExpanded(!expanded)}
@@ -147,7 +147,7 @@ export default function ProjectCrowdfunding({ index }: { index: number }) {
         >
           {expanded ? "▾ Hide Features" : "▸ Show Features"}
         </button>
-
+ 
         {expanded && (
           <motion.ul
             initial={{ opacity: 0, height: 0 }}
@@ -172,7 +172,7 @@ export default function ProjectCrowdfunding({ index }: { index: number }) {
             ))}
           </motion.ul>
         )}
-
+ 
         {/* Links */}
         <div
           style={{
@@ -183,10 +183,17 @@ export default function ProjectCrowdfunding({ index }: { index: number }) {
             marginTop: "1rem",
           }}
         >
-          {["GitHub"].map((label) => (
+          {[
+            { label: "GitHub", href: "https://github.com/RindTel/crowdfunding", external: true },
+            { label: "Live Demo", href: "/demo_fundforge.html", external: true },
+          ].map(({ label, href, external }) => (
             <a
               key={label}
-              href="https://github.com/RindTel/crowdfunding" target="_blank" rel="noopener noreferrer"
+              href={href}
+              target={external ? "_blank" : undefined}
+              rel={external ? "noopener noreferrer" : undefined}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#ffbe33")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(240,168,50,0.3)")}
               style={{
                 fontFamily: "var(--font-mono)",
                 fontSize: "0.75rem",
@@ -199,8 +206,6 @@ export default function ProjectCrowdfunding({ index }: { index: number }) {
                 alignItems: "center",
                 gap: "0.25rem",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#ffbe33")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(240,168,50,0.3)")}
             >
               {label}
               <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

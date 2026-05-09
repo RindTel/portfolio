@@ -22,5 +22,5 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error(err);
     return Response.json({ success: false }, { status: 500 });
-  }
+   }
 }

@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FundForge — Admin Dashboard Demo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+ 
+    :root {
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --color-text-primary: #0f172a;
+      --color-text-secondary: #64748b;
+      --color-text-tertiary: #94a3b8;
+      --color-background-primary: #ffffff;
+      --color-background-secondary: #f8fafc;
+      --color-border-tertiary: rgba(0, 0, 0, 0.08);
+    }
+ 
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-text-primary: #f1f5f9;
+        --color-text-secondary: #94a3b8;
+        --color-text-tertiary: #475569;
+        --color-background-primary: #0f172a;
+        --color-background-secondary: #1e293b;
+        --color-border-tertiary: rgba(255, 255, 255, 0.08);
+      }
+    }
+ 
+    body {
+      font-family: var(--font-sans);
+      color: var(--color-text-primary);
+      background: var(--color-background-primary);
+      min-height: 100vh;
+    }
+ 
+   
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+ 
+    /
+    .sidebar {
+      width: 175px;
+      min-width: 175px;
+      border-right: 0.5px solid var(--color-border-tertiary);
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+ 
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+ 
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      background: #6366f1;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 12px;
+    }
+ 
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--color-text-secondary);
+      transition: background 0.15s;
+    }
+ 
+    .nav-item:hover {
+      background: var(--color-background-secondary);
+    }
+ 
+    .nav-item.active {
+      background: #eef2ff;
+      color: #4338ca;
+      font-weight: 500;
+    }
+ 
+    .nav-item i {
+      font-size: 15px;
+    }
+ 
+    .sidebar-footer {
+      margin-top: auto;
+    }
+ 
+    /* Main  */
+    .main {
+      flex: 1;
+      padding: 20px;
+      overflow: hidden;
+      background: var(--color-background-primary);
+    }
+ 
+    /*  Top bar  */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+ 
+    .top-bar h1 {
+      font-size: 17px;
+      font-weight: 500;
+    }
+ 
+    .top-bar p {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      margin-top: 2px;
+    }
+ 
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: #10b981;
+      background: #dcfce7;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+ 
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      animation: pulse 1.5s ease infinite;
+    }
+ 
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+ 
+    
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+ 
+    .stat-card {
+      background: var(--color-background-secondary);
+      border-radius: 10px;
+      padding: 14px;
+    }
+ 
+    .stat-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+ 
+    .stat-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+ 
+    .stat-val {
+      font-size: 20px;
+      font-weight: 500;
+    }
+ 
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--color-text-secondary);
+      margin-top: 2px;
+    }
+ 
+    .delta {
+      font-size: 11px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+ 
+    .delta.up { color: #10b981; }
+    .delta.down { color: #ef4444; }
+ 
+    .mid-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+ 
+    .card {
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+ 
+    .card-hdr {
+      padding: 12px 14px;
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+ 
+    .card-hdr h3 {
+      font-size: 13px;
+      font-weight: 500;
+    }
+ 
+    .card-hdr span {
+      font-size: 11px;
+      color: var(--color-text-secondary);
+    }
+ 
+    
+    .bar-wrap {
+      padding: 14px;
+    }
+ 
+    .bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 90px;
+    }
+ 
+    .bar {
+      flex: 1;
+      border-radius: 4px 4px 0 0;
+      background: #6366f1;
+      min-width: 0;
+      transition: opacity 0.15s;
+      cursor: pointer;
+    }
+ 
+    .bar:hover {
+      opacity: 0.75;
+    }
+ 
+    .bar-lbls {
+      display: flex;
+      gap: 6px;
+      margin-top: 5px;
+    }
+ 
+    .bar-lbl {
+      flex: 1;
+      text-align: center;
+      font-size: 9px;
+      color: var(--color-text-tertiary);
+    }
+ 
+    
+    .pie-wrap {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+ 
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+ 
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+ 
+    
+    .tbl-card {
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+ 
+    .tbl-hdr {
+      padding: 11px 14px;
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+ 
+    .tbl-hdr h3 {
+      font-size: 13px;
+      font-weight: 500;
+    }
+ 
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      table-layout: fixed;
+    }
+ 
+    th {
+      text-align: left;
+      padding: 8px 14px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      background: var(--color-background-secondary);
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+    }
+ 
+    td {
+      padding: 9px 14px;
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+ 
+    tr:last-child td {
+      border-bottom: none;
+    }
+ 
+    tr:hover td {
+      background: var(--color-background-secondary);
+    }
+ 
+    
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+ 
+    .badge-green  { background: #dcfce7; color: #166534; }
+    .badge-blue   { background: #dbeafe; color: #1e40af; }
+    .badge-amber  { background: #fef3c7; color: #92400e; }
+    .badge-red    { background: #fee2e2; color: #991b1b; }
+ 
+  
+    .avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+ 
+    .donor-cell {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+  </style>
+</head>
+<body>
+ 
+<div class="layout">
+ 
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon"><i class="ti ti-flame" aria-hidden="true"></i></div>
+      FundForge
+    </div>
+ 
+    <nav>
+      <div class="nav-item active"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Overview</div>
+      <div class="nav-item"><i class="ti ti-target" aria-hidden="true"></i>Campaigns</div>
+      <div class="nav-item"><i class="ti ti-users" aria-hidden="true"></i>Users</div>
+      <div class="nav-item"><i class="ti ti-heart" aria-hidden="true"></i>Donations</div>
+      <div class="nav-item"><i class="ti ti-chart-bar" aria-hidden="true"></i>Analytics</div>
+    </nav>
+ 
+    <div class="sidebar-footer">
+      <div class="nav-item"><i class="ti ti-settings" aria-hidden="true"></i>Settings</div>
+    </div>
+  </aside>
+ 
+  <!-- Main content -->
+  <main class="main">
+ 
+    <!-- Top bar -->
+    <div class="top-bar">
+      <div>
+        <h1>Good morning, Admin 👋</h1>
+        <p>Here's what's happening on your platform</p>
+      </div>
+      <div class="live-badge">
+        <span class="live-dot" aria-hidden="true"></span>
+        Live
+      </div>
+    </div>
+ 
+   
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#6366f1"><i class="ti ti-currency-dollar" aria-hidden="true"></i></div>
+        <div class="stat-row">
+          <div><div class="stat-val">$2.4M</div><div class="stat-lbl">Total revenue</div></div>
+          <div class="delta up"><i class="ti ti-arrow-up-right" aria-hidden="true"></i>12.3%</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#8b5cf6"><i class="ti ti-target" aria-hidden="true"></i></div>
+        <div class="stat-row">
+          <div><div class="stat-val">47</div><div class="stat-lbl">Active campaigns</div></div>
+          <div class="delta up"><i class="ti ti-arrow-up-right" aria-hidden="true"></i>3 new</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#f59e0b"><i class="ti ti-users" aria-hidden="true"></i></div>
+        <div class="stat-row">
+          <div><div class="stat-val">1,847</div><div class="stat-lbl">Total users</div></div>
+          <div class="delta up"><i class="ti ti-arrow-up-right" aria-hidden="true"></i>8.7%</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#ef4444"><i class="ti ti-heart" aria-hidden="true"></i></div>
+        <div class="stat-row">
+          <div><div class="stat-val">3,241</div><div class="stat-lbl">Total donations</div></div>
+          <div class="delta up"><i class="ti ti-arrow-up-right" aria-hidden="true"></i>5.2%</div>
+        </div>
+      </div>
+    </div>
+ 
+    
+    <div class="mid-grid">
+ 
+      
+      <div class="card">
+        <div class="card-hdr">
+          <h3>Revenue (12 months)</h3>
+          <span>2025–2026</span>
+        </div>
+        <div class="bar-wrap">
+          <div class="bars" id="bars" aria-label="Monthly revenue bar chart"></div>
+          <div class="bar-lbls" id="bar-lbls"></div>
+        </div>
+      </div>
+ 
+      <!-- Donut / status -->
+      <div class="card">
+        <div class="card-hdr"><h3>By status</h3></div>
+        <div class="pie-wrap">
+          <svg viewBox="0 0 100 70" style="width:100%;overflow:visible;" role="img" aria-label="Donut chart showing campaign status breakdown">
+            <title>Campaign status breakdown</title>
+            <circle cx="50" cy="40" r="28" fill="none" stroke="var(--color-background-secondary)" stroke-width="14"/>
+            <circle cx="50" cy="40" r="28" fill="none" stroke="#6366f1" stroke-width="14" stroke-dasharray="88 88"  stroke-dashoffset="22"   transform="rotate(-90 50 40)"/>
+            <circle cx="50" cy="40" r="28" fill="none" stroke="#10b981" stroke-width="14" stroke-dasharray="29 147" stroke-dashoffset="-66"  transform="rotate(-90 50 40)"/>
+            <circle cx="50" cy="40" r="28" fill="none" stroke="#f59e0b" stroke-width="14" stroke-dasharray="16 160" stroke-dashoffset="-95"  transform="rotate(-90 50 40)"/>
+            <circle cx="50" cy="40" r="28" fill="none" stroke="#ef4444" stroke-width="14" stroke-dasharray="8 168"  stroke-dashoffset="-111" transform="rotate(-90 50 40)"/>
+            <text x="50" y="37" text-anchor="middle" font-size="10" font-weight="500" fill="var(--color-text-primary)">156</text>
+            <text x="50" y="47" text-anchor="middle" font-size="7"  fill="var(--color-text-secondary)">total</text>
+          </svg>
+          <div class="status-row"><span><span class="status-dot" style="background:#6366f1"></span>Active</span>    <span style="font-weight:500">47</span></div>
+          <div class="status-row"><span><span class="status-dot" style="background:#10b981"></span>Completed</span> <span style="font-weight:500">72</span></div>
+          <div class="status-row"><span><span class="status-dot" style="background:#f59e0b"></span>Pending</span>   <span style="font-weight:500">25</span></div>
+          <div class="status-row"><span><span class="status-dot" style="background:#ef4444"></span>Cancelled</span> <span style="font-weight:500">12</span></div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- Donations table -->
+    <div class="tbl-card">
+      <div class="tbl-hdr">
+        <h3>Recent donations</h3>
+        <div class="live-badge">
+          <span class="live-dot" aria-hidden="true"></span>
+          Live feed
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:22%">Donor</th>
+            <th style="width:32%">Campaign</th>
+            <th style="width:16%">Amount</th>
+            <th style="width:18%">Status</th>
+            <th style="width:12%">Date</th>
+          </tr>
+        </thead>
+        <tbody id="donations-tbody"></tbody>
+      </table>
+    </div>
+ 
+  </main>
+</div>
+ 
+<script>
+  // Bar chart 
+  const MONTHS = ['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May'];
+  const VALUES = [18, 24, 22, 31, 28, 35, 29, 38, 42, 45, 52, 61];
+  const MAX_VAL = Math.max(...VALUES);
+ 
+  const barsEl   = document.getElementById('bars');
+  const barLblEl = document.getElementById('bar-lbls');
+ 
+  VALUES.forEach((v, i) => {
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    bar.style.height = Math.round(v / MAX_VAL * 100) + '%';
+    bar.title = '$' + v + 'k';
+    barsEl.appendChild(bar);
+ 
+    const lbl = document.createElement('div');
+    lbl.className = 'bar-lbl';
+    lbl.textContent = MONTHS[i];
+    barLblEl.appendChild(lbl);
+  });
+ 
+  //  Donations table 
+  const DONATIONS = [
+    { name: 'Anonymous', avatar: '?',  color: '#94a3b8', campaign: 'Mobile Health Clinic',          amount: '$250', status: 'COMPLETED', date: 'May 9' },
+    { name: 'Sarah K.',  avatar: 'SK', color: '#6366f1', campaign: 'Eco Smart Water Purifier',       amount: '$100', status: 'COMPLETED', date: 'May 9' },
+    { name: 'Marcus T.', avatar: 'MT', color: '#8b5cf6', campaign: 'AI Tutoring for Rural Kids',     amount: '$50',  status: 'COMPLETED', date: 'May 8' },
+    { name: 'Anonymous', avatar: '?',  color: '#94a3b8', campaign: 'Community Urban Garden',         amount: '$75',  status: 'COMPLETED', date: 'May 8' },
+    { name: 'Priya M.',  avatar: 'PM', color: '#f59e0b', campaign: 'Ocean Plastic Art Project',      amount: '$30',  status: 'PENDING',   date: 'May 7' },
+    { name: 'James L.',  avatar: 'JL', color: '#10b981', campaign: 'Mobile Health Clinic',           amount: '$500', status: 'COMPLETED', date: 'May 7' },
+    { name: 'Aisha B.',  avatar: 'AB', color: '#ef4444', campaign: 'Solar Bike Charging Stations',   amount: '$80',  status: 'COMPLETED', date: 'May 6' },
+    { name: 'Tom R.',    avatar: 'TR', color: '#6366f1', campaign: 'AI Tutoring for Rural Kids',     amount: '$25',  status: 'FAILED',    date: 'May 6' },
+  ];
+ 
+  const STATUS_CLASS = { COMPLETED: 'badge-green', PENDING: 'badge-amber', FAILED: 'badge-red' };
+ 
+  const tbody = document.getElementById('donations-tbody');
+ 
+  DONATIONS.forEach(d => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>
+        <div class="donor-cell">
+          <div class="avatar" style="background:${d.color}20;color:${d.color}">${d.avatar}</div>
+          ${d.name}
+        </div>
+      </td>
+      <td style="color:var(--color-text-secondary)">${d.campaign}</td>
+      <td style="font-weight:500;color:#10b981">${d.amount}</td>
+      <td><span class="badge ${STATUS_CLASS[d.status] ?? 'badge-blue'}">${d.status}</span></td>
+      <td style="color:var(--color-text-secondary)">${d.date}</td>
+    `;
+    tbody.appendChild(row);
+  });
+</script>
+ 
+</body>
+</html>

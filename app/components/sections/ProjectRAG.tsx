@@ -1,9 +1,10 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
  
 const stack = ["Python", "LangChain", "FAISS", "Ollama", "Qwen 2.5", "FastAPI", "Docker"];
+ 
 const features = [
   "Local document ingestion with FAISS vector search",
   "Supports multiple LLMs via Ollama (Qwen, Llama, Mistral)",
@@ -33,7 +34,7 @@ export default function ProjectRAG({ index }: { index: number }) {
         boxShadow: hovered ? "0 0 40px rgba(51,255,136,0.06)" : "none",
       }}
     >
-      {/* Mac-style title bar */}
+      {/* Title Bar */}
       <div
         style={{
           background: "#000d00",
@@ -44,9 +45,9 @@ export default function ProjectRAG({ index }: { index: number }) {
           gap: "0.4rem",
         }}
       >
-        <span style={{ width: 9, height: 9, borderRadius: "50%", background: "#ff5f57", display: "block" }} />
-        <span style={{ width: 9, height: 9, borderRadius: "50%", background: "#ffbd2e", display: "block" }} />
-        <span style={{ width: 9, height: 9, borderRadius: "50%", background: "#28ca41", display: "block" }} />
+        <span style={{ width: 9, height: 9, borderRadius: "50%", background: "#ff5f57" }} />
+        <span style={{ width: 9, height: 9, borderRadius: "50%", background: "#ffbd2e" }} />
+        <span style={{ width: 9, height: 9, borderRadius: "50%", background: "#28ca41" }} />
         <span
           style={{
             fontFamily: "var(--font-mono)",
@@ -60,7 +61,7 @@ export default function ProjectRAG({ index }: { index: number }) {
         </span>
       </div>
  
-      {/* Screenshot */}
+      {/* Image */}
       <div
         style={{
           position: "relative",
@@ -71,94 +72,53 @@ export default function ProjectRAG({ index }: { index: number }) {
         }}
       >
         <Image
-          src="/rag-preview.png"
-          alt="RAG Knowledge System — Intelligence Terminal UI"
-          fill
-          style={{
-            objectFit: "cover",
-            objectPosition: "top",
-            transition: "transform 0.6s ease",
-            transform: hovered ? "scale(1.02)" : "scale(1)",
-            filter: hovered ? "brightness(1)" : "brightness(0.88)",
-          }}
-          sizes="(max-width: 768px) 100vw, 33vw"
-          priority
-        />
-        {/* Scanline overlay */}
+           src="/rag-preview.png"
+            alt="RAG System"
+              fill
+                sizes="(max-width: 768px) 100vw, 33vw"
+               style={{
+                   objectFit: "cover",
+                   objectPosition: "top",
+                     transform: hovered ? "scale(1.02)" : "scale(1)",
+                     transition: "transform 0.6s ease",
+                   filter: hovered ? "brightness(1)" : "brightness(0.88)",
+               }}
+             />  
         <div
           style={{
             position: "absolute",
             inset: 0,
-            backgroundImage:
+            background:
               "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px)",
             pointerEvents: "none",
-            zIndex: 2,
-          }}
-        />
-        {/* Subtle green tint on hover */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "rgba(51,255,136,0.03)",
-            opacity: hovered ? 1 : 0,
-            transition: "opacity 0.4s",
-            pointerEvents: "none",
-            zIndex: 3,
           }}
         />
       </div>
  
-      {/* Card body */}
+      {/* Content */}
       <div style={{ padding: "1.5rem" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            justifyContent: "space-between",
-            marginBottom: "0.65rem",
-          }}
-        >
-          <div>
-            <p
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: "0.6rem",
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: "#33ff88",
-                marginBottom: "0.3rem",
-                opacity: 0.65,
-              }}
-            >
-              Project 01
-            </p>
-            <h3
-              style={{
-                fontFamily: "var(--font-display)",
-                fontWeight: 700,
-                fontSize: "1.25rem",
-                color: "var(--text-primary)",
-                letterSpacing: "-0.02em",
-              }}
-            >
-              RAG Knowledge System
-            </h3>
-          </div>
-          <span
+        <div style={{ marginBottom: "0.6rem" }}>
+          <p
             style={{
               fontFamily: "var(--font-mono)",
-              fontSize: "0.62rem",
+              fontSize: "0.6rem",
               color: "#33ff88",
-              background: "rgba(51,255,136,0.08)",
-              border: "1px solid rgba(51,255,136,0.2)",
-              padding: "0.22rem 0.55rem",
-              borderRadius: "2px",
-              whiteSpace: "nowrap",
+              opacity: 0.65,
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
             }}
           >
-            AI / ML
-          </span>
+            Project 01
+          </p>
+          <h3
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "1.25rem",
+              color: "var(--text-primary)",
+            }}
+          >
+            RAG Knowledge System
+          </h3>
         </div>
  
         <p
@@ -166,16 +126,15 @@ export default function ProjectRAG({ index }: { index: number }) {
             fontSize: "0.88rem",
             color: "var(--text-secondary)",
             lineHeight: 1.7,
-            marginBottom: "1.1rem",
+            marginBottom: "1rem",
           }}
         >
           A fully local Retrieval-Augmented Generation system with a retro terminal UI.
-          Load any documents, query them semantically via FAISS vector search, and get
-          cited answers — no internet, no API keys required.
+          Uses FAISS vector search with cited responses and offline LLM inference.
         </p>
  
         {/* Stack */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginBottom: "1.1rem" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginBottom: "1rem" }}>
           {stack.map((t) => (
             <span
               key={t}
@@ -186,8 +145,6 @@ export default function ProjectRAG({ index }: { index: number }) {
                 background: "rgba(51,255,136,0.07)",
                 border: "1px solid rgba(51,255,136,0.15)",
                 padding: "0.2rem 0.5rem",
-                borderRadius: "2px",
-                opacity: 0.85,
               }}
             >
               {t}
@@ -195,47 +152,37 @@ export default function ProjectRAG({ index }: { index: number }) {
           ))}
         </div>
  
-        {/* Expandable features */}
+        {/* Features toggle */}
         <button
           onClick={() => setExpanded(!expanded)}
           style={{
             fontFamily: "var(--font-mono)",
             fontSize: "0.65rem",
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-            color: "#33ff88",
             background: "none",
             border: "none",
+            color: "#33ff88",
             cursor: "pointer",
-            padding: 0,
-            marginBottom: expanded ? "0.85rem" : 0,
-            opacity: 0.65,
-            display: "flex",
-            alignItems: "center",
-            gap: "0.4rem",
+            marginBottom: expanded ? "0.8rem" : 0,
           }}
         >
-          <span>{expanded ? "▾" : "▸"}</span>
-          {expanded ? "Hide" : "Show"} Features
+          {expanded ? "▾ Hide Features" : "▸ Show Features"}
         </button>
  
         {expanded && (
           <motion.ul
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
-            style={{ listStyle: "none", padding: 0, marginBottom: "1.1rem" }}
+            style={{ listStyle: "none", padding: 0, marginBottom: "1rem" }}
           >
             {features.map((f) => (
               <li
                 key={f}
                 style={{
-                  fontFamily: "var(--font-mono)",
                   fontSize: "0.7rem",
                   color: "var(--text-secondary)",
-                  paddingLeft: "1rem",
+                  marginBottom: "0.4rem",
                   position: "relative",
-                  marginBottom: "0.45rem",
-                  lineHeight: 1.6,
+                  paddingLeft: "1rem",
                 }}
               >
                 <span style={{ position: "absolute", left: 0, color: "#33ff88" }}>→</span>
@@ -254,10 +201,17 @@ export default function ProjectRAG({ index }: { index: number }) {
             borderTop: "1px solid var(--border)",
           }}
         >
-          {["GitHub"].map((label) => (
+          {[
+            { label: "GitHub", href: "https://github.com/RindTel/rag_terminal_1.0.0", external: true },
+            { label: "Live Demo", href: "/demo.html", external: true },
+          ].map(({ label, href, external }) => (
             <a
               key={label}
-              href="https://github.com/RindTel/rag_terminal_1.0.0" target="_blank" rel="noopener noreferrer"
+              href={href}
+              target={external ? "_blank" : undefined}
+              rel={external ? "noopener noreferrer" : undefined}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#33ff88")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(51,255,136,0.55)")}
               style={{
                 fontFamily: "var(--font-mono)",
                 fontSize: "0.75rem",
@@ -265,13 +219,10 @@ export default function ProjectRAG({ index }: { index: number }) {
                 textTransform: "uppercase",
                 color: "rgba(51,255,136,0.55)",
                 textDecoration: "none",
-                transition: "color 0.2s",
                 display: "flex",
                 alignItems: "center",
                 gap: "0.25rem",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#33ff88")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(51,255,136,0.55)")}
             >
               {label}
               <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -284,3 +235,4 @@ export default function ProjectRAG({ index }: { index: number }) {
     </motion.div>
   );
 }
+ 
