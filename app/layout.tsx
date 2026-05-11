@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   description: "Computer Science student specializing in AI systems, distributed architectures, and full-stack engineering. Building intelligent, scalable software.",
   keywords: ["software engineer", "computer science", "AI", "machine learning", "full-stack", "portfolio", "RAG", "distributed systems"],
   authors: [{ name: "Rindrit Telaku" }],
+  verification: {
+  google: "FCGDLkUcpZrrP2Np639IVF9WvGRxw6HQJ1H4pXRvGlQ",
+},
   openGraph: {
     title: "Rindrit Telaku",
     description: "CS student specializing in AI systems, distributed architectures, and full-stack engineering.",
