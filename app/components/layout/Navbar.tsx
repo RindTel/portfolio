@@ -1,204 +1,139 @@
 "use client";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-
+ 
 const links = [
-  { label: "About", href: "#about" },
-  { label: "Projects", href: "#projects" },
-  { label: "Skills", href: "#skills" },
-  { label: "Contact", href: "#contact" },
+  { label: "about",      href: "#about" },
+  { label: "experience", href: "#experience" },
+  { label: "projects",   href: "#projects" },
+  { label: "skills",     href: "#skills" },
+  { label: "contact",    href: "#contact" },
 ];
-
+ 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-
+  const [open, setOpen] = useState(false);
+ 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    const fn = () => setScrolled(window.scrollY > 32);
+    window.addEventListener("scroll", fn);
+    return () => window.removeEventListener("scroll", fn);
   }, []);
-
+ 
   return (
     <>
-      <motion.nav
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      <nav
         style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 100,
+          position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+          height: 48,
           padding: "0 2rem",
-          height: "72px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          background: scrolled ? "rgba(8,10,15,0.92)" : "transparent",
-          backdropFilter: scrolled ? "blur(20px)" : "none",
-          borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "none",
-          transition: "all 0.4s ease",
+          background: scrolled ? "rgba(10,10,10,0.97)" : "transparent",
+          borderBottom: scrolled ? "1px solid var(--border)" : "1px solid transparent",
+          backdropFilter: scrolled ? "blur(8px)" : "none",
+          transition: "background 0.2s, border-color 0.2s",
         }}
       >
+       <div style={{
+         maxWidth: 900, margin: "0 auto", height: "100%",
+         display: "flex", alignItems: "center",
+       }}>
+        {/* wordmark */}
         <a
           href="#"
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.85rem",
-            color: "var(--accent)",
-            letterSpacing: "0.15em",
-            textDecoration: "none",
-          }}
+          style={{ fontSize: 12, color: "var(--text-primary)", letterSpacing: "0.06em" }}
         >
-          AM<span style={{ color: "var(--text-muted)" }}>://</span>dev
+          rindrit<span style={{ color: "var(--green)" }}>@</span>dev<span
+            style={{
+              display: "inline-block", width: 7, height: 13,
+              background: "var(--green)", marginLeft: 2,
+              verticalAlign: "middle",
+              animation: "blink 1.1s step-end infinite",
+            }}
+          />
         </a>
-
-        <div
-          style={{
-            display: "flex",
-            gap: "2.5rem",
-            alignItems: "center",
-          }}
-          className="nav-desktop"
-        >
-          {links.map((l) => (
+ 
+        {/* desktop links */}
+        <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: "2rem", marginLeft: "auto" }}>
+          {links.map(l => (
             <a
               key={l.href}
               href={l.href}
-              className="nav-link"
               style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: "0.72rem",
-                letterSpacing: "0.15em",
-                textTransform: "uppercase",
-                color: "var(--text-secondary)",
-                textDecoration: "none",
-                transition: "color 0.2s",
+                fontSize: 11, color: "var(--text-secondary)", letterSpacing: "0.04em",
+                transition: "color 0.15s",
               }}
+              onMouseEnter={e => (e.currentTarget.style.color = "var(--text-primary)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "var(--text-secondary)")}
             >
               {l.label}
             </a>
           ))}
           <a
-            href="#contact"
-            className="nav-cta"
+            href="/RindritTelakuCV.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.72rem",
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: "var(--bg)",
-              background: "var(--accent)",
-              padding: "0.45rem 1.2rem",
-              borderRadius: "2px",
-              textDecoration: "none",
-              fontWeight: 500,
-              transition: "opacity 0.2s",
+              fontSize: 11, color: "var(--green)", letterSpacing: "0.04em",
+              border: "1px solid rgba(34,197,94,0.3)",
+              padding: "3px 10px",
+              transition: "background 0.15s",
             }}
+            onMouseEnter={e => (e.currentTarget.style.background = "var(--green-dim)")}
+            onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
           >
-            Hire Me
+            resume
           </a>
         </div>
-
+ 
+        {/* mobile */}
         <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="nav-mobile-btn"
+          className="nav-burger"
+          onClick={() => setOpen(!open)}
           style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: "8px",
-            display: "none",
-            flexDirection: "column",
-            gap: "5px",
+            display: "none", marginLeft: "auto", background: "none",
+            border: "none", color: "var(--text-secondary)", fontSize: 18, padding: 4,
           }}
-          aria-label="Toggle menu"
+          aria-label="menu"
         >
-          <span
-            style={{
-              display: "block",
-              width: 24,
-              height: 2,
-              background: "var(--text-primary)",
-              transition: "all 0.3s",
-              transform: menuOpen ? "rotate(45deg) translateY(7px)" : "none",
-            }}
-          />
-          <span
-            style={{
-              display: "block",
-              width: 24,
-              height: 2,
-              background: "var(--text-primary)",
-              transition: "all 0.3s",
-              opacity: menuOpen ? 0 : 1,
-            }}
-          />
-          <span
-            style={{
-              display: "block",
-              width: 24,
-              height: 2,
-              background: "var(--text-primary)",
-              transition: "all 0.3s",
-              transform: menuOpen ? "rotate(-45deg) translateY(-7px)" : "none",
-            }}
-          />
+          {open ? "×" : "≡"}
         </button>
-      </motion.nav>
-
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            style={{
-              position: "fixed",
-              top: 72,
-              left: 0,
-              right: 0,
-              background: "rgba(8,10,15,0.98)",
-              backdropFilter: "blur(20px)",
-              zIndex: 99,
-              padding: "2rem",
-              borderBottom: "1px solid var(--border)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "1.5rem",
-            }}
+       </div>
+      </nav>
+ 
+      {open && (
+        <div
+          style={{
+            position: "fixed", top: 48, left: 0, right: 0, zIndex: 99,
+            background: "rgba(10,10,10,0.98)",
+            borderBottom: "1px solid var(--border)",
+            padding: "1.5rem 2rem",
+            display: "flex", flexDirection: "column", gap: "1.25rem",
+          }}
+        >
+          {links.map(l => (
+            <a
+              key={l.href} href={l.href}
+              onClick={() => setOpen(false)}
+              style={{ fontSize: 12, color: "var(--text-secondary)", letterSpacing: "0.04em" }}
+            >
+              ~ {l.label}
+            </a>
+          ))}
+          <a
+            href="/RindritTelakuCV.pdf" target="_blank" rel="noopener noreferrer"
+            style={{ fontSize: 12, color: "var(--green)" }}
           >
-            {links.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                onClick={() => setMenuOpen(false)}
-                style={{
-                  color: "var(--text-secondary)",
-                  textDecoration: "none",
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "0.85rem",
-                  letterSpacing: "0.15em",
-                  textTransform: "uppercase",
-                }}
-              >
-                {l.label}
-              </a>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+            resume ↗
+          </a>
+        </div>
+      )}
+ 
       <style>{`
-        .nav-link:hover { color: var(--accent) !important; }
-        .nav-cta:hover { opacity: 0.85; }
-        @media (max-width: 768px) {
-          .nav-desktop { display: none !important; }
-          .nav-mobile-btn { display: flex !important; }
+        @media (max-width: 700px) {
+          .nav-links { display: none !important; }
+          .nav-burger { display: block !important; }
         }
       `}</style>
     </>
   );
 }
+ 

@@ -1,56 +1,39 @@
 "use client";
-import { motion } from "framer-motion";
-
+ 
 export default function Footer() {
   return (
     <footer
       style={{
         borderTop: "1px solid var(--border)",
-        padding: "2.5rem 2rem",
-        background: "var(--bg-secondary)",
+        padding: "1.5rem 2rem",
+        position: "relative",
+        zIndex: 1,
       }}
     >
       <div
         style={{
-          maxWidth: 1200,
+          maxWidth: 900,
           margin: "0 auto",
           display: "flex",
-          justifyContent: "space-between",
           alignItems: "center",
+          justifyContent: "space-between",
           flexWrap: "wrap",
-          gap: "1rem",
+          gap: "0.75rem",
         }}
       >
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--text-muted)" }}>
-          Rindrit Telaku — {new Date().getFullYear()}
+        <span style={{ fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.04em" }}>
+          rindrit telaku · {new Date().getFullYear()}
         </span>
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--text-muted)", letterSpacing: "0.05em" }}>
-          Designed & built with{" "}
-          <span style={{ color: "var(--accent)" }}>Next.js</span>,{" "}
-          <span style={{ color: "var(--accent)" }}>Tailwind</span>,{" "}
-          <span style={{ color: "var(--accent)" }}>Framer Motion</span>
+        <span style={{ fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.04em" }}>
+          next.js · framer-motion · typescript
         </span>
         <a
-          href="#hero"
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.68rem",
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-            color: "var(--text-muted)",
-            textDecoration: "none",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.4rem",
-            transition: "color 0.2s",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
+          href="#"
+          style={{ fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.04em" }}
+          onMouseEnter={e => (e.currentTarget.style.color = "var(--text-secondary)")}
+          onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}
         >
-          Back to top
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 19V5M5 12l7-7 7 7" />
-          </svg>
+          back to top ↑
         </a>
       </div>
     </footer>

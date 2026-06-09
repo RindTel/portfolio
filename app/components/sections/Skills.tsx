@@ -1,169 +1,266 @@
 "use client";
-import { useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
 
-const skillCategories = [
+import { useRef, useState } from "react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
+
+const categories = [
   {
     id: "languages",
-    label: "Languages",
-    icon: "{ }",
-    color: "var(--accent)",
+    label: "languages",
     skills: [
-      { name: "Python", level: 95 },
-      { name: "TypeScript", level: 80 },
-      { name: "Java", level: 50 },
-      { name: "Go", level: 72 },
-      { name: "C#", level: 40 },
-      { name: "SQL", level: 87 },
+      { name: "sql", level: 87 },
+      { name: "typescript", level: 80 },
+      { name: "go", level: 72 },
+      { name: "java", level: 50 },
+      { name: "c#", level: 40 },
     ],
   },
   {
-    id: "networking",
-    label: "Networking",
-    icon: "~>",
-    color: "var(--violet)",
+    id: "data-ai",
+    label: "data & ai",
     skills: [
-      { name: "TCP/IP Stack", level: 80 },
-      { name: "BGP / OSPF", level: 85 },
-      { name: "Cisco", level: 80 },
-      { name: "Network Security", level: 82 },
-      { name: "Wi-Fi 6 / 802.11ax", level: 75 },
-      { name: "Voip", level: 68 },
+      { name: "rag-systems", level: 90 },
+      { name: "pytorch", level: 90 },
+      { name: "vector-databases", level: 85 },
+      { name: "faiss", level: 85 },
+      { name: "langchain", level: 82 },
+      { name: "numpy", level: 80 },
+      { name: "mlops", level: 72 },
     ],
   },
   {
-    id: "ai",
-    label: "AI / ML",
-    icon: "**",
-    color: "#e88080",
+    id: "cloud-infra",
+    label: "cloud & infra",
     skills: [
-      { name: "Python", level: 95 },
-      { name: "PyTorch", level: 90 },
-      { name: "RAG Systems", level: 90 },
-      { name: "Numpy", level: 80 },
-      { name: "Vector Databases", level: 85 },
-      { name: "MLOps / Evaluation", level: 72 },
+      { name: "linux/bash", level: 90 },
+      { name: "git/ci-cd", level: 93 },
+      { name: "docker", level: 85 },
+      { name: "aws", level: 78 },
+      { name: "terraform", level: 72 },
+      { name: "ansible", level: 70 },
+      { name: "grafana", level: 72 },
     ],
   },
   {
-    id: "tools",
-    label: "Tools & Platforms",
-    icon: "[]",
-    color: "var(--amber)",
+    id: "backend-tools",
+    label: "backend & tools",
     skills: [
-      { name: "Docker", level: 85 },
-      { name: "AWS", level: 78 },
-      { name: "PostgreSQL", level: 88 },
-      { name: "Git / CI/CD", level: 93 },
-      { name: "Terraform", level: 72 },
-      { name: "Linux / Bash", level: 90 },
+      { name: "postgresql", level: 88 },
+      { name: "fastapi", level: 82 },
+      { name: "next.js", level: 78 },
+      { name: "prisma", level: 75 },
+      { name: "rest-apis", level: 88 },
+      { name: "stripe", level: 70 },
     ],
   },
 ];
 
-function SkillBar({ name, level, color, delay }: { name: string; level: number; color: string; delay: number }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true });
+function Bar({ level }: { level: number }) {
+  const filled = Math.round((level / 100) * 20);
+
   return (
-    <div ref={ref} style={{ marginBottom: "0.9rem" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.35rem" }}>
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--text-secondary)" }}>{name}</span>
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: color, opacity: 0.7 }}>{level}%</span>
-      </div>
-      <div style={{ height: 2, background: "rgba(255,255,255,0.07)", borderRadius: 1 }}>
-        <motion.div
-          initial={{ width: 0 }}
-          animate={inView ? { width: `${level}%` } : {}}
-          transition={{ duration: 1, delay, ease: [0.16, 1, 0.3, 1] }}
-          style={{ height: "100%", background: color, borderRadius: 1, opacity: 0.85 }}
-        />
-      </div>
-    </div>
+    <span
+      style={{
+        fontFamily: "var(--font-mono)",
+        fontSize: 10,
+        letterSpacing: 0,
+      }}
+    >
+      <span style={{ color: "var(--green)" }}>
+        {"█".repeat(filled)}
+      </span>
+      <span style={{ color: "var(--border-mid)" }}>
+        {"█".repeat(20 - filled)}
+      </span>
+      <span
+        style={{
+          color: "var(--text-muted)",
+          marginLeft: "0.6rem",
+        }}
+      >
+        {level}
+      </span>
+    </span>
   );
 }
 
 export default function Skills() {
   const [active, setActive] = useState("languages");
+
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
-  const activeCategory = skillCategories.find((c) => c.id === active)!;
+
+  const inView = useInView(ref, {
+    once: true,
+    margin: "-60px",
+  });
+
+  const cat = categories.find((c) => c.id === active)!;
 
   return (
-    <section id="skills" style={{ padding: "8rem 2rem" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          style={{ marginBottom: "4rem" }}
-        >
-          <p className="section-label" style={{ marginBottom: "1rem" }}>03 / Skills</p>
-          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.2rem, 5vw, 3.5rem)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.05, color: "var(--text-primary)" }}>
-            Technical{" "}
-            <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", color: "var(--accent)", fontWeight: 400 }}>arsenal</span>
-          </h2>
-        </motion.div>
+    <section id="skills" style={{ padding: "7rem 2rem" }}>
+      <div
+        ref={ref}
+        style={{
+          maxWidth: 900,
+          margin: "0 auto",
+        }}
+      >
+        <p className="section-tag">skills</p>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "2rem" }}>
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }}>
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "1rem" }}>Categories</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-              {skillCategories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setActive(cat.id)}
+        {/* Tabs */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 0,
+            borderBottom: "1px solid var(--border)",
+            marginBottom: "2rem",
+          }}
+        >
+          {categories.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => setActive(c.id)}
+              style={{
+                background: "none",
+                border: "none",
+                borderBottom: `1px solid ${
+                  c.id === active ? "var(--green)" : "transparent"
+                }`,
+                marginBottom: -1,
+                padding: "0.5rem 1rem",
+                fontFamily: "var(--font-mono)",
+                fontSize: 11,
+                color:
+                  c.id === active
+                    ? "var(--green)"
+                    : "var(--text-muted)",
+                letterSpacing: "0.04em",
+                cursor: "pointer",
+                transition: "color 0.15s",
+              }}
+              onMouseEnter={(e) => {
+                if (c.id !== active) {
+                  e.currentTarget.style.color =
+                    "var(--text-secondary)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (c.id !== active) {
+                  e.currentTarget.style.color =
+                    "var(--text-muted)";
+                }
+              }}
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Skills Table */}
+        <div
+          style={{
+            border: "1px solid var(--border)",
+            background: "var(--surface)",
+            minHeight: 384,
+          }}
+        >
+          {/* Header */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              padding: "0.55rem 1.25rem",
+              borderBottom: "1px solid var(--border)",
+              background: "var(--surface-2)",
+            }}
+          >
+            <span
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 10,
+                color: "var(--text-muted)",
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+              }}
+            >
+              skill
+            </span>
+
+            <span
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 10,
+                color: "var(--text-muted)",
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+              }}
+            >
+              proficiency / 100
+            </span>
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              {cat.skills.map((s, i) => (
+                <motion.div
+                  key={s.name}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: i * 0.04 }}
+                  className="skill-row"
                   style={{
-                    display: "flex", alignItems: "center", gap: "0.75rem",
-                    padding: "0.85rem 1rem", borderRadius: "4px", border: "1px solid",
-                    borderColor: active === cat.id ? cat.color + "40" : "var(--border)",
-                    background: active === cat.id ? cat.color + "0d" : "transparent",
-                    cursor: "pointer", transition: "all 0.2s", textAlign: "left",
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    padding: "0.75rem 1.25rem",
+                    borderBottom:
+                      i < cat.skills.length - 1
+                        ? "1px solid var(--border)"
+                        : "none",
+                    alignItems: "center",
                   }}
                 >
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: active === cat.id ? cat.color : "var(--text-muted)", width: 24, transition: "color 0.2s" }}>{cat.icon}</span>
-                  <span style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "0.88rem", color: active === cat.id ? "var(--text-primary)" : "var(--text-secondary)", transition: "color 0.2s" }}>{cat.label}</span>
-                </button>
-              ))}
-            </div>
+                  <span
+                    style={{
+                      fontSize: 14,
+                      color: "var(--text-primary)",
+                      letterSpacing: "0.01em",
+                    }}
+                  >
+                    {s.name}
+                  </span>
 
-            <div style={{ marginTop: "2rem", padding: "1.25rem", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "4px" }}>
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "1rem" }}>Quick Stats</p>
-              {[{ label: "Years coding", val: "2+" }, { label: "Projects shipped", val: "5" }, { label: "Open source PRs", val: "12" }, { label: "Certifications", val: "3" }].map((s) => (
-                <div key={s.label} style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.6rem" }}>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--text-muted)" }}>{s.label}</span>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--accent)", fontWeight: 500 }}>{s.val}</span>
-                </div>
+                  <Bar level={s.level} />
+                </motion.div>
               ))}
-            </div>
-          </motion.div>
-
-          <motion.div key={active} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}
-            style={{ padding: "1.75rem", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "4px" }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: "1rem", color: activeCategory.color }}>{activeCategory.icon}</span>
-              <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "1.1rem", color: "var(--text-primary)" }}>{activeCategory.label}</h3>
-            </div>
-            {activeCategory.skills.map((skill, i) => (
-              <SkillBar key={skill.name} name={skill.name} level={skill.level} color={activeCategory.color} delay={i * 0.06} />
-            ))}
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.6, delay: 0.35 }}>
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "1rem" }}>Also familiar with</p>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-              {["React","Next.js","GraphQL","WebSockets","Kafka","Elasticsearch","MongoDB","Prisma","gRPC","Protocol Buffers","WASM","Svelte","Three.js","FastAPI","Celery","RabbitMQ","Prometheus","Nginx"].map((tech, i) => (
-                <motion.span key={tech} initial={{ opacity: 0, scale: 0.8 }} animate={inView ? { opacity: 1, scale: 1 } : {}} transition={{ delay: 0.4 + i * 0.04 }} whileHover={{ scale: 1.05 }}
-                  style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--text-secondary)", background: "var(--surface)", border: "1px solid var(--border)", padding: "0.3rem 0.65rem", borderRadius: "2px", cursor: "default", transition: "border-color 0.2s, color 0.2s" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(99,210,190,0.2)"; e.currentTarget.style.color = "var(--accent)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text-secondary)"; }}
-                >{tech}</motion.span>
-              ))}
-            </div>
-          </motion.div>
+            </motion.div>
+          </AnimatePresence>
         </div>
+
+        <p
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: 10,
+            color: "var(--text-muted)",
+            marginTop: "0.75rem",
+            letterSpacing: "0.04em",
+          }}
+        >
+          # self-assessed · context matters more than numbers
+        </p>
       </div>
+
+      <style>{`
+        .skill-row:hover {
+          background: var(--surface-2);
+        }
+      `}</style>
     </section>
   );
 }

@@ -1,586 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FundForge — Admin Dashboard Demo</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
-  <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
- 
-    :root {
-      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --color-text-primary: #0f172a;
-      --color-text-secondary: #64748b;
-      --color-text-tertiary: #94a3b8;
-      --color-background-primary: #ffffff;
-      --color-background-secondary: #f8fafc;
-      --color-border-tertiary: rgba(0, 0, 0, 0.08);
-    }
- 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --color-text-primary: #f1f5f9;
-        --color-text-secondary: #94a3b8;
-        --color-text-tertiary: #475569;
-        --color-background-primary: #0f172a;
-        --color-background-secondary: #1e293b;
-        --color-border-tertiary: rgba(255, 255, 255, 0.08);
-      }
-    }
- 
-    body {
-      font-family: var(--font-sans);
-      color: var(--color-text-primary);
-      background: var(--color-background-primary);
-      min-height: 100vh;
-    }
- 
-   
-    .layout {
-      display: flex;
-      min-height: 100vh;
-    }
- 
-    /
-    .sidebar {
-      width: 175px;
-      min-width: 175px;
-      border-right: 0.5px solid var(--color-border-tertiary);
-      padding: 16px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
- 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 500;
-      font-size: 14px;
-      margin-bottom: 18px;
-    }
- 
-    .logo-icon {
-      width: 28px;
-      height: 28px;
-      background: #6366f1;
-      border-radius: 7px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 12px;
-    }
- 
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 10px;
-      border-radius: 8px;
-      font-size: 13px;
-      cursor: pointer;
-      color: var(--color-text-secondary);
-      transition: background 0.15s;
-    }
- 
-    .nav-item:hover {
-      background: var(--color-background-secondary);
-    }
- 
-    .nav-item.active {
-      background: #eef2ff;
-      color: #4338ca;
-      font-weight: 500;
-    }
- 
-    .nav-item i {
-      font-size: 15px;
-    }
- 
-    .sidebar-footer {
-      margin-top: auto;
-    }
- 
-    /* Main  */
-    .main {
-      flex: 1;
-      padding: 20px;
-      overflow: hidden;
-      background: var(--color-background-primary);
-    }
- 
-    /*  Top bar  */
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
- 
-    .top-bar h1 {
-      font-size: 17px;
-      font-weight: 500;
-    }
- 
-    .top-bar p {
-      font-size: 12px;
-      color: var(--color-text-secondary);
-      margin-top: 2px;
-    }
- 
-    .live-badge {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      color: #10b981;
-      background: #dcfce7;
-      padding: 4px 10px;
-      border-radius: 20px;
-    }
- 
-    .live-dot {
-      width: 6px;
-      height: 6px;
-      background: #10b981;
-      border-radius: 50%;
-      animation: pulse 1.5s ease infinite;
-    }
- 
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
- 
-    
-    .stat-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 18px;
-    }
- 
-    .stat-card {
-      background: var(--color-background-secondary);
-      border-radius: 10px;
-      padding: 14px;
-    }
- 
-    .stat-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 15px;
-      margin-bottom: 10px;
-    }
- 
-    .stat-row {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-    }
- 
-    .stat-val {
-      font-size: 20px;
-      font-weight: 500;
-    }
- 
-    .stat-lbl {
-      font-size: 11px;
-      color: var(--color-text-secondary);
-      margin-top: 2px;
-    }
- 
-    .delta {
-      font-size: 11px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 2px;
-    }
- 
-    .delta.up { color: #10b981; }
-    .delta.down { color: #ef4444; }
- 
-    .mid-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
- 
-    .card {
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: 10px;
-      overflow: hidden;
-    }
- 
-    .card-hdr {
-      padding: 12px 14px;
-      border-bottom: 0.5px solid var(--color-border-tertiary);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
- 
-    .card-hdr h3 {
-      font-size: 13px;
-      font-weight: 500;
-    }
- 
-    .card-hdr span {
-      font-size: 11px;
-      color: var(--color-text-secondary);
-    }
- 
-    
-    .bar-wrap {
-      padding: 14px;
-    }
- 
-    .bars {
-      display: flex;
-      align-items: flex-end;
-      gap: 6px;
-      height: 90px;
-    }
- 
-    .bar {
-      flex: 1;
-      border-radius: 4px 4px 0 0;
-      background: #6366f1;
-      min-width: 0;
-      transition: opacity 0.15s;
-      cursor: pointer;
-    }
- 
-    .bar:hover {
-      opacity: 0.75;
-    }
- 
-    .bar-lbls {
-      display: flex;
-      gap: 6px;
-      margin-top: 5px;
-    }
- 
-    .bar-lbl {
-      flex: 1;
-      text-align: center;
-      font-size: 9px;
-      color: var(--color-text-tertiary);
-    }
- 
-    
-    .pie-wrap {
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
- 
-    .status-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-    }
- 
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 6px;
-    }
- 
-    
-    .tbl-card {
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: 10px;
-      overflow: hidden;
-    }
- 
-    .tbl-hdr {
-      padding: 11px 14px;
-      border-bottom: 0.5px solid var(--color-border-tertiary);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
- 
-    .tbl-hdr h3 {
-      font-size: 13px;
-      font-weight: 500;
-    }
- 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-      table-layout: fixed;
-    }
- 
-    th {
-      text-align: left;
-      padding: 8px 14px;
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--color-text-secondary);
-      background: var(--color-background-secondary);
-      border-bottom: 0.5px solid var(--color-border-tertiary);
-    }
- 
-    td {
-      padding: 9px 14px;
-      border-bottom: 0.5px solid var(--color-border-tertiary);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
- 
-    tr:last-child td {
-      border-bottom: none;
-    }
- 
-    tr:hover td {
-      background: var(--color-background-secondary);
-    }
- 
-    
-    .badge {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 500;
-      padding: 2px 8px;
-      border-radius: 20px;
-    }
- 
-    .badge-green  { background: #dcfce7; color: #166534; }
-    .badge-blue   { background: #dbeafe; color: #1e40af; }
-    .badge-amber  { background: #fef3c7; color: #92400e; }
-    .badge-red    { background: #fee2e2; color: #991b1b; }
- 
-  
-    .avatar {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      font-weight: 500;
-      flex-shrink: 0;
-    }
- 
-    .donor-cell {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Transit Lens · Live Demo</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg:#0B0F1A; --card:#121829; --line:#222B40; --muted:#8B95A7;
+    --text:#F4F7FF; --soft:#C7D0E0; --teal:#00B5A0; --cyan:#33C3FF; --orange:#FF6319;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; color:var(--text); font-family:Inter,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, #16203a 0%, rgba(11,15,26,0) 60%),
+      radial-gradient(1000px 500px at 110% 0%, #0f2b2b 0%, rgba(11,15,26,0) 55%),
+      var(--bg);
+    min-height:100vh;
+  }
+  .wrap { max-width:1180px; margin:0 auto; padding:28px 22px 60px; }
+  .topbar { display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:14px; }
+  h1 {
+    font-size:2.2rem; font-weight:800; letter-spacing:-0.5px; margin:0;
+    background:linear-gradient(90deg,#00B5A0 0%,#33C3FF 50%,#7B6CFF 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .sub { color:var(--muted); font-size:0.95rem; margin-top:4px; }
+  .demo-tag { font-size:0.7rem; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--teal); border:1px solid var(--teal); border-radius:999px; padding:3px 10px; }
+  select {
+    background:var(--card); color:var(--text); border:1px solid var(--line);
+    border-radius:10px; padding:9px 14px; font-size:0.95rem; font-weight:600; cursor:pointer;
+  }
+  .line { height:5px; border-radius:5px; margin:18px 0 24px;
+    background:linear-gradient(90deg,#007AC9 0 18%,#00985F 18% 36%,#FF6319 36% 54%,
+      #8C4799 54% 72%,#00B9E4 72% 90%,#00B5A0 90% 100%); }
+  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:16px 18px; position:relative; overflow:hidden; }
+  .card::before { content:""; position:absolute; left:0; top:0; bottom:0; width:5px;
+    background:var(--accent,var(--teal)); }
+  .lbl { color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:1.5px; }
+  .val { color:var(--text); font-size:1.9rem; font-weight:800; font-variant-numeric:tabular-nums;
+    font-family:"DM Mono",ui-monospace,monospace; margin-top:4px; line-height:1.1; }
+  .hint { color:#6C7689; font-size:0.78rem; margin-top:2px; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:26px; }
+  .panel { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px; }
+  .section { color:var(--soft); font-weight:700; font-size:1.05rem; margin:0 0 14px;
+    padding-left:10px; border-left:3px solid var(--teal); }
+  .chart-box { position:relative; height:300px; }
+  .peak { color:var(--orange); font-size:0.82rem; margin-top:10px; }
+  .maprow { display:grid; grid-template-columns:2fr 1fr; gap:22px; margin-top:26px; }
+  #map { height:420px; border-radius:12px; border:1px solid var(--line); background:#0e1422; }
+  .board { max-height:420px; overflow:auto; }
+  .board table { width:100%; border-collapse:collapse; font-size:0.86rem; }
+  .board th { text-align:left; color:var(--muted); font-weight:600; font-size:0.72rem;
+    text-transform:uppercase; letter-spacing:1px; padding:6px 8px; position:sticky; top:0;
+    background:var(--card); }
+  .board td { padding:7px 8px; border-top:1px solid var(--line); color:var(--soft); }
+  .board td.num { font-variant-numeric:tabular-nums; color:var(--text); font-weight:600; }
+  .bar { height:6px; border-radius:4px; background:linear-gradient(90deg,var(--teal),var(--cyan)); }
+  .legend { display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
+  .badge { font-size:0.72rem; font-weight:600; color:#0B0F1A; border-radius:999px; padding:2px 9px; }
+  .foot { color:#6C7689; font-size:0.8rem; margin-top:34px; text-align:center; }
+  .foot a { color:var(--cyan); text-decoration:none; }
+  @media (max-width:860px){ .kpis{grid-template-columns:repeat(2,1fr)} .grid2,.maprow{grid-template-columns:1fr} }
+</style>
 </head>
 <body>
- 
-<div class="layout">
- 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="logo">
-      <div class="logo-icon"><i class="ti ti-flame" aria-hidden="true"></i></div>
-      FundForge
+<div class="wrap">
+  <div class="topbar">
+    <div>
+      <h1>Transit Lens</h1>
+      <div class="sub" id="subtitle">GTFS delay intelligence</div>
     </div>
- 
-    <nav>
-      <div class="nav-item active"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Overview</div>
-      <div class="nav-item"><i class="ti ti-target" aria-hidden="true"></i>Campaigns</div>
-      <div class="nav-item"><i class="ti ti-users" aria-hidden="true"></i>Users</div>
-      <div class="nav-item"><i class="ti ti-heart" aria-hidden="true"></i>Donations</div>
-      <div class="nav-item"><i class="ti ti-chart-bar" aria-hidden="true"></i>Analytics</div>
-    </nav>
- 
-    <div class="sidebar-footer">
-      <div class="nav-item"><i class="ti ti-settings" aria-hidden="true"></i>Settings</div>
+    <div style="display:flex; gap:12px; align-items:center;">
+      <span class="demo-tag">Static demo</span>
+      <select id="city"></select>
     </div>
-  </aside>
- 
-  <!-- Main content -->
-  <main class="main">
- 
-    <!-- Top bar -->
-    <div class="top-bar">
-      <div>
-        <h1>Good morning, Admin 👋</h1>
-        <p>Here's what's happening on your platform</p>
-      </div>
-      <div class="live-badge">
-        <span class="live-dot" aria-hidden="true"></span>
-        Live
-      </div>
+  </div>
+  <div class="line"></div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="section">Average delay by hour</div>
+      <div class="chart-box"><canvas id="hourChart"></canvas></div>
+      <div class="peak" id="peakNote"></div>
     </div>
- 
-   
-    <div class="stat-grid">
-      <div class="stat-card">
-        <div class="stat-icon" style="background:#6366f1"><i class="ti ti-currency-dollar" aria-hidden="true"></i></div>
-        <div class="stat-row">
-          <div><div class="stat-val">$2.4M</div><div class="stat-lbl">Total revenue</div></div>
-          <div class="delta up"><i class="ti ti-arrow-up-right" aria-hidden="true"></i>12.3%</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:#8b5cf6"><i class="ti ti-target" aria-hidden="true"></i></div>
-        <div class="stat-row">
-          <div><div class="stat-val">47</div><div class="stat-lbl">Active campaigns</div></div>
-          <div class="delta up"><i class="ti ti-arrow-up-right" aria-hidden="true"></i>3 new</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:#f59e0b"><i class="ti ti-users" aria-hidden="true"></i></div>
-        <div class="stat-row">
-          <div><div class="stat-val">1,847</div><div class="stat-lbl">Total users</div></div>
-          <div class="delta up"><i class="ti ti-arrow-up-right" aria-hidden="true"></i>8.7%</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:#ef4444"><i class="ti ti-heart" aria-hidden="true"></i></div>
-        <div class="stat-row">
-          <div><div class="stat-val">3,241</div><div class="stat-lbl">Total donations</div></div>
-          <div class="delta up"><i class="ti ti-arrow-up-right" aria-hidden="true"></i>5.2%</div>
-        </div>
-      </div>
+    <div class="panel">
+      <div class="section">Top 10 most delayed routes</div>
+      <div class="chart-box"><canvas id="routeChart"></canvas></div>
     </div>
- 
-    
-    <div class="mid-grid">
- 
-      
-      <div class="card">
-        <div class="card-hdr">
-          <h3>Revenue (12 months)</h3>
-          <span>2025–2026</span>
-        </div>
-        <div class="bar-wrap">
-          <div class="bars" id="bars" aria-label="Monthly revenue bar chart"></div>
-          <div class="bar-lbls" id="bar-lbls"></div>
-        </div>
-      </div>
- 
-      <!-- Donut / status -->
-      <div class="card">
-        <div class="card-hdr"><h3>By status</h3></div>
-        <div class="pie-wrap">
-          <svg viewBox="0 0 100 70" style="width:100%;overflow:visible;" role="img" aria-label="Donut chart showing campaign status breakdown">
-            <title>Campaign status breakdown</title>
-            <circle cx="50" cy="40" r="28" fill="none" stroke="var(--color-background-secondary)" stroke-width="14"/>
-            <circle cx="50" cy="40" r="28" fill="none" stroke="#6366f1" stroke-width="14" stroke-dasharray="88 88"  stroke-dashoffset="22"   transform="rotate(-90 50 40)"/>
-            <circle cx="50" cy="40" r="28" fill="none" stroke="#10b981" stroke-width="14" stroke-dasharray="29 147" stroke-dashoffset="-66"  transform="rotate(-90 50 40)"/>
-            <circle cx="50" cy="40" r="28" fill="none" stroke="#f59e0b" stroke-width="14" stroke-dasharray="16 160" stroke-dashoffset="-95"  transform="rotate(-90 50 40)"/>
-            <circle cx="50" cy="40" r="28" fill="none" stroke="#ef4444" stroke-width="14" stroke-dasharray="8 168"  stroke-dashoffset="-111" transform="rotate(-90 50 40)"/>
-            <text x="50" y="37" text-anchor="middle" font-size="10" font-weight="500" fill="var(--color-text-primary)">156</text>
-            <text x="50" y="47" text-anchor="middle" font-size="7"  fill="var(--color-text-secondary)">total</text>
-          </svg>
-          <div class="status-row"><span><span class="status-dot" style="background:#6366f1"></span>Active</span>    <span style="font-weight:500">47</span></div>
-          <div class="status-row"><span><span class="status-dot" style="background:#10b981"></span>Completed</span> <span style="font-weight:500">72</span></div>
-          <div class="status-row"><span><span class="status-dot" style="background:#f59e0b"></span>Pending</span>   <span style="font-weight:500">25</span></div>
-          <div class="status-row"><span><span class="status-dot" style="background:#ef4444"></span>Cancelled</span> <span style="font-weight:500">12</span></div>
-        </div>
-      </div>
+  </div>
+
+  <div class="maprow">
+    <div class="panel">
+      <div class="section">Busiest stops</div>
+      <div id="map"></div>
     </div>
- 
-    <!-- Donations table -->
-    <div class="tbl-card">
-      <div class="tbl-hdr">
-        <h3>Recent donations</h3>
-        <div class="live-badge">
-          <span class="live-dot" aria-hidden="true"></span>
-          Live feed
-        </div>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th style="width:22%">Donor</th>
-            <th style="width:32%">Campaign</th>
-            <th style="width:16%">Amount</th>
-            <th style="width:18%">Status</th>
-            <th style="width:12%">Date</th>
-          </tr>
-        </thead>
-        <tbody id="donations-tbody"></tbody>
-      </table>
+    <div class="panel">
+      <div class="section">Top stops</div>
+      <div class="board"><table id="stopTable">
+        <thead><tr><th>#</th><th>Stop</th><th>Events</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
     </div>
- 
-  </main>
+  </div>
+
+  <div class="legend" id="legend"></div>
+  <div class="foot">
+    Static snapshot of the dbt marts, built by <code>dashboard/build_demo.py</code>.
+    The live app is the Streamlit dashboard (<code>python main.py</code>).
+  </div>
 </div>
- 
+
 <script>
-  // Bar chart 
-  const MONTHS = ['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May'];
-  const VALUES = [18, 24, 22, 31, 28, 35, 29, 38, 42, 45, 52, 61];
-  const MAX_VAL = Math.max(...VALUES);
- 
-  const barsEl   = document.getElementById('bars');
-  const barLblEl = document.getElementById('bar-lbls');
- 
-  VALUES.forEach((v, i) => {
-    const bar = document.createElement('div');
-    bar.className = 'bar';
-    bar.style.height = Math.round(v / MAX_VAL * 100) + '%';
-    bar.title = '$' + v + 'k';
-    barsEl.appendChild(bar);
- 
-    const lbl = document.createElement('div');
-    lbl.className = 'bar-lbl';
-    lbl.textContent = MONTHS[i];
-    barLblEl.appendChild(lbl);
-  });
- 
-  //  Donations table 
-  const DONATIONS = [
-    { name: 'Anonymous', avatar: '?',  color: '#94a3b8', campaign: 'Mobile Health Clinic',          amount: '$250', status: 'COMPLETED', date: 'May 9' },
-    { name: 'Sarah K.',  avatar: 'SK', color: '#6366f1', campaign: 'Eco Smart Water Purifier',       amount: '$100', status: 'COMPLETED', date: 'May 9' },
-    { name: 'Marcus T.', avatar: 'MT', color: '#8b5cf6', campaign: 'AI Tutoring for Rural Kids',     amount: '$50',  status: 'COMPLETED', date: 'May 8' },
-    { name: 'Anonymous', avatar: '?',  color: '#94a3b8', campaign: 'Community Urban Garden',         amount: '$75',  status: 'COMPLETED', date: 'May 8' },
-    { name: 'Priya M.',  avatar: 'PM', color: '#f59e0b', campaign: 'Ocean Plastic Art Project',      amount: '$30',  status: 'PENDING',   date: 'May 7' },
-    { name: 'James L.',  avatar: 'JL', color: '#10b981', campaign: 'Mobile Health Clinic',           amount: '$500', status: 'COMPLETED', date: 'May 7' },
-    { name: 'Aisha B.',  avatar: 'AB', color: '#ef4444', campaign: 'Solar Bike Charging Stations',   amount: '$80',  status: 'COMPLETED', date: 'May 6' },
-    { name: 'Tom R.',    avatar: 'TR', color: '#6366f1', campaign: 'AI Tutoring for Rural Kids',     amount: '$25',  status: 'FAILED',    date: 'May 6' },
+const DATA = {"budapest":{"title":"Budapest","total_stops":6210,"top_routes":[{"route_id":"3600","route_short_name":"60","route_type":0,"avg_delay_seconds":16.5,"num_stop_events":2040,"mode":"Tram","color":"#00985F","name":"60"},{"route_id":"9180","route_short_name":"918","route_type":3,"avg_delay_seconds":15.0,"num_stop_events":3514,"mode":"Bus","color":"#007AC9","name":"918"},{"route_id":"9790","route_short_name":"979","route_type":3,"avg_delay_seconds":14.0,"num_stop_events":2076,"mode":"Bus","color":"#007AC9","name":"979"},{"route_id":"9230","route_short_name":"923","route_type":3,"avg_delay_seconds":13.7,"num_stop_events":6265,"mode":"Bus","color":"#007AC9","name":"923"},{"route_id":"2660","route_short_name":"266","route_type":3,"avg_delay_seconds":12.8,"num_stop_events":7774,"mode":"Bus","color":"#007AC9","name":"266"},{"route_id":"9560","route_short_name":"956","route_type":3,"avg_delay_seconds":12.3,"num_stop_events":3682,"mode":"Bus","color":"#007AC9","name":"956"},{"route_id":"9501","route_short_name":"950A","route_type":3,"avg_delay_seconds":12.1,"num_stop_events":2393,"mode":"Bus","color":"#007AC9","name":"950A"},{"route_id":"9010","route_short_name":"901","route_type":3,"avg_delay_seconds":11.9,"num_stop_events":3385,"mode":"Bus","color":"#007AC9","name":"901"},{"route_id":"9730","route_short_name":"973","route_type":3,"avg_delay_seconds":11.7,"num_stop_events":5100,"mode":"Bus","color":"#007AC9","name":"973"},{"route_id":"9310","route_short_name":"931","route_type":3,"avg_delay_seconds":11.4,"num_stop_events":3226,"mode":"Bus","color":"#007AC9","name":"931"}],"hours":[{"hour_of_day":0,"avg_delay_seconds":2.9,"num_stop_events":52853,"is_peak_window":true},{"hour_of_day":1,"avg_delay_seconds":6.7,"num_stop_events":28166,"is_peak_window":true},{"hour_of_day":2,"avg_delay_seconds":7.3,"num_stop_events":25072,"is_peak_window":true},{"hour_of_day":3,"avg_delay_seconds":7.1,"num_stop_events":25558,"is_peak_window":true},{"hour_of_day":4,"avg_delay_seconds":2.1,"num_stop_events":84478,"is_peak_window":false},{"hour_of_day":5,"avg_delay_seconds":1.4,"num_stop_events":194046,"is_peak_window":false},{"hour_of_day":6,"avg_delay_seconds":1.4,"num_stop_events":273431,"is_peak_window":false},{"hour_of_day":7,"avg_delay_seconds":1.3,"num_stop_events":324312,"is_peak_window":false},{"hour_of_day":8,"avg_delay_seconds":1.3,"num_stop_events":313363,"is_peak_window":false},{"hour_of_day":9,"avg_delay_seconds":1.4,"num_stop_events":276027,"is_peak_window":false},{"hour_of_day":10,"avg_delay_seconds":1.4,"num_stop_events":265621,"is_peak_window":false},{"hour_of_day":11,"avg_delay_seconds":1.4,"num_stop_events":264176,"is_peak_window":false},{"hour_of_day":12,"avg_delay_seconds":1.4,"num_stop_events":264995,"is_peak_window":false},{"hour_of_day":13,"avg_delay_seconds":1.5,"num_stop_events":276623,"is_peak_window":false},{"hour_of_day":14,"avg_delay_seconds":1.5,"num_stop_events":302367,"is_peak_window":false},{"hour_of_day":15,"avg_delay_seconds":1.5,"num_stop_events":319799,"is_peak_window":false},{"hour_of_day":16,"avg_delay_seconds":1.5,"num_stop_events":328495,"is_peak_window":false},{"hour_of_day":17,"avg_delay_seconds":1.5,"num_stop_events":325428,"is_peak_window":false},{"hour_of_day":18,"avg_delay_seconds":1.5,"num_stop_events":301976,"is_peak_window":false},{"hour_of_day":19,"avg_delay_seconds":1.5,"num_stop_events":268430,"is_peak_window":false},{"hour_of_day":20,"avg_delay_seconds":1.5,"num_stop_events":236774,"is_peak_window":false},{"hour_of_day":21,"avg_delay_seconds":1.6,"num_stop_events":198889,"is_peak_window":false},{"hour_of_day":22,"avg_delay_seconds":1.7,"num_stop_events":171239,"is_peak_window":false},{"hour_of_day":23,"avg_delay_seconds":1.5,"num_stop_events":129494,"is_peak_window":false}],"stops":[{"stop_name":"Keleti p\u00e1lyaudvar M","stop_lat":47.500466,"stop_lon":19.081955,"total_scheduled_stops":8629,"busy_rank":1},{"stop_name":"Mechwart liget","stop_lat":47.510767,"stop_lon":19.031447,"total_scheduled_stops":8560,"busy_rank":2},{"stop_name":"Sz\u00e9na t\u00e9r","stop_lat":47.50814,"stop_lon":19.026735,"total_scheduled_stops":8560,"busy_rank":3},{"stop_name":"Sz\u00e9na t\u00e9r","stop_lat":47.508491,"stop_lon":19.027319,"total_scheduled_stops":8547,"busy_rank":4},{"stop_name":"Mechwart liget","stop_lat":47.510965,"stop_lon":19.032111,"total_scheduled_stops":8547,"busy_rank":5},{"stop_name":"Margit h\u00edd, budai h\u00eddf\u0151 H","stop_lat":47.514564,"stop_lon":19.038894,"total_scheduled_stops":8343,"busy_rank":6},{"stop_name":"M\u00f3ricz Zsigmond k\u00f6rt\u00e9r M","stop_lat":47.477496,"stop_lon":19.048347,"total_scheduled_stops":7978,"busy_rank":7},{"stop_name":"Corvin-negyed M","stop_lat":47.48621,"stop_lon":19.070057,"total_scheduled_stops":7492,"busy_rank":8},{"stop_name":"Harminckettesek tere","stop_lat":47.489592,"stop_lon":19.070589,"total_scheduled_stops":7492,"busy_rank":9},{"stop_name":"Mester utca / Ferenc k\u00f6r\u00fat","stop_lat":47.482199,"stop_lon":19.068463,"total_scheduled_stops":7492,"busy_rank":10},{"stop_name":"Pet\u0151fi h\u00edd, budai h\u00eddf\u0151","stop_lat":47.476695,"stop_lon":19.058975,"total_scheduled_stops":7492,"busy_rank":11},{"stop_name":"R\u00e1k\u00f3czi t\u00e9r M","stop_lat":47.49239,"stop_lon":19.071001,"total_scheduled_stops":7492,"busy_rank":12},{"stop_name":"Bor\u00e1ros t\u00e9r H","stop_lat":47.480149,"stop_lon":19.066074,"total_scheduled_stops":7492,"busy_rank":13},{"stop_name":"Pet\u0151fi h\u00edd, budai h\u00eddf\u0151","stop_lat":47.476956,"stop_lon":19.059572,"total_scheduled_stops":7423,"busy_rank":14},{"stop_name":"Bor\u00e1ros t\u00e9r H","stop_lat":47.4804,"stop_lon":19.066697,"total_scheduled_stops":7423,"busy_rank":15},{"stop_name":"Blaha Lujza t\u00e9r M","stop_lat":47.497519,"stop_lon":19.071495,"total_scheduled_stops":7413,"busy_rank":16},{"stop_name":"Nyugati p\u00e1lyaudvar M","stop_lat":47.5103,"stop_lon":19.056167,"total_scheduled_stops":7401,"busy_rank":17},{"stop_name":"Blaha Lujza t\u00e9r M","stop_lat":47.49677,"stop_lon":19.070725,"total_scheduled_stops":7401,"busy_rank":18},{"stop_name":"Kir\u00e1ly utca / Erzs\u00e9bet k\u00f6r\u00fat","stop_lat":47.503256,"stop_lon":19.065856,"total_scheduled_stops":7401,"busy_rank":19},{"stop_name":"Margit h\u00edd, budai h\u00eddf\u0151 H","stop_lat":47.514653,"stop_lon":19.038164,"total_scheduled_stops":7401,"busy_rank":20}]},"helsinki":{"title":"Helsinki","total_stops":5,"top_routes":[{"route_id":"R2","route_short_name":"9","route_type":0,"avg_delay_seconds":75.0,"num_stop_events":2,"mode":"Tram","color":"#00985F","name":"9"},{"route_id":"R4","route_short_name":"615","route_type":3,"avg_delay_seconds":75.0,"num_stop_events":2,"mode":"Bus","color":"#007AC9","name":"615"},{"route_id":"R3","route_short_name":"M1","route_type":1,"avg_delay_seconds":55.0,"num_stop_events":2,"mode":"Metro","color":"#FF6319","name":"M1"},{"route_id":"R1","route_short_name":"550","route_type":3,"avg_delay_seconds":51.0,"num_stop_events":5,"mode":"Bus","color":"#007AC9","name":"550"}],"hours":[{"hour_of_day":1,"avg_delay_seconds":90.0,"num_stop_events":1,"is_peak_window":true},{"hour_of_day":6,"avg_delay_seconds":45.0,"num_stop_events":2,"is_peak_window":false},{"hour_of_day":7,"avg_delay_seconds":45.0,"num_stop_events":1,"is_peak_window":false},{"hour_of_day":8,"avg_delay_seconds":30.0,"num_stop_events":1,"is_peak_window":false},{"hour_of_day":9,"avg_delay_seconds":55.0,"num_stop_events":2,"is_peak_window":false},{"hour_of_day":16,"avg_delay_seconds":75.0,"num_stop_events":2,"is_peak_window":true},{"hour_of_day":17,"avg_delay_seconds":75.0,"num_stop_events":2,"is_peak_window":true}],"stops":[{"stop_name":"Rautatientori","stop_lat":60.1709,"stop_lon":24.9414,"total_scheduled_stops":4,"busy_rank":1},{"stop_name":"Pasila","stop_lat":60.1986,"stop_lon":24.9333,"total_scheduled_stops":2,"busy_rank":2},{"stop_name":"Hakaniemi","stop_lat":60.1797,"stop_lon":24.9512,"total_scheduled_stops":2,"busy_rank":3},{"stop_name":"Kamppi","stop_lat":60.1689,"stop_lon":24.9326,"total_scheduled_stops":2,"busy_rank":4},{"stop_name":"Itakeskus","stop_lat":60.2103,"stop_lon":25.0782,"total_scheduled_stops":1,"busy_rank":5}]},"prague":{"title":"Prague","total_stops":18982,"top_routes":[{"route_id":"L1103","route_short_name":"T3","route_type":2,"avg_delay_seconds":62.0,"num_stop_events":60,"mode":"Rail","color":"#8C4799","name":"T3"},{"route_id":"L1333","route_short_name":"S33","route_type":2,"avg_delay_seconds":49.5,"num_stop_events":493,"mode":"Rail","color":"#8C4799","name":"S33"},{"route_id":"L1308","route_short_name":"S8","route_type":2,"avg_delay_seconds":47.9,"num_stop_events":2065,"mode":"Rail","color":"#8C4799","name":"S8"},{"route_id":"L405","route_short_name":"405","route_type":3,"avg_delay_seconds":43.8,"num_stop_events":1014,"mode":"Bus","color":"#007AC9","name":"405"},{"route_id":"L1365","route_short_name":"S65","route_type":2,"avg_delay_seconds":43.1,"num_stop_events":880,"mode":"Rail","color":"#8C4799","name":"S65"},{"route_id":"L1108","route_short_name":"T8","route_type":2,"avg_delay_seconds":43.1,"num_stop_events":62,"mode":"Rail","color":"#8C4799","name":"T8"},{"route_id":"L1302","route_short_name":"S2","route_type":2,"avg_delay_seconds":42.5,"num_stop_events":3567,"mode":"Rail","color":"#8C4799","name":"S2"},{"route_id":"L1110","route_short_name":"T10","route_type":2,"avg_delay_seconds":40.9,"num_stop_events":171,"mode":"Rail","color":"#8C4799","name":"T10"},{"route_id":"L1101","route_short_name":"T1","route_type":2,"avg_delay_seconds":39.8,"num_stop_events":104,"mode":"Rail","color":"#8C4799","name":"T1"},{"route_id":"L1328","route_short_name":"S28","route_type":2,"avg_delay_seconds":36.9,"num_stop_events":1039,"mode":"Rail","color":"#8C4799","name":"S28"}],"hours":[{"hour_of_day":0,"avg_delay_seconds":2.7,"num_stop_events":13143,"is_peak_window":false},{"hour_of_day":1,"avg_delay_seconds":5.6,"num_stop_events":5569,"is_peak_window":true},{"hour_of_day":2,"avg_delay_seconds":5.4,"num_stop_events":5191,"is_peak_window":true},{"hour_of_day":3,"avg_delay_seconds":5.5,"num_stop_events":5285,"is_peak_window":true},{"hour_of_day":4,"avg_delay_seconds":3.4,"num_stop_events":23048,"is_peak_window":true},{"hour_of_day":5,"avg_delay_seconds":2.6,"num_stop_events":65266,"is_peak_window":false},{"hour_of_day":6,"avg_delay_seconds":2.6,"num_stop_events":100310,"is_peak_window":false},{"hour_of_day":7,"avg_delay_seconds":2.5,"num_stop_events":118379,"is_peak_window":false},{"hour_of_day":8,"avg_delay_seconds":2.4,"num_stop_events":111722,"is_peak_window":false},{"hour_of_day":9,"avg_delay_seconds":2.4,"num_stop_events":99215,"is_peak_window":false},{"hour_of_day":10,"avg_delay_seconds":2.6,"num_stop_events":88875,"is_peak_window":false},{"hour_of_day":11,"avg_delay_seconds":2.5,"num_stop_events":82386,"is_peak_window":false},{"hour_of_day":12,"avg_delay_seconds":2.6,"num_stop_events":84470,"is_peak_window":false},{"hour_of_day":13,"avg_delay_seconds":2.6,"num_stop_events":94735,"is_peak_window":false},{"hour_of_day":14,"avg_delay_seconds":2.7,"num_stop_events":103420,"is_peak_window":false},{"hour_of_day":15,"avg_delay_seconds":2.6,"num_stop_events":111363,"is_peak_window":false},{"hour_of_day":16,"avg_delay_seconds":2.7,"num_stop_events":110796,"is_peak_window":false},{"hour_of_day":17,"avg_delay_seconds":2.8,"num_stop_events":106959,"is_peak_window":false},{"hour_of_day":18,"avg_delay_seconds":2.7,"num_stop_events":97312,"is_peak_window":false},{"hour_of_day":19,"avg_delay_seconds":2.6,"num_stop_events":80918,"is_peak_window":false},{"hour_of_day":20,"avg_delay_seconds":2.5,"num_stop_events":59105,"is_peak_window":false},{"hour_of_day":21,"avg_delay_seconds":2.4,"num_stop_events":43092,"is_peak_window":false},{"hour_of_day":22,"avg_delay_seconds":2.0,"num_stop_events":35326,"is_peak_window":false},{"hour_of_day":23,"avg_delay_seconds":1.5,"num_stop_events":29086,"is_peak_window":false}],"stops":[{"stop_name":"Hor\u010di\u010dkova","stop_lat":50.032001,"stop_lon":14.534417,"total_scheduled_stops":2417,"busy_rank":1},{"stop_name":"H\u00e1je","stop_lat":50.030666,"stop_lon":14.529568,"total_scheduled_stops":2417,"busy_rank":2},{"stop_name":"Hrad\u010dansk\u00e1","stop_lat":50.09721,"stop_lon":14.403853,"total_scheduled_stops":2080,"busy_rank":3},{"stop_name":"Hrad\u010dansk\u00e1","stop_lat":50.097298,"stop_lon":14.404873,"total_scheduled_stops":2029,"busy_rank":4},{"stop_name":"Pra\u0161n\u00fd most","stop_lat":50.09473,"stop_lon":14.393871,"total_scheduled_stops":1784,"busy_rank":5},{"stop_name":"Palmovka","stop_lat":50.102474,"stop_lon":14.473387,"total_scheduled_stops":1777,"busy_rank":6},{"stop_name":"Karlovo n\u00e1m\u011bst\u00ed","stop_lat":50.075302,"stop_lon":14.419109,"total_scheduled_stops":1767,"busy_rank":7},{"stop_name":"Mor\u00e1\u0148","stop_lat":50.074024,"stop_lon":14.418731,"total_scheduled_stops":1743,"busy_rank":8},{"stop_name":"Strossmayerovo n\u00e1m\u011bst\u00ed","stop_lat":50.098564,"stop_lon":14.433307,"total_scheduled_stops":1718,"busy_rank":9},{"stop_name":"Palmovka","stop_lat":50.104248,"stop_lon":14.475662,"total_scheduled_stops":1660,"busy_rank":10},{"stop_name":"V\u00edt\u011bzn\u00e9 n\u00e1m\u011bst\u00ed","stop_lat":50.099449,"stop_lon":14.395474,"total_scheduled_stops":1656,"busy_rank":11},{"stop_name":"N\u00e1b\u0159e\u017e\u00ed Kapit\u00e1na Jaro\u0161e","stop_lat":50.096321,"stop_lon":14.431299,"total_scheduled_stops":1645,"busy_rank":12},{"stop_name":"Novom\u011bstsk\u00e1 radnice","stop_lat":50.077518,"stop_lon":14.419602,"total_scheduled_stops":1624,"busy_rank":13},{"stop_name":"Karlovo n\u00e1m\u011bst\u00ed","stop_lat":50.076477,"stop_lon":14.419256,"total_scheduled_stops":1600,"busy_rank":14},{"stop_name":"N\u00e1m\u011bst\u00ed M\u00edru","stop_lat":50.074921,"stop_lon":14.436891,"total_scheduled_stops":1598,"busy_rank":15},{"stop_name":"Malostransk\u00e1","stop_lat":50.090363,"stop_lon":14.410101,"total_scheduled_stops":1537,"busy_rank":16},{"stop_name":"\u0160t\u011bp\u00e1nsk\u00e1","stop_lat":50.075687,"stop_lon":14.422432,"total_scheduled_stops":1521,"busy_rank":17},{"stop_name":"Karlovo n\u00e1m\u011bst\u00ed","stop_lat":50.075901,"stop_lon":14.419612,"total_scheduled_stops":1521,"busy_rank":18},{"stop_name":"I. P. Pavlova","stop_lat":50.075539,"stop_lon":14.430594,"total_scheduled_stops":1521,"busy_rank":19},{"stop_name":"I. P. Pavlova","stop_lat":50.075405,"stop_lon":14.431689,"total_scheduled_stops":1520,"busy_rank":20}]},"zurich":{"title":"Zurich","total_stops":102717,"top_routes":[{"route_id":"91-5C-Y-j26-1","route_short_name":"EXT","route_type":117,"avg_delay_seconds":492.0,"num_stop_events":5,"mode":"Other","color":"#9AA4B2","name":"EXT"},{"route_id":"91-2P-Y-j26-1","route_short_name":"NJ","route_type":105,"avg_delay_seconds":382.6,"num_stop_events":318,"mode":"Other","color":"#9AA4B2","name":"NJ"},{"route_id":"91-2Z-Y-j26-1","route_short_name":"NJ","route_type":105,"avg_delay_seconds":363.4,"num_stop_events":589,"mode":"Other","color":"#9AA4B2","name":"NJ"},{"route_id":"91-621-I-j26-1","route_short_name":"621I","route_type":101,"avg_delay_seconds":318.0,"num_stop_events":430,"mode":"Other","color":"#9AA4B2","name":"621I"},{"route_id":"91-3R-Y-j26-1","route_short_name":"EC","route_type":102,"avg_delay_seconds":315.3,"num_stop_events":334,"mode":"Other","color":"#9AA4B2","name":"EC"},{"route_id":"91-1G-j26-1","route_short_name":"001G","route_type":101,"avg_delay_seconds":312.7,"num_stop_events":308,"mode":"Other","color":"#9AA4B2","name":"001G"},{"route_id":"91-GEX-A-j26-1","route_short_name":"GEX","route_type":107,"avg_delay_seconds":308.6,"num_stop_events":42,"mode":"Other","color":"#9AA4B2","name":"GEX"},{"route_id":"91-8Y-Y-j26-1","route_short_name":"EXT","route_type":117,"avg_delay_seconds":300.0,"num_stop_events":6,"mode":"Other","color":"#9AA4B2","name":"EXT"},{"route_id":"91-5D-j26-1","route_short_name":"005D","route_type":101,"avg_delay_seconds":298.9,"num_stop_events":276,"mode":"Other","color":"#9AA4B2","name":"005D"},{"route_id":"94-380-1-j26-1","route_short_name":"3801","route_type":1000,"avg_delay_seconds":297.7,"num_stop_events":52,"mode":"Ferry","color":"#00B9E4","name":"3801"}],"hours":[{"hour_of_day":0,"avg_delay_seconds":10.7,"num_stop_events":665076,"is_peak_window":true},{"hour_of_day":1,"avg_delay_seconds":7.3,"num_stop_events":224607,"is_peak_window":false},{"hour_of_day":2,"avg_delay_seconds":7.2,"num_stop_events":121624,"is_peak_window":false},{"hour_of_day":3,"avg_delay_seconds":7.7,"num_stop_events":98040,"is_peak_window":false},{"hour_of_day":4,"avg_delay_seconds":9.5,"num_stop_events":119677,"is_peak_window":false},{"hour_of_day":5,"avg_delay_seconds":10.2,"num_stop_events":582733,"is_peak_window":true},{"hour_of_day":6,"avg_delay_seconds":10.3,"num_stop_events":1152062,"is_peak_window":true},{"hour_of_day":7,"avg_delay_seconds":10.4,"num_stop_events":1362245,"is_peak_window":true},{"hour_of_day":8,"avg_delay_seconds":10.3,"num_stop_events":1344731,"is_peak_window":true},{"hour_of_day":9,"avg_delay_seconds":10.1,"num_stop_events":1304631,"is_peak_window":true},{"hour_of_day":10,"avg_delay_seconds":10.4,"num_stop_events":1279539,"is_peak_window":true},{"hour_of_day":11,"avg_delay_seconds":10.2,"num_stop_events":1316830,"is_peak_window":true},{"hour_of_day":12,"avg_delay_seconds":10.2,"num_stop_events":1362041,"is_peak_window":true},{"hour_of_day":13,"avg_delay_seconds":10.1,"num_stop_events":1369020,"is_peak_window":true},{"hour_of_day":14,"avg_delay_seconds":10.2,"num_stop_events":1330776,"is_peak_window":true},{"hour_of_day":15,"avg_delay_seconds":9.9,"num_stop_events":1397829,"is_peak_window":false},{"hour_of_day":16,"avg_delay_seconds":10.1,"num_stop_events":1514885,"is_peak_window":true},{"hour_of_day":17,"avg_delay_seconds":10.4,"num_stop_events":1529851,"is_peak_window":true},{"hour_of_day":18,"avg_delay_seconds":10.7,"num_stop_events":1465990,"is_peak_window":true},{"hour_of_day":19,"avg_delay_seconds":10.7,"num_stop_events":1286357,"is_peak_window":true},{"hour_of_day":20,"avg_delay_seconds":11.0,"num_stop_events":1049744,"is_peak_window":true},{"hour_of_day":21,"avg_delay_seconds":10.9,"num_stop_events":879898,"is_peak_window":true},{"hour_of_day":22,"avg_delay_seconds":11.2,"num_stop_events":822039,"is_peak_window":true},{"hour_of_day":23,"avg_delay_seconds":11.6,"num_stop_events":811632,"is_peak_window":true}],"stops":[{"stop_name":"Schwyz, Zentrum","stop_lat":47.02116241,"stop_lon":8.65134213,"total_scheduled_stops":44862,"busy_rank":1},{"stop_name":"Schwyz, Bahnhof","stop_lat":47.0267289,"stop_lon":8.63216309,"total_scheduled_stops":24326,"busy_rank":2},{"stop_name":"Brunnen, Bahnhof","stop_lat":46.99955233,"stop_lon":8.61000166,"total_scheduled_stops":24178,"busy_rank":3},{"stop_name":"Ibach, Mythen Center","stop_lat":47.01563209,"stop_lon":8.64818006,"total_scheduled_stops":23355,"busy_rank":4},{"stop_name":"Schwyz, Steisteg","stop_lat":47.01966812,"stop_lon":8.65173738,"total_scheduled_stops":23350,"busy_rank":5},{"stop_name":"Schwyz, L\u00fccken","stop_lat":47.01860861,"stop_lon":8.65145891,"total_scheduled_stops":20581,"busy_rank":6},{"stop_name":"Ibach, Mythen Center","stop_lat":47.01577296,"stop_lon":8.64845853,"total_scheduled_stops":20576,"busy_rank":7},{"stop_name":"K\u00fcssnacht am Rigi, Bahnhof","stop_lat":47.08310201,"stop_lon":8.43316829,"total_scheduled_stops":19035,"busy_rank":8},{"stop_name":"Schwyz, Zentrum","stop_lat":47.0212114,"stop_lon":8.65136009,"total_scheduled_stops":18559,"busy_rank":9},{"stop_name":"Yverdon-les-Bains, gare","stop_lat":46.78148799,"stop_lon":6.63973573,"total_scheduled_stops":18078,"busy_rank":10},{"stop_name":"Brunnen, Kantonalbank","stop_lat":46.99670953,"stop_lon":8.60739654,"total_scheduled_stops":17917,"busy_rank":11},{"stop_name":"Yverdon-les-Bains, gare","stop_lat":46.78116811,"stop_lon":6.63986149,"total_scheduled_stops":17815,"busy_rank":12},{"stop_name":"Brunnen, Kantonalbank","stop_lat":46.99662988,"stop_lon":8.60721688,"total_scheduled_stops":17475,"busy_rank":13},{"stop_name":"Weggis, Dorfplatz","stop_lat":47.03228256,"stop_lon":8.43548595,"total_scheduled_stops":17382,"busy_rank":14},{"stop_name":"Goldau, L\u00f6wenplatz","stop_lat":47.05063554,"stop_lon":8.55064997,"total_scheduled_stops":16620,"busy_rank":15},{"stop_name":"Goldau, Tierpark","stop_lat":47.05176785,"stop_lon":8.55350661,"total_scheduled_stops":16620,"busy_rank":16},{"stop_name":"Seewen SZ, Seewen Markt","stop_lat":47.03246012,"stop_lon":8.6277344,"total_scheduled_stops":16523,"busy_rank":17},{"stop_name":"Goldau, L\u00f6wenplatz","stop_lat":47.0506539,"stop_lon":8.55075776,"total_scheduled_stops":16466,"busy_rank":18},{"stop_name":"Goldau, Tierpark","stop_lat":47.05169441,"stop_lon":8.55341678,"total_scheduled_stops":16466,"busy_rank":19},{"stop_name":"Basel, Markthalle","stop_lat":47.54875262,"stop_lon":7.58719784,"total_scheduled_stops":14728,"busy_rank":20}]}};
+const MODES = {
+  Tram:"#00985F", Metro:"#FF6319", Rail:"#8C4799", Bus:"#007AC9",
+  Ferry:"#00B9E4", "Suburban rail":"#8C4799", Other:"#9AA4B2"
+};
+let hourChart, routeChart, map, markerLayer;
+
+function kpis(d) {
+  const routes = d.top_routes;
+  const avg = routes.length ? routes.reduce((s,r)=>s+r.avg_delay_seconds,0)/routes.length : 0;
+  const worst = routes[0];
+  const cards = [
+    ["Top routes shown", routes.length.toLocaleString(), "by avg delay", "#007AC9"],
+    ["Stops", d.total_stops.toLocaleString(), "scheduled network", "#00985F"],
+    ["Avg delay", avg.toFixed(1)+"s", "across shown routes", "#FF6319"],
+    ["Worst route", worst ? worst.name : "-",
+      worst ? worst.avg_delay_seconds.toFixed(0)+"s avg" : "", worst ? worst.color : "#00B5A0"],
   ];
- 
-  const STATUS_CLASS = { COMPLETED: 'badge-green', PENDING: 'badge-amber', FAILED: 'badge-red' };
- 
-  const tbody = document.getElementById('donations-tbody');
- 
-  DONATIONS.forEach(d => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>
-        <div class="donor-cell">
-          <div class="avatar" style="background:${d.color}20;color:${d.color}">${d.avatar}</div>
-          ${d.name}
-        </div>
-      </td>
-      <td style="color:var(--color-text-secondary)">${d.campaign}</td>
-      <td style="font-weight:500;color:#10b981">${d.amount}</td>
-      <td><span class="badge ${STATUS_CLASS[d.status] ?? 'badge-blue'}">${d.status}</span></td>
-      <td style="color:var(--color-text-secondary)">${d.date}</td>
-    `;
-    tbody.appendChild(row);
+  document.getElementById("kpis").innerHTML = cards.map(([l,v,h,a])=>
+    `<div class="card" style="--accent:${a}"><div class="lbl">${l}</div>`+
+    `<div class="val">${v}</div><div class="hint">${h}</div></div>`).join("");
+}
+
+function hourGraph(d) {
+  const labels = d.hours.map(h=>String(h.hour_of_day).padStart(2,"0")+":00");
+  const vals = d.hours.map(h=>h.avg_delay_seconds);
+  const peaks = d.hours.map(h=>h.is_peak_window ? h.avg_delay_seconds : null);
+  const ctx = document.getElementById("hourChart").getContext("2d");
+  const grad = ctx.createLinearGradient(0,0,0,300);
+  grad.addColorStop(0,"rgba(51,195,255,0.45)"); grad.addColorStop(1,"rgba(51,195,255,0.04)");
+  if (hourChart) hourChart.destroy();
+  hourChart = new Chart(ctx, {
+    type:"line",
+    data:{ labels, datasets:[
+      { data:vals, borderColor:"#33C3FF", backgroundColor:grad, borderWidth:2,
+        fill:true, tension:0.35, pointRadius:0 },
+      { data:peaks, borderColor:"transparent", backgroundColor:"#FF6319",
+        pointRadius:5, pointHoverRadius:7, showLine:false },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{
+        label:c=>` ${c.parsed.y}s avg delay` } } },
+      scales:{ x:{ grid:{color:"#1a2236"}, ticks:{color:"#8B95A7",maxRotation:0,autoSkip:true,maxTicksLimit:12} },
+        y:{ grid:{color:"#1a2236"}, ticks:{color:"#8B95A7"}, title:{display:true,text:"avg delay (s)",color:"#8B95A7"} } } }
   });
+  const ph = d.hours.filter(h=>h.is_peak_window).map(h=>String(h.hour_of_day).padStart(2,"0")+":00");
+  document.getElementById("peakNote").textContent = ph.length ? "Peak windows: "+ph.join(", ") : "";
+}
+
+function routeGraph(d) {
+  const rows = d.top_routes;
+  const ctx = document.getElementById("routeChart").getContext("2d");
+  if (routeChart) routeChart.destroy();
+  routeChart = new Chart(ctx, {
+    type:"bar",
+    data:{ labels: rows.map(r=>r.name),
+      datasets:[{ data:rows.map(r=>r.avg_delay_seconds),
+        backgroundColor:rows.map(r=>r.color), borderRadius:5, barThickness:16 }] },
+    options:{ indexAxis:"y", responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{
+        label:c=>` ${c.parsed.x}s avg · ${rows[c.dataIndex].mode}` } } },
+      scales:{ x:{ grid:{color:"#1a2236"}, ticks:{color:"#8B95A7"}, title:{display:true,text:"avg delay (s)",color:"#8B95A7"} },
+        y:{ grid:{display:false}, ticks:{color:"#C7D0E0",font:{weight:"600"}} } } }
+  });
+}
+
+function stopsView(d) {
+  const stops = d.stops.filter(s=>s.stop_lat!=null && s.stop_lon!=null);
+  const tbody = document.querySelector("#stopTable tbody");
+  const max = Math.max(1, ...d.stops.map(s=>s.total_scheduled_stops));
+  tbody.innerHTML = d.stops.map(s=>{
+    const w = Math.round(100*s.total_scheduled_stops/max);
+    return `<tr><td class="num">${s.busy_rank}</td><td>${s.stop_name||"-"}</td>`+
+      `<td><div class="num">${s.total_scheduled_stops.toLocaleString()}</div>`+
+      `<div class="bar" style="width:${w}%"></div></td></tr>`;
+  }).join("");
+
+  if (!map) {
+    map = L.map("map",{ zoomControl:true, attributionControl:false });
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+      { maxZoom:19 }).addTo(map);
+    markerLayer = L.layerGroup().addTo(map);
+  }
+  markerLayer.clearLayers();
+  if (!stops.length) { map.setView([0,0],2); return; }
+  const mx = Math.max(1, ...stops.map(s=>s.total_scheduled_stops));
+  const pts = [];
+  stops.forEach(s=>{
+    const t = s.total_scheduled_stops/mx;
+    const r = 6 + t*16;
+    L.circleMarker([s.stop_lat,s.stop_lon],{
+      radius:r, color:"#ffffff", weight:1, opacity:0.5,
+      fillColor:"#00B5A0", fillOpacity:0.35+0.5*t
+    }).bindTooltip(`${s.stop_name||"Stop"} · ${s.total_scheduled_stops.toLocaleString()} stop events`)
+      .addTo(markerLayer);
+    pts.push([s.stop_lat,s.stop_lon]);
+  });
+  map.fitBounds(pts, { padding:[30,30] });
+}
+
+function legend() {
+  document.getElementById("legend").innerHTML = Object.entries(MODES)
+    .filter(([k])=>k!=="Suburban rail")
+    .map(([k,c])=>`<span class="badge" style="background:${c}">${k}</span>`).join("");
+}
+
+function render(city) {
+  const d = DATA[city];
+  document.getElementById("subtitle").textContent =
+    `${d.title} · GTFS delay intelligence, ${Object.keys(DATA).length} cities loaded`;
+  kpis(d); hourGraph(d); routeGraph(d); stopsView(d);
+}
+
+(function init(){
+  const sel = document.getElementById("city");
+  Object.keys(DATA).sort().forEach(c=>{
+    const o = document.createElement("option");
+    o.value = c; o.textContent = DATA[c].title;
+    sel.appendChild(o);
+  });
+  sel.addEventListener("change", e=>render(e.target.value));
+  legend();
+  render(sel.value);
+})();
 </script>
- 
 </body>
 </html>

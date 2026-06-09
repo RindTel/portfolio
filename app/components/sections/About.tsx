@@ -1,235 +1,265 @@
 "use client";
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
- 
+
 const strengths = [
-  { label: "Systems Thinking", desc: "Designing scalable architectures that anticipate complexity before it arrives." },
-  { label: "AI Engineering", desc: "Building production grade ML pipelines, RAG systems, and intelligent agents." },
-  { label: "Full-Stack Craft", desc: "End to end ownership from database schema to polished user interfaces." },
-  { label: "Network Design", desc: "Enterprise scale infrastructure, security protocols, and distributed systems." },
+  { key: "pipeline_arch",  val: "end-to-end data workflows: ingestion, transform, retrieval, delivery" },
+  { key: "rag_systems",    val: "local LLM inference, FAISS vector search, cited document retrieval" },
+  { key: "backend_apis",   val: "schema design → async services → REST APIs, full ownership" },
+  { key: "network_infra",  val: "enterprise routing (BGP/OSPF), multi-tier topologies, zero downtime" },
 ];
- 
-const interests = ["Retrieval-Augmented Generation", "Distributed Systems", "Network Security", "Compiler Design", "WebAssembly", "Formal Verification"];
- 
+
+const interests = [
+  "retrieval-augmented-generation",
+  "distributed-systems",
+  "network-security",
+  "compiler-design",
+  "webassembly",
+  "formal-verification",
+];
+
+const stats = [
+  { val: "3+",   label: "years building" },
+  { val: "10+",  label: "projects shipped" },
+  { val: "4",    label: "transit networks analyzed" },
+  { val: "100%", label: "offline RAG stack" },
+];
+
 export default function About() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
- 
+  const ref    = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
+
   return (
-    <section
-      id="about"
-      ref={ref}
-      style={{
-        padding: "8rem 2rem",
-        maxWidth: 1200,
-        margin: "0 auto",
-      }}
-    >
+    <section id="about" style={{ padding: "7rem 2rem", maxWidth: 900, margin: "0 auto" }} ref={ref}>
+      <p className="section-tag">about</p>
+
+      {/* Stats row */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7 }}
-        style={{ marginBottom: "5rem" }}
+        transition={{ duration: 0.4 }}
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: "1px",
+          background: "var(--border)",
+          border: "1px solid var(--border)",
+          marginBottom: "4rem",
+        }}
+        className="stats-grid"
       >
-        <p className="section-label" style={{ marginBottom: "1rem" }}>01 / About</p>
-        <h2
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "clamp(2.2rem, 5vw, 3.5rem)",
-            fontWeight: 800,
-            letterSpacing: "-0.03em",
-            lineHeight: 1.05,
-            color: "var(--text-primary)",
-            maxWidth: 600,
-          }}
-        >
-          Engineered for{" "}
-          <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", color: "var(--accent)", fontWeight: 400 }}>
-            complexity,
-          </span>
-          {" "}built for clarity
-        </h2>
+        {stats.map((s, i) => (
+          <motion.div
+            key={s.label}
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ delay: 0.1 + i * 0.07 }}
+            style={{
+              background: "var(--surface)",
+              padding: "1.25rem 1.5rem",
+              display: "flex", flexDirection: "column", gap: "0.25rem",
+            }}
+          >
+            <span style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "clamp(1.4rem, 3vw, 1.9rem)",
+              fontWeight: 600,
+              color: "var(--green)",
+              letterSpacing: "-0.02em",
+              lineHeight: 1,
+            }}>
+              {s.val}
+            </span>
+            <span style={{
+              fontFamily: "var(--font-mono)", fontSize: 10,
+              color: "var(--text-muted)", letterSpacing: "0.06em",
+            }}>
+              {s.label}
+            </span>
+          </motion.div>
+        ))}
       </motion.div>
- 
+
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))",
+          gridTemplateColumns: "1fr 1fr",
           gap: "5rem",
           alignItems: "start",
+          marginBottom: "4rem",
         }}
+        className="about-grid"
       >
-        {/* Bio column */}
+        {/* Bio */}
         <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.2 }}
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <p
-            style={{
-              fontSize: "1rem",
-              lineHeight: 1.8,
-              color: "var(--text-secondary)",
-              marginBottom: "1.25rem",
-            }}
-          >
-            I&apos;m a Software Engineer with a deep passion for building software
-            at the intersection of intelligence and infrastructure. My work spans AI pipelines,
-            distributed systems, and network architecture.
+          <h2 style={{
+            fontSize: "clamp(1.6rem, 4vw, 2.2rem)",
+            fontWeight: 600,
+            letterSpacing: "-0.025em",
+            lineHeight: 1.2,
+            color: "var(--text-primary)",
+            marginBottom: "1.25rem",
+          }}>
+            Building systems<br />that process data<br />at scale.
+          </h2>
+          <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.8, marginBottom: "1rem" }}>
+            I&apos;m a data engineer focused on pipelines, intelligent retrieval, and
+            backend infrastructure. My work sits at the intersection of raw data
+            and useful systems.
           </p>
- 
-          <p
-            style={{
-              fontSize: "1rem",
-              lineHeight: 1.8,
-              color: "var(--text-secondary)",
-              marginBottom: "2rem",
-            }}
-          >
-            I thrive in environments where technical complexity meets product ambition. Whether it&apos;s
-            designing a retrieval augmented generation system from scratch or architecting a smart
-            stadium network for 50,000 concurrent users. I care deeply about the craft.
+          <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.8, marginBottom: "2rem" }}>
+            I&apos;ve designed a RAG system running fully offline on local hardware,
+            an EXIF analytics pipeline over a photo library, and a GTFS
+            delay-intelligence dashboard spanning four transit networks.
           </p>
- 
-          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+
+          {/* Terminal-style current status */}
+          <div style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            padding: "1rem 1.25rem",
+            marginBottom: "2rem",
+          }}>
+            <p style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)", marginBottom: "0.5rem", letterSpacing: "0.06em" }}>
+              # now
+            </p>
             {[
-              { label: "Resume", href: "/Rindrit_CV.pdf" },
-              { label: "GitHub", href: "https://github.com/RindTel" },
-              { label: "LinkedIn", href: "https://linkedin.com/in/rindrittelaku" },
-            ].map((item) => (
+              "› building production data pipelines @ ProQu",
+              "› shipping local-first data tools on the side",
+              "› pristina, ks · gmt+1",
+            ].map((line, i) => (
+              <motion.p
+                key={line}
+                initial={{ opacity: 0, x: -6 }}
+                animate={inView ? { opacity: 1, x: 0 } : {}}
+                transition={{ delay: 0.4 + i * 0.08 }}
+                style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.9, letterSpacing: "0.02em" }}
+              >
+                {line}
+              </motion.p>
+            ))}
+          </div>
+
+          <div style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap" }}>
+            {[
+              { label: "github ↗",   href: "https://github.com/RindTel" },
+              { label: "linkedin ↗", href: "https://linkedin.com/in/rindrittelaku" },
+              { label: "email ↗",    href: "mailto:rindritelaku@gmail.com" },
+              { label: "resume ↗",   href: "/RindritTelakuCV.pdf" },
+            ].map(item => (
               <a
                 key={item.label}
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "0.72rem",
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase",
-                  color: "var(--text-secondary)",
-                  textDecoration: "none",
-                  border: "1px solid var(--border)",
-                  padding: "0.5rem 1rem",
-                  borderRadius: "2px",
-                  transition: "all 0.2s",
+                  fontFamily: "var(--font-mono)", fontSize: 12,
+                  color: "var(--text-muted)", letterSpacing: "0.04em",
+                  transition: "color 0.15s",
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "var(--accent)";
-                  e.currentTarget.style.color = "var(--accent)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "var(--border)";
-                  e.currentTarget.style.color = "var(--text-secondary)";
-                }}
+                onMouseEnter={e => (e.currentTarget.style.color = "var(--text-secondary)")}
+                onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}
               >
                 {item.label}
               </a>
             ))}
           </div>
         </motion.div>
- 
-        {/* Strengths column */}
+
+        {/* Strengths */}
         <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.35 }}
-          className="strengths-col"
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.5, delay: 0.25 }}
         >
-          <p
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.7rem",
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: "var(--text-muted)",
-              marginBottom: "1.5rem",
-            }}
-          >
-            Core Strengths
+          <p style={{
+            fontFamily: "var(--font-mono)", fontSize: 10,
+            color: "var(--text-muted)", letterSpacing: "0.1em",
+            textTransform: "uppercase", marginBottom: "0.75rem",
+          }}>
+            core strengths
           </p>
- 
-          <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", marginBottom: "3rem" }}>
+          <div style={{ borderTop: "1px solid var(--border)" }}>
             {strengths.map((s, i) => (
               <motion.div
-                key={s.label}
-                initial={{ opacity: 0, y: 15 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
+                key={s.key}
+                initial={{ opacity: 0 }}
+                animate={inView ? { opacity: 1 } : {}}
+                transition={{ delay: 0.3 + i * 0.07 }}
                 style={{
-                  padding: "1.25rem",
-                  background: "var(--surface)",
-                  border: "1px solid var(--border)",
-                  borderRadius: "4px",
-                  transition: "border-color 0.2s",
-                  cursor: "default",
+                  padding: "0.85rem 0",
+                  borderBottom: "1px solid var(--border)",
                 }}
-                whileHover={{ borderColor: "rgba(99,210,190,0.3)" }}
+                className="strength-row"
               >
-                <p
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontWeight: 600,
-                    fontSize: "0.95rem",
-                    color: "var(--text-primary)",
-                    marginBottom: "0.35rem",
-                  }}
-                >
-                  {s.label}
+                <p style={{
+                  fontFamily: "var(--font-mono)", fontSize: 10,
+                  color: "var(--text-muted)", letterSpacing: "0.06em",
+                  marginBottom: "0.25rem",
+                }}>
+                  {s.key}
                 </p>
-                <p
-                  style={{
-                    fontSize: "0.88rem",
-                    color: "var(--text-secondary)",
-                    lineHeight: 1.6,
-                  }}
-                >
-                  {s.desc}
+                <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6 }}>
+                  {s.val}
                 </p>
               </motion.div>
             ))}
           </div>
- 
-          <p
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.7rem",
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: "var(--text-muted)",
-              marginBottom: "1rem",
-            }}
-          >
-            Technical Interests
-          </p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-            {interests.map((tag) => (
-              <span
-                key={tag}
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "0.72rem",
-                  color: "var(--accent)",
-                  background: "var(--accent-dim)",
-                  border: "1px solid rgba(99,210,190,0.15)",
-                  padding: "0.35rem 0.75rem",
-                  borderRadius: "2px",
-                  letterSpacing: "0.04em",
-                }}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
         </motion.div>
       </div>
- 
+
+      {/* Interests */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : {}}
+        transition={{ delay: 0.5 }}
+        style={{ borderTop: "1px solid var(--border)", paddingTop: "2rem" }}
+      >
+        <p style={{
+          fontFamily: "var(--font-mono)", fontSize: 10,
+          color: "var(--text-muted)", letterSpacing: "0.1em",
+          textTransform: "uppercase", marginBottom: "1rem",
+        }}>
+          technical interests
+        </p>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+          {interests.map((tag, i) => (
+            <motion.span
+              key={tag}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={inView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ delay: 0.5 + i * 0.05 }}
+              style={{
+                fontFamily: "var(--font-mono)", fontSize: 11,
+                color: "var(--text-secondary)",
+                border: "1px solid var(--border)",
+                padding: "3px 12px",
+                letterSpacing: "0.02em",
+                transition: "border-color 0.2s, color 0.2s",
+              }}
+              className="interest-tag"
+            >
+              {tag}
+            </motion.span>
+          ))}
+        </div>
+      </motion.div>
+
       <style>{`
-        @media (max-width: 640px) {
-          .strengths-col { margin-top: 3rem; }
+        .about-grid { gap: 5rem; }
+        .strength-row:hover { background: var(--surface); padding-left: 0.75rem; transition: padding 0.2s; }
+        .strength-row:hover p:last-child { color: var(--text-primary) !important; }
+        .interest-tag:hover { border-color: var(--green-border) !important; color: var(--green) !important; cursor: default; }
+        .stats-grid { grid-template-columns: repeat(4, 1fr) !important; }
+        @media (max-width: 680px) {
+          .about-grid { grid-template-columns: 1fr !important; gap: 3rem !important; }
+          .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
       `}</style>
     </section>
   );
 }
- 

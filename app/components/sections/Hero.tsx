@@ -1,384 +1,305 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
- 
-function AnimatedGrid() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
- 
+
+/* ── typing animation ── */
+function TypeWriter({ text, delay = 0, speed = 38, onDone }: {
+  text: string; delay?: number; speed?: number; onDone?: () => void;
+}) {
+  const [displayed, setDisplayed] = useState("");
+  const [started, setStarted] = useState(false);
+
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
- 
-    let animId: number;
-    let t = 0;
- 
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
- 
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      t += 0.003;
- 
-      const vp = { x: canvas.width / 2, y: canvas.height * 0.55 };
-      ctx.lineWidth = 1;
- 
-      for (let i = 0; i <= 12; i++) {
-        const y = vp.y + (i - 6) * 60 + Math.sin(t + i * 0.3) * 5;
-        const perspective = Math.abs(i - 6) / 6;
-        const alpha = Math.max(0, 0.12 - perspective * 0.1);
-        ctx.strokeStyle = `rgba(99,210,190,${alpha})`;
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      }
- 
-      const numV = 20;
-      for (let i = 0; i <= numV; i++) {
-        const x = (i / numV) * canvas.width;
-        const alpha = 0.04 + Math.sin(t * 0.5 + i * 0.2) * 0.02;
-        ctx.strokeStyle = `rgba(99,210,190,${alpha})`;
-        ctx.beginPath();
-        ctx.moveTo(vp.x, vp.y);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
-      }
- 
-      for (let i = 0; i < 30; i++) {
-        const x = ((Math.sin(t * 0.4 + i * 2.1) * 0.5 + 0.5) * canvas.width);
-        const y = ((Math.cos(t * 0.3 + i * 1.7) * 0.5 + 0.5) * canvas.height * 0.8);
-        const size = 1 + Math.sin(t + i) * 0.5;
-        const alpha = 0.3 + Math.sin(t * 0.7 + i * 0.8) * 0.2;
-        ctx.fillStyle = `rgba(99,210,190,${alpha})`;
-        ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
-        ctx.fill();
-      }
- 
-      animId = requestAnimationFrame(draw);
-    };
-    draw();
- 
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
- 
+    const t = setTimeout(() => setStarted(true), delay);
+    return () => clearTimeout(t);
+  }, [delay]);
+
+  useEffect(() => {
+    if (!started) return;
+    if (displayed.length >= text.length) { onDone?.(); return; }
+    const t = setTimeout(() => setDisplayed(text.slice(0, displayed.length + 1)), speed);
+    return () => clearTimeout(t);
+  }, [started, displayed, text, speed, onDone]);
+
+  return <>{displayed}</>;
+}
+
+const bootLines = [
+  { delay: 0,    text: "initializing profile...",     dim: true  },
+  { delay: 520,  text: "loading rindrit.telaku",      dim: false },
+  { delay: 980,  text: "role: data engineer",         dim: false },
+  { delay: 1420, text: "status: online ✓",            green: true },
+  { delay: 1800, text: "ready.",                      dim: true  },
+];
+
+/* ── focus block ──
+   Replaces the old decorative pipeline SVG (which paired hand-drawn nodes
+   with a fake log stream of invented throughput numbers). This is a small
+   honest terminal card: a typed command that reveals three true lines about
+   what I actually build, the stack I use, and where I am. */
+const FOCUS_LINES = [
+  "building local-first data tools: ETL, retrieval, dashboards",
+  "stack: python, typescript, sql, duckdb, dbt, docker",
+  "based in pristina, ks · gmt+1",
+];
+
+function FocusBlock() {
+  const [typed, setTyped] = useState(false);
+
   return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: "absolute",
-        inset: 0,
-        width: "100%",
-        height: "100%",
-        pointerEvents: "none",
-      }}
-    />
+    <div style={{
+      position: "relative",
+      width: "100%",
+      padding: "1.25rem 1.5rem 1.4rem",
+      background: "var(--surface)",
+      border: "1px solid var(--border)",
+    }}>
+      <p style={{
+        fontFamily: "var(--font-mono)", fontSize: 10,
+        color: "var(--text-muted)", letterSpacing: "0.08em",
+        textTransform: "uppercase", marginBottom: "1rem",
+      }}>
+        # ~/focus
+      </p>
+
+      <p style={{
+        fontFamily: "var(--font-mono)", fontSize: 12,
+        color: "var(--text-secondary)", letterSpacing: "0.03em",
+        marginBottom: "0.85rem",
+      }}>
+        <span style={{ color: "var(--green)", marginRight: 8 }}>$</span>
+        <TypeWriter text="cat focus.txt" speed={34} onDone={() => setTyped(true)} />
+      </p>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+        {FOCUS_LINES.map((line, i) => (
+          <motion.p
+            key={line}
+            initial={{ opacity: 0, y: 4 }}
+            animate={typed ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: i * 0.14, duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+            style={{
+              fontFamily: "var(--font-mono)", fontSize: 11,
+              color: i === FOCUS_LINES.length - 1 ? "var(--green)" : "var(--text-muted)",
+              letterSpacing: "0.03em",
+            }}
+          >
+            <span style={{ color: "var(--text-muted)", marginRight: 6 }}>›</span>
+            {line}
+          </motion.p>
+        ))}
+      </div>
+    </div>
   );
 }
- 
-const titleWords = ["Software", "Engineer"];
- 
+
+const specs = [
+  { key: "name",     val: "Rindrit Telaku" },
+  { key: "role",     val: "Data Engineer" },
+  { key: "location", val: "Pristina, KS" },
+  { key: "focus",    val: "pipelines · infra · backend" },
+  { key: "status",   val: "building", green: true },
+];
+
 export default function Hero() {
-  const [typedSubtitle, setTypedSubtitle] = useState("");
-  const [mounted, setMounted] = useState(false);
-  const subtitle = "Computer Science and Engineering student at UBT · AI Systems · Distributed Architectures · Full-Stack Engineering";
- 
+  const [ready, setReady] = useState(false);
+
   useEffect(() => {
-    setMounted(true);
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < subtitle.length) {
-        setTypedSubtitle(subtitle.slice(0, i + 1));
-        i++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 28);
-    return () => clearInterval(interval);
+    const t = setTimeout(() => setReady(true), 2100);
+    return () => clearTimeout(t);
   }, []);
- 
+
   return (
     <section
       id="hero"
       style={{
-        position: "relative",
         minHeight: "100vh",
         display: "flex",
-        alignItems: "center",
-        overflow: "hidden",
-        background: "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(99,210,190,0.04) 0%, transparent 70%)",
+        flexDirection: "column",
+        justifyContent: "center",
+        padding: "6rem 2rem 4rem",
+        maxWidth: 900,
+        margin: "0 auto",
+        gap: "2.5rem",
       }}
     >
-      {/* Defer canvas until after mount so it doesn't block LCP */}
-      {mounted && <AnimatedGrid />}
- 
-      <div
+      {/* Boot sequence */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
+        {bootLines.map((l, i) => (
+          <BootLine key={i} {...l} />
+        ))}
+      </div>
+
+      {/* Main content */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: ready ? 1 : 0 }}
+        transition={{ duration: 0.5 }}
         style={{
-          position: "absolute",
-          top: "30%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: 600,
-          height: 600,
-          background: "radial-gradient(circle, rgba(99,210,190,0.06) 0%, transparent 70%)",
-          pointerEvents: "none",
+          borderTop: "1px solid var(--border)",
+          borderBottom: "1px solid var(--border)",
+          padding: "2.5rem 0",
+          display: "grid",
+          gridTemplateColumns: "1fr auto",
+          gap: "4rem",
+          alignItems: "start",
         }}
-      />
- 
-      <div
-        style={{
-          position: "relative",
-          zIndex: 10,
-          maxWidth: 1200,
-          margin: "0 auto",
-          padding: "0 2rem",
-          paddingTop: "72px",
-          width: "100%",
-        }}
+        className="hero-grid"
       >
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.72rem",
-            letterSpacing: "0.3em",
-            textTransform: "uppercase",
-            color: "var(--accent)",
-            marginBottom: "1.5rem",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-          }}
-        >
-          <span
-            style={{
-              display: "inline-block",
-              width: 6,
-              height: 6,
-              borderRadius: "50%",
-              background: "var(--accent)",
-              animation: "pulse 2s ease-in-out infinite",
-            }}
-          />
-          Available
-        </motion.div>
- 
-        <div style={{ marginBottom: "1.5rem" }}>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: "1.1rem",
-              color: "var(--text-secondary)",
-              marginBottom: "0.5rem",
-            }}
-          >
-            Hello, I&apos;m
-          </motion.p>
-          <motion.h1
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.9, delay: 0.4 }}
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "clamp(3.5rem, 9vw, 7rem)",
-              fontWeight: 800,
-              lineHeight: 0.95,
-              letterSpacing: "-0.03em",
-              color: "var(--text-primary)",
-              marginBottom: "0.25rem",
-            }}
-          >
-            Rindrit Telaku
-          </motion.h1>
+        {/* Left */}
+        <div>
+          <h1 style={{
+            fontSize: "clamp(2.4rem, 7vw, 4.5rem)",
+            fontWeight: 600,
+            letterSpacing: "-0.03em",
+            lineHeight: 1.05,
+            color: "var(--text-primary)",
+            marginBottom: "1.25rem",
+          }}>
+            Rindrit<br />Telaku
+          </h1>
+          <p style={{
+            fontSize: 15,
+            color: "var(--text-secondary)",
+            lineHeight: 1.8,
+            maxWidth: 420,
+            marginBottom: "2rem",
+          }}>
+            Data engineer at heart. I design pipelines, intelligent
+            retrieval, and backends built to take a beating. From offline
+            RAG stacks to enterprise networks, I care about systems that
+            hold up.
+          </p>
+          <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+            {[
+              { label: "projects →", href: "#projects", accent: true },
+              { label: "contact",    href: "#contact" },
+              { label: "resume ↗",  href: "/RindritTelakuCV.pdf" },
+            ].map(l => (
+              <a
+                key={l.label}
+                href={l.href}
+                target={l.href.startsWith("/R") ? "_blank" : undefined}
+                rel={l.href.startsWith("/R") ? "noopener noreferrer" : undefined}
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 12,
+                  color: l.accent ? "var(--green)" : "var(--text-muted)",
+                  letterSpacing: "0.04em",
+                  transition: "color 0.15s",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.color = l.accent ? "var(--green)" : "var(--text-secondary)")}
+                onMouseLeave={e => (e.currentTarget.style.color = l.accent ? "var(--green)" : "var(--text-muted)")}
+              >
+                {l.label}
+              </a>
+            ))}
+          </div>
         </div>
- 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "0.5rem",
-            marginBottom: "1.5rem",
-          }}
-        >
-          {titleWords.map((word, i) => (
-            <span
-              key={i}
+
+        {/* Right - spec sheet with staggered load-in */}
+        <div className="hero-specs" style={{ minWidth: 220 }}>
+          <div style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: 10,
+            color: "var(--text-muted)",
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            marginBottom: "0.75rem",
+            paddingBottom: "0.5rem",
+            borderBottom: "1px solid var(--border)",
+          }}>
+            profile.json
+          </div>
+          {specs.map((s, i) => (
+            <motion.div
+              key={s.key}
+              initial={{ opacity: 0, x: 8 }}
+              animate={{ opacity: ready ? 1 : 0, x: ready ? 0 : 8 }}
+              transition={{ delay: 0.1 + i * 0.08, duration: 0.4 }}
               style={{
-                fontFamily: "var(--font-serif)",
-                fontSize: "clamp(1.4rem, 3.5vw, 2.4rem)",
-                fontStyle: "italic",
-                color: word === "&" ? "var(--accent)" : "var(--text-secondary)",
-                fontWeight: 400,
+                display: "grid",
+                gridTemplateColumns: "70px 1fr",
+                gap: "0.75rem",
+                padding: "0.4rem 0",
+                borderBottom: "1px solid var(--border)",
+                alignItems: "baseline",
               }}
             >
-              {word}
-            </span>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.04em" }}>
+                {s.key}
+              </span>
+              <span style={{
+                fontFamily: "var(--font-mono)", fontSize: 11,
+                color: s.green ? "var(--green)" : "var(--text-secondary)",
+              }}>
+                {s.green
+                  ? <><span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: "var(--green)", marginRight: 6, animation: "pulse-dot 2s ease-in-out infinite", verticalAlign: "middle" }} />{s.val}</>
+                  : s.val
+                }
+              </span>
+            </motion.div>
           ))}
-        </motion.div>
- 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.9 }}
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.82rem",
-            color: "var(--text-muted)",
-            letterSpacing: "0.02em",
-            maxWidth: 560,
-            marginBottom: "3rem",
-            minHeight: "3.5em",
-          }}
-        >
-          {typedSubtitle}
-          <span
-            style={{
-              display: "inline-block",
-              width: 2,
-              height: "0.9em",
-              background: "var(--accent)",
-              marginLeft: 2,
-              verticalAlign: "middle",
-              animation: "blink 1s step-end infinite",
-            }}
-          />
-        </motion.div>
- 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 1.0 }}
-          style={{
-            fontSize: "1.05rem",
-            color: "var(--text-secondary)",
-            maxWidth: 520,
-            lineHeight: 1.7,
-            marginBottom: "3rem",
-          }}
-        >
-          I build intelligent systems and elegant software. From RAG powered AI pipelines
-          to enterprise network architectures. Focused on engineering solutions that are
-          both technically rigorous and beautifully crafted.
-        </motion.p>
- 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 1.1 }}
-          style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}
-        >
-          <a
-            href="#projects"
-            className="btn-primary"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.78rem",
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: "var(--bg)",
-              background: "var(--accent)",
-              padding: "0.85rem 2rem",
-              borderRadius: "2px",
-              textDecoration: "none",
-              fontWeight: 500,
-              transition: "all 0.25s ease",
-            }}
-          >
-            View Projects
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </a>
-          <a
-            href="#contact"
-            className="btn-secondary"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.78rem",
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: "var(--text-primary)",
-              background: "transparent",
-              padding: "0.85rem 2rem",
-              borderRadius: "2px",
-              border: "1px solid var(--border-accent)",
-              textDecoration: "none",
-              fontWeight: 500,
-              transition: "all 0.25s ease",
-            }}
-          >
-            Get in Touch
-          </a>
-        </motion.div>
- 
-        {/* Scroll indicator - hidden on mobile */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2 }}
-          className="scroll-indicator"
-          style={{
-            position: "absolute",
-            bottom: "3rem",
-            left: "2rem",
-            alignItems: "center",
-            gap: "0.75rem",
-          }}
-        >
-          <div
-            style={{
-              width: 1,
-              height: 48,
-              background: "linear-gradient(to bottom, var(--accent), transparent)",
-              animation: "fadeUpDown 2s ease-in-out infinite",
-            }}
-          />
-          <span
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.65rem",
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: "var(--text-muted)",
-            }}
-          >
-            Scroll
-          </span>
-        </motion.div>
-      </div>
- 
+        </div>
+      </motion.div>
+
+      {/* Focus block - honest terminal card in place of the old pipeline graph */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: ready ? 1 : 0, y: ready ? 0 : 12 }}
+        transition={{ delay: 0.6, duration: 0.5 }}
+      >
+        <FocusBlock />
+      </motion.div>
+
+      {/* Cursor */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: ready ? 1 : 0 }}
+        transition={{ delay: 0.8 }}
+        style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--text-muted)" }}
+      >
+        <span style={{ color: "var(--green)" }}>$</span>{" "}
+        <span style={{
+          display: "inline-block", width: 8, height: 14,
+          background: "var(--text-muted)",
+          verticalAlign: "middle",
+          animation: "blink 1.1s step-end infinite",
+        }} />
+      </motion.div>
+
       <style>{`
-        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
-        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-        @keyframes fadeUpDown { 0%,100%{opacity:0.3;transform:translateY(0)} 50%{opacity:1;transform:translateY(8px)} }
-        .btn-primary:hover { opacity:0.85; transform:translateY(-1px); box-shadow:0 8px 30px rgba(99,210,190,0.25); }
-        .btn-secondary:hover { background:rgba(99,210,190,0.08); border-color:var(--accent); }
-        .scroll-indicator { display: flex; }
-        @media (max-width: 640px) { .scroll-indicator { display: none; } }
+        @keyframes pulse-dot {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.5); }
+          50%       { box-shadow: 0 0 0 4px rgba(74,222,128,0); }
+        }
+        @media (max-width: 680px) {
+          .hero-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+          .hero-specs { display: none; }
+        }
       `}</style>
     </section>
+  );
+}
+
+function BootLine({ text, dim, green, delay }: { text: string; dim?: boolean; green?: boolean; delay: number }) {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setShow(true), delay);
+    return () => clearTimeout(t);
+  }, [delay]);
+
+  if (!show) return null;
+
+  return (
+    <div style={{
+      fontFamily: "var(--font-mono)", fontSize: 11,
+      color: green ? "var(--green)" : dim ? "var(--text-muted)" : "var(--text-secondary)",
+      letterSpacing: "0.04em",
+      display: "flex", alignItems: "center", gap: 8,
+    }}>
+      <span style={{ color: "var(--text-muted)" }}>›</span>
+      <TypeWriter text={text} speed={30} />
+    </div>
   );
 }
