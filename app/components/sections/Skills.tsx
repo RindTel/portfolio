@@ -249,7 +249,7 @@ export default function Skills() {
             letterSpacing: "0.04em",
           }}
         >
-          # self-assessed · context matters more than numbers
+          # self assessed · context matters more than numbers
         </p>
       </div>
 

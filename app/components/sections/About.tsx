@@ -102,11 +102,11 @@ export default function About() {
           </h2>
           <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.8, marginBottom: "1rem" }}>
             I&apos;m a data engineer focused on pipelines, retrieval systems, and
-            backend infrastructure — turning raw data into systems people can trust.
+            backend infrastructure.Turning raw data into systems people can trust.
           </p>
           <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.8, marginBottom: "2rem" }}>
             I&apos;ve built a fully offline RAG system, an EXIF analytics pipeline over
-            a personal photo library, and a GTFS delay-intelligence dashboard spanning
+            a personal photo library, and a GTFS delay intelligence dashboard spanning
             four European transit networks.
           </p>
 

@@ -24,12 +24,12 @@ const projects: Project[] = [
     img: "/exif.png",
     pos: "top",
     stack: ["Python", "DuckDB", "dbt", "Streamlit", "Pandas", "Altair"],
-    desc: "Local ETL pipeline that turns a nature-photography library into EXIF analytics: shots by hour, capture locations, and the gear and exposure combinations behind every frame.",
+    desc: "Local ETL pipeline that turns a nature photography library into EXIF analytics: shots by hour, capture locations, and the gear and exposure combinations behind every frame.",
     features: [
       "extracts EXIF metadata from a photo library into a DuckDB warehouse",
       "dbt models aggregate camera, ISO, aperture and shutter usage",
-      "Streamlit dashboard with camera, hour-of-day and ISO filters",
-      "capture-location map and automatic peak shooting-hour detection",
+      "Streamlit dashboard with camera, hour of day and ISO filters",
+      "capture location map and automatic peak shooting hour detection",
     ],
     links: [
       { label: "github", href: "https://github.com/RindTel" },
@@ -43,12 +43,12 @@ const projects: Project[] = [
     img: "/transit.jpg",
     pos: "top",
     stack: ["Python", "DuckDB", "dbt", "Streamlit", "GTFS", "Leaflet"],
-    desc: "GTFS delay-intelligence dashboard across four European transit networks. Ingests public schedule and real-time feeds, then surfaces the most-delayed routes, busiest stops, and peak-delay windows per city.",
+    desc: "GTFS delay intelligence dashboard across four European transit networks. Ingests public schedule and real time feeds, then surfaces the most delayed routes, busiest stops, and peak-delay windows per city.",
     features: [
       "ingests GTFS feeds for Budapest, Prague, Zurich and Helsinki",
       "dbt marts compute average delay by hour and per route",
-      "ranks the most-delayed routes and busiest stops by city",
-      "interactive delay charts with a live stop-density map",
+      "ranks the most delayed routes and busiest stops by city",
+      "interactive delay charts with a live stop density map",
     ],
     links: [
       { label: "github", href: "https://github.com/RindTel" },
@@ -62,7 +62,7 @@ const projects: Project[] = [
     img: "/rag.png",
     pos: "top",
     stack: ["Python", "LangChain", "FAISS", "Ollama", "Qwen 2.5", "FastAPI", "Docker"],
-    desc: "Fully local retrieval-augmented generation with a terminal UI. FAISS vector search, offline LLM inference via Ollama, cited chunk responses.",
+    desc: "Fully local retrieval augmented generation with a terminal UI. FAISS vector search, offline LLM inference via Ollama, cited chunk responses.",
     features: [
       "local document ingestion with FAISS vector search",
       "supports multiple LLMs via Ollama (Qwen, Llama, Mistral)",

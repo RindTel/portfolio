@@ -56,8 +56,8 @@ function NowBlock() {
         lineHeight: 1.75, marginBottom: "1.1rem", maxWidth: 640,
       }}>
         Currently building production data pipelines at ProQu, focused on ETL,
-        dbt, and retrieval systems. Based in Pristina, Kosovo (GMT+1) — open to
-        remote data engineering and full-stack roles.
+        dbt, and retrieval systems. Based in Pristina, Kosovo (GMT+1) open to
+        remote data engineering and full stack roles.
       </p>
 
       <div style={{

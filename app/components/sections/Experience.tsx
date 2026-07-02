@@ -22,7 +22,7 @@ const roles: Role[] = [
     location: "Remote",
     current: true,
     summary:
-      "Architected and maintained production ingestion pipelines normalizing multi-source data on AWS. Built batch ETL workflows using AWS Glue, S3, and Athena, developed a streaming pipeline for real-time notifications, and wrote automated tests to catch malformed or inconsistent records before downstream consumption.",
+      "Architected and maintained production ingestion pipelines normalizing multi source data on AWS. Built batch ETL workflows using AWS Glue, S3, and Athena, developed a streaming pipeline for real time notifications, and wrote automated tests to catch malformed or inconsistent records before downstream consumption.",
     stack: ["Python", "AWS Glue", "S3", "Athena", "SQL", "ETL"],
   },
 ];
