@@ -88,7 +88,7 @@ const specs = [
   { key: "role",     val: "Data Engineer" },
   { key: "location", val: "Pristina, KS" },
   { key: "focus",    val: "pipelines · infra · backend" },
-  { key: "status",   val: "building", green: true },
+  { key: "status",   val: "open to work", green: true },
 ];
 
 export default function Hero() {
