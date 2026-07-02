@@ -32,7 +32,7 @@ const projects: Project[] = [
       "capture location map and automatic peak shooting hour detection",
     ],
     links: [
-      { label: "github", href: "https://github.com/RindTel" },
+      { label: "github", href: "https://github.com/RindTel/FovIQ" },
       { label: "live demo", href: "/demo.html" },
     ],
   },
@@ -51,7 +51,7 @@ const projects: Project[] = [
       "interactive delay charts with a live stop density map",
     ],
     links: [
-      { label: "github", href: "https://github.com/RindTel" },
+      { label: "github", href: "https://github.com/RindTel/transit-lens" },
       { label: "live demo", href: "/demo_fundforge.html" },
     ],
   },
