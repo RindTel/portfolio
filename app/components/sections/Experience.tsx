@@ -22,8 +22,8 @@ const roles: Role[] = [
     location: "Remote",
     current: true,
     summary:
-      "Building and maintaining production data pipelines that ingest and normalize multi-source risk data on AWS. Working with large-scale datasets, automating ingestion workflows, monitoring data quality, and improving pipeline reliability across multiple sources.",
-    stack: ["Python", "AWS", "SQL", "ETL", "Git"],
+      "Architected and maintained production ingestion pipelines normalizing multi-source data on AWS. Built batch ETL workflows using AWS Glue, S3, and Athena, developed a streaming pipeline for real-time notifications, and wrote automated tests to catch malformed or inconsistent records before downstream consumption.",
+    stack: ["Python", "AWS Glue", "S3", "Athena", "SQL", "ETL"],
   },
 ];
 
@@ -44,7 +44,6 @@ export default function Experience() {
           margin: "0 auto",
         }}
       >
-        <p className="section-tag">experience</p>
 
         <motion.h2
           initial={{ opacity: 0, y: 10 }}
@@ -58,7 +57,7 @@ export default function Experience() {
             marginBottom: "2.5rem",
           }}
         >
-          Where I&apos;ve worked
+          Professional experience
         </motion.h2>
 
         <div style={{ borderTop: "1px solid var(--border)" }}>

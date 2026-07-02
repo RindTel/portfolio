@@ -3,26 +3,22 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
 const strengths = [
-  { key: "pipeline_arch",  val: "end-to-end data workflows: ingestion, transform, retrieval, delivery" },
-  { key: "rag_systems",    val: "local LLM inference, FAISS vector search, cited document retrieval" },
-  { key: "backend_apis",   val: "schema design → async services → REST APIs, full ownership" },
-  { key: "network_infra",  val: "enterprise routing (BGP/OSPF), multi-tier topologies, zero downtime" },
+  { key: "pipeline arch",  val: "end to end data workflows: ingestion, transform, retrieval, delivery" },
+  { key: "rag systems",    val: "local LLM inference, FAISS vector search, cited document retrieval" },
+  { key: "data modeling",  val: "dbt transformations, dimensional modeling, DuckDB warehousing" },
 ];
 
 const interests = [
-  "retrieval-augmented-generation",
-  "distributed-systems",
-  "network-security",
-  "compiler-design",
-  "webassembly",
-  "formal-verification",
+  "retrieval augmented generation",
+  "distributed systems",
+  "data modeling",
+  "analytics engineering",
 ];
 
 const stats = [
-  { val: "3+",   label: "years building" },
-  { val: "10+",  label: "projects shipped" },
-  { val: "4",    label: "transit networks analyzed" },
-  { val: "100%", label: "offline RAG stack" },
+  { val: "2024",  label: "Building Since" },
+  { val: "10+",    label: "Projects Shipped" },
+  { val: "5+", label: "transit networks analyzed" },
 ];
 
 export default function About() {
@@ -31,8 +27,6 @@ export default function About() {
 
   return (
     <section id="about" style={{ padding: "7rem 2rem", maxWidth: 900, margin: "0 auto" }} ref={ref}>
-      <p className="section-tag">about</p>
-
       {/* Stats row */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -40,7 +34,7 @@ export default function About() {
         transition={{ duration: 0.4 }}
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
+          gridTemplateColumns: "repeat(3, 1fr)",
           gap: "1px",
           background: "var(--border)",
           border: "1px solid var(--border)",
@@ -107,42 +101,14 @@ export default function About() {
             Building systems<br />that process data<br />at scale.
           </h2>
           <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.8, marginBottom: "1rem" }}>
-            I&apos;m a data engineer focused on pipelines, intelligent retrieval, and
-            backend infrastructure. My work sits at the intersection of raw data
-            and useful systems.
+            I&apos;m a data engineer focused on pipelines, retrieval systems, and
+            backend infrastructure — turning raw data into systems people can trust.
           </p>
           <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.8, marginBottom: "2rem" }}>
-            I&apos;ve designed a RAG system running fully offline on local hardware,
-            an EXIF analytics pipeline over a photo library, and a GTFS
-            delay-intelligence dashboard spanning four transit networks.
+            I&apos;ve built a fully offline RAG system, an EXIF analytics pipeline over
+            a personal photo library, and a GTFS delay-intelligence dashboard spanning
+            four European transit networks.
           </p>
-
-          {/* Terminal-style current status */}
-          <div style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            padding: "1rem 1.25rem",
-            marginBottom: "2rem",
-          }}>
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-muted)", marginBottom: "0.5rem", letterSpacing: "0.06em" }}>
-              # now
-            </p>
-            {[
-              "› building production data pipelines @ ProQu",
-              "› shipping local-first data tools on the side",
-              "› pristina, ks · gmt+1",
-            ].map((line, i) => (
-              <motion.p
-                key={line}
-                initial={{ opacity: 0, x: -6 }}
-                animate={inView ? { opacity: 1, x: 0 } : {}}
-                transition={{ delay: 0.4 + i * 0.08 }}
-                style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.9, letterSpacing: "0.02em" }}
-              >
-                {line}
-              </motion.p>
-            ))}
-          </div>
 
           <div style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap" }}>
             {[
@@ -254,7 +220,7 @@ export default function About() {
         .strength-row:hover { background: var(--surface); padding-left: 0.75rem; transition: padding 0.2s; }
         .strength-row:hover p:last-child { color: var(--text-primary) !important; }
         .interest-tag:hover { border-color: var(--green-border) !important; color: var(--green) !important; cursor: default; }
-        .stats-grid { grid-template-columns: repeat(4, 1fr) !important; }
+        .stats-grid { grid-template-columns: repeat(3, 1fr) !important; }
         @media (max-width: 680px) {
           .about-grid { grid-template-columns: 1fr !important; gap: 3rem !important; }
           .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }

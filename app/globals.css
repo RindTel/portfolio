@@ -2,15 +2,15 @@
 @import "tailwindcss";
 
 :root {
-  --bg:        #0a0a0a;
-  --surface:   #111111;
-  --surface-2: #161616;
-  --border:    #222222;
-  --border-mid:#2e2e2e;
+  --bg:        #0d1017;
+  --surface:   #12161f;
+  --surface-2: #171c27;
+  --border:    #242a36;
+  --border-mid:#323949;
 
-  --text-primary:   #ececec;
-  --text-secondary: #b8b8b8;
-  --text-muted:     #5a5a5a;
+  --text-primary:   #e8eaf1;
+  --text-secondary: #aeb2bf;
+  --text-muted:     #6d7284;
 
   --green:     #4ade80;
   --green-dim: rgba(74,222,128,0.08);
@@ -36,7 +36,6 @@ body {
   font-size: 15px;
   line-height: 1.7;
   overflow-x: hidden;
-  text-shadow: 0 0 18px rgba(255,255,255,0.04);
 }
 
 /* subtle dot grid */

@@ -42,7 +42,7 @@ export default function Contact() {
       setSent(true);
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch {
-      alert("failed to send. try email directly.");
+      alert("Failed to send — please email me directly.");
     } finally {
       setLoading(false);
     }
@@ -51,7 +51,6 @@ export default function Contact() {
   return (
     <section id="contact" style={{ padding: "7rem 2rem" }}>
       <div style={{ maxWidth: 900, margin: "0 auto" }} ref={ref}>
-        <p className="section-tag">contact</p>
         <div style={{
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
@@ -79,16 +78,13 @@ export default function Contact() {
               Send it over, I reply within a day.
             </p>
  
-            {/* terminal label */}
-            <div style={{
+            <p style={{
               fontFamily: "var(--font-mono)", fontSize: 10,
-              color: "var(--text-muted)", letterSpacing: "0.06em",
-              marginBottom: "0.5rem",
-              display: "flex", alignItems: "center", gap: "0.4rem",
+              color: "var(--text-muted)", letterSpacing: "0.1em",
+              textTransform: "uppercase", marginBottom: "0.75rem",
             }}>
-              <span style={{ color: "var(--green)" }}>$</span>
-              send-message --to rindritelaku@gmail.com
-            </div>
+              Send a message
+            </p>
  
             {sent ? (
               <div style={{
@@ -149,7 +145,7 @@ export default function Contact() {
                   onMouseEnter={e => { if (!loading) (e.currentTarget as HTMLElement).style.background = "var(--green-dim)"; }}
                   onMouseLeave={e => { if (!loading) (e.currentTarget as HTMLElement).style.background = "none"; }}
                 >
-                  {loading ? "sending..." : "$ send →"}
+                  {loading ? "sending..." : "Send message →"}
                 </button>
               </form>
             )}

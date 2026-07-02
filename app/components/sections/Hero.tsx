@@ -32,62 +32,52 @@ const bootLines = [
   { delay: 1800, text: "ready.",                      dim: true  },
 ];
 
-/* ── focus block ──
-   Replaces the old decorative pipeline SVG (which paired hand-drawn nodes
-   with a fake log stream of invented throughput numbers). This is a small
-   honest terminal card: a typed command that reveals three true lines about
-   what I actually build, the stack I use, and where I am. */
-const FOCUS_LINES = [
-  "building local-first data tools: ETL, retrieval, dashboards",
-  "stack: python, typescript, sql, duckdb, dbt, docker",
-  "based in pristina, ks · gmt+1",
-];
-
-function FocusBlock() {
-  const [typed, setTyped] = useState(false);
-
+/* ── now block ──
+   A clean, plain-text status card (no terminal framing): what I'm currently
+   building, where I'm based, and the core stack I work in. */
+function NowBlock() {
   return (
     <div style={{
-      position: "relative",
       width: "100%",
-      padding: "1.25rem 1.5rem 1.4rem",
+      padding: "1.4rem 1.5rem",
       background: "var(--surface)",
       border: "1px solid var(--border)",
     }}>
       <p style={{
         fontFamily: "var(--font-mono)", fontSize: 10,
-        color: "var(--text-muted)", letterSpacing: "0.08em",
-        textTransform: "uppercase", marginBottom: "1rem",
+        color: "var(--text-muted)", letterSpacing: "0.1em",
+        textTransform: "uppercase", marginBottom: "0.85rem",
       }}>
-        # ~/focus
+        Now
       </p>
 
       <p style={{
-        fontFamily: "var(--font-mono)", fontSize: 12,
-        color: "var(--text-secondary)", letterSpacing: "0.03em",
-        marginBottom: "0.85rem",
+        fontSize: 14, color: "var(--text-secondary)",
+        lineHeight: 1.75, marginBottom: "1.1rem", maxWidth: 640,
       }}>
-        <span style={{ color: "var(--green)", marginRight: 8 }}>$</span>
-        <TypeWriter text="cat focus.txt" speed={34} onDone={() => setTyped(true)} />
+        Currently building production data pipelines at ProQu, focused on ETL,
+        dbt, and retrieval systems. Based in Pristina, Kosovo (GMT+1) — open to
+        remote data engineering and full-stack roles.
       </p>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-        {FOCUS_LINES.map((line, i) => (
-          <motion.p
-            key={line}
-            initial={{ opacity: 0, y: 4 }}
-            animate={typed ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: i * 0.14, duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-            style={{
-              fontFamily: "var(--font-mono)", fontSize: 11,
-              color: i === FOCUS_LINES.length - 1 ? "var(--green)" : "var(--text-muted)",
-              letterSpacing: "0.03em",
-            }}
-          >
-            <span style={{ color: "var(--text-muted)", marginRight: 6 }}>›</span>
-            {line}
-          </motion.p>
-        ))}
+      <div style={{
+        display: "flex", flexWrap: "wrap", alignItems: "baseline",
+        gap: "0.6rem", paddingTop: "0.9rem",
+        borderTop: "1px solid var(--border)",
+      }}>
+        <span style={{
+          fontFamily: "var(--font-mono)", fontSize: 10,
+          color: "var(--text-muted)", letterSpacing: "0.08em",
+          textTransform: "uppercase",
+        }}>
+          Core Stack
+        </span>
+        <span style={{
+          fontFamily: "var(--font-mono)", fontSize: 12,
+          color: "var(--text-secondary)", letterSpacing: "0.02em",
+        }}>
+          Python · TypeScript · SQL · dbt · DuckDB · Docker
+        </span>
       </div>
     </div>
   );
@@ -165,10 +155,10 @@ export default function Hero() {
             maxWidth: 420,
             marginBottom: "2rem",
           }}>
-            Data engineer at heart. I design pipelines, intelligent
-            retrieval, and backends built to take a beating. From offline
-            RAG stacks to enterprise networks, I care about systems that
-            hold up.
+            Data engineer focused on pipelines, retrieval systems, and
+            backend infrastructure. I turn messy, raw data into
+            systems people can rely on, from offline RAG stacks
+            to production ETL pipelines on AWS.
           </p>
           <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
             {[
@@ -243,13 +233,13 @@ export default function Hero() {
         </div>
       </motion.div>
 
-      {/* Focus block - honest terminal card in place of the old pipeline graph */}
+      {/* Now block - clean status card */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: ready ? 1 : 0, y: ready ? 0 : 12 }}
         transition={{ delay: 0.6, duration: 0.5 }}
       >
-        <FocusBlock />
+        <NowBlock />
       </motion.div>
 
       {/* Cursor */}

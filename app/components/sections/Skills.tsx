@@ -10,8 +10,9 @@ const categories = [
     skills: [
       { name: "sql", level: 87 },
       { name: "typescript", level: 80 },
-      { name: "python", level: 50 },
-      { name: "c#", level: 40 },
+      { name: "python", level: 80 },
+      { name: "java", level: 30 },
+      { name: "go", level: 20 },
     ],
   },
   {
@@ -36,8 +37,6 @@ const categories = [
       { name: "docker", level: 85 },
       { name: "aws", level: 78 },
       { name: "terraform", level: 72 },
-      { name: "ansible", level: 70 },
-      { name: "grafana", level: 72 },
     ],
   },
   {
@@ -104,7 +103,6 @@ export default function Skills() {
           margin: "0 auto",
         }}
       >
-        <p className="section-tag">skills</p>
 
         {/* Tabs */}
         <div

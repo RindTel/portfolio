@@ -96,9 +96,7 @@ function ProjectCard({ p, index }: { p: Project; index: number }) {
       <div className="proj-thumb">
         {imgError ? (
           <div className="proj-thumb-fallback">
-            <span className="proj-thumb-dollar">$</span>
-            <span className="proj-thumb-cmd">open {p.title.split(/[\s·]+/)[0].toLowerCase()}</span>
-            <span className="proj-thumb-cursor" />
+            <span className="proj-thumb-cmd">{p.title.split(/\s·\s?/)[0]}</span>
           </div>
         ) : (
           <Image
@@ -177,7 +175,6 @@ export default function Projects() {
     <section id="projects" style={{ padding: "7rem 2rem" }}>
       <div style={{ maxWidth: 900, margin: "0 auto" }}>
         <div ref={ref}>
-          <p className="section-tag">projects</p>
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -226,19 +223,27 @@ export default function Projects() {
       <style>{`
         .proj-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr));
-          gap: 1px;
-          border: 1px solid var(--border);
-          background: var(--border);
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1.5rem;
+        }
+        @media (max-width: 720px) {
+          .proj-grid { grid-template-columns: 1fr; }
         }
         .proj-card {
           position: relative;
           display: flex;
           flex-direction: column;
           background: var(--surface);
-          transition: background 0.25s ease;
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          overflow: hidden;
+          transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
         }
-        .proj-card:hover { background: var(--surface-2); }
+        .proj-card:hover {
+          background: var(--surface-2);
+          border-color: var(--border-mid);
+          transform: translateY(-3px);
+        }
 
         .proj-accent {
           position: absolute; top: 0; left: 0; right: 0; height: 2px;
@@ -272,13 +277,7 @@ export default function Projects() {
           font-family: var(--font-mono); font-size: 12px;
           letter-spacing: 0.04em;
         }
-        .proj-thumb-dollar { color: var(--green); }
         .proj-thumb-cmd { color: var(--text-secondary); }
-        .proj-thumb-cursor {
-          width: 7px; height: 13px; background: var(--text-muted);
-          animation: proj-blink 1.1s step-end infinite;
-        }
-        @keyframes proj-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         .proj-card:hover .proj-thumb img {
           transform: scale(1.06);
           filter: brightness(1) saturate(0.95);
