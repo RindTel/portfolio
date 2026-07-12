@@ -1,6 +1,24 @@
 import type { Metadata } from "next";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
+
+// Self-hosted at build time and served from /_next/static. A remote @import in
+// globals.css doesn't survive the build — Tailwind v4 owns @import handling and
+// strips remote URLs — so the fonts silently never loaded. This also keeps the
+// app free of any cross-origin dependency, letting the CSP drop both Google hosts.
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  style: ["normal", "italic"],
+  variable: "--font-jetbrains",
+});
  
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://rindrittelaku.dev"),
@@ -34,12 +52,14 @@ export const metadata: Metadata = {
  
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${inter.variable} ${jetbrainsMono.variable}`}
+    >
       <head>
         <meta name="theme-color" content="#0a0a0a" />
         <meta name="color-scheme" content="dark" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body>
         {children}
