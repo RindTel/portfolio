@@ -31,27 +31,24 @@ export const metadata: Metadata = {
   keywords: ["data engineer", "data pipelines", "RAG", "backend", "infrastructure", "Python", "portfolio"],
   authors: [{ name: "Rindrit Telaku" }],
   verification: { google: "FCGDLkUcpZrrP2Np639IVF9WvGRxw6HQJ1H4pXRvGlQ" },
+  // No `images`, `icons` or `manifest` keys here on purpose: they are generated
+  // by app/opengraph-image.tsx, app/icon.tsx, app/apple-icon.tsx and
+  // app/manifest.ts. Declaring them here would override those file conventions
+  // and re-point the tags at the /og-image.png and /favicon.ico that never
+  // existed in public/ — which is exactly how they came to 404.
   openGraph: {
     title: "Rindrit Telaku · Data Engineer",
     description: "Pipelines, intelligent systems, backend infrastructure.",
     type: "website",
     url: "/",
     siteName: "Rindrit Telaku",
-    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Rindrit Telaku · Data Engineer",
     description: "Pipelines, intelligent systems, backend infrastructure.",
-    images: ["/og-image.png"],
   },
   robots: { index: true, follow: true },
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
-  },
-  manifest: "/site.webmanifest",
 };
  
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -62,7 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${inter.variable} ${jetbrainsMono.variable}`}
     >
       <head>
-        <meta name="theme-color" content="#0a0a0a" />
+        <meta name="theme-color" content="#0d1017" />
         <meta name="color-scheme" content="dark" />
       </head>
       <body>
