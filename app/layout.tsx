@@ -21,7 +21,11 @@ const jetbrainsMono = JetBrains_Mono({
 });
  
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://rindrittelaku.dev"),
+  // The live site. rindrittelaku.dev does not resolve — set NEXT_PUBLIC_SITE_URL
+  // to switch to a custom domain once its DNS is actually pointed at Vercel.
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://rindrittelaku.vercel.app",
+  ),
   title: "Rindrit Telaku · Data Engineer",
   description: "Data engineer building pipelines, intelligent retrieval systems, and backend infrastructure. Based in Pristina.",
   keywords: ["data engineer", "data pipelines", "RAG", "backend", "infrastructure", "Python", "portfolio"],
@@ -31,7 +35,7 @@ export const metadata: Metadata = {
     title: "Rindrit Telaku · Data Engineer",
     description: "Pipelines, intelligent systems, backend infrastructure.",
     type: "website",
-    url: "https://rindrittelaku.dev",
+    url: "/",
     siteName: "Rindrit Telaku",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
