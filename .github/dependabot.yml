@@ -1,0 +1,41 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    commit-message:
+      prefix: deps
+      prefix-development: deps-dev
+
+    groups:
+      # React and Next are versioned together in practice — a lone react bump
+      # against an unchanged next tends to fail the build. One PR, or none.
+      react-next:
+        patterns:
+          - next
+          - react
+          - react-dom
+          - "@types/react"
+          - "@types/react-dom"
+          - eslint-config-next
+
+      # Everything else, batched by risk. Patch/minor are near-always safe to
+      # merge on a static site; majors come through as their own PR so they
+      # can't ride in unnoticed.
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    labels:
+      - dependencies
