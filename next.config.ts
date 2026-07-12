@@ -78,6 +78,13 @@ const nextConfig: NextConfig = {
         // links) or server-side link-preview crawlers fetching og-image.png.
         { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
         { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
+        // Closes the plaintext first-hop window: once a visitor has loaded the
+        // site over HTTPS, their browser refuses http:// for a year, so an
+        // SSL-strip on hostile wifi can't intercept the initial redirect.
+        // Deliberately no includeSubDomains (keeps future subdomains free to
+        // serve HTTP) and no preload (that one is not cleanly reversible).
+        // Browsers ignore this over http://localhost, so it's inert in dev.
+        { key: "Strict-Transport-Security", value: "max-age=31536000" },
       ],
     },
     // headers() merges every matching rule rather than stopping at the first,
