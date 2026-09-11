@@ -1,93 +1,194 @@
 @import "tailwindcss";
 
-:root {
-  --bg:        #0d1017;
-  --surface:   #12161f;
-  --surface-2: #171c27;
-  --border:    #242a36;
-  --border-mid:#323949;
-
-  --text-primary:   #e8eaf1;
-  --text-secondary: #aeb2bf;
-  --text-muted:     #6d7284;
-
-  --green:     #4ade80;
-  --green-dim: rgba(74,222,128,0.08);
-  --green-glow: rgba(74,222,128,0.35);
-  --green-border: rgba(74,222,128,0.3);
-
-  /* Supplied by next/font/google in app/layout.tsx (self-hosted, no CDN). */
-  --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), monospace;
+@theme {
+  --color-bg: #0a0b0d;
+  --color-surface: #111316;
+  --color-graphite: #1a1d21;
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-line-strong: rgb(255 255 255 / 0.16);
+  --color-text: #e8eaed;
+  --color-muted: #9aa1aa;
+  --color-dim: #7b828c;
+  --color-accent: #8fd3e4;
+  --font-sans: var(--font-archivo), "Archivo", system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, monospace;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --radius-panel: 14px;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  color-scheme: dark;
+}
 
 html {
-  scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+  background: var(--color-bg);
+  scroll-behavior: auto;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 body {
-  background: var(--bg);
-  color: var(--text-primary);
+  background: var(--color-bg);
+  color: var(--color-text);
   font-family: var(--font-sans);
-  font-size: 15px;
-  line-height: 1.7;
-  overflow-x: hidden;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
 }
 
-/* subtle dot grid */
-body::before {
-  content: '';
+::selection {
+  background: rgb(143 211 228 / 0.28);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+a {
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-graphite) transparent;
+}
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-graphite);
+  border-radius: 8px;
+}
+
+/* Atmosphere: one cyan wash and a grain layer, both fixed and inert. */
+.atmosphere::before,
+.atmosphere::after {
+  content: "";
   position: fixed;
   inset: 0;
-  background-image: radial-gradient(circle, #181818 1px, transparent 1px);
-  background-size: 32px 32px;
   pointer-events: none;
+}
+.atmosphere::before {
   z-index: 0;
+  background:
+    radial-gradient(60vw 50vh at 85% -10%, rgb(143 211 228 / 0.07), transparent 65%),
+    radial-gradient(50vw 40vh at 10% 110%, rgb(143 211 228 / 0.035), transparent 60%);
+}
+.atmosphere::after {
+  z-index: 60;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 160px 160px;
+  mix-blend-mode: overlay;
 }
 
-main, nav, footer { position: relative; z-index: 1; }
+@layer components {
+/* Glass: only nav, meta chips and the image frames use it. */
+.glass {
+  background: rgb(255 255 255 / 0.04);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.09),
+    inset 0 -1px 0 rgb(0 0 0 / 0.25),
+    0 20px 60px -20px rgb(0 0 0 / 0.75);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: #15181c;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
 
-::selection { background: rgba(34,197,94,0.15); color: var(--green); }
-
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-mid); }
-
-a { color: inherit; text-decoration: none; }
-button { font-family: inherit; cursor: pointer; }
-input, textarea { font-family: inherit; }
-img { max-width: 100%; display: block; }
-
-:focus-visible { outline: 1px solid var(--green); outline-offset: 2px; }
-
-/* section label - mono, small, prefixed with $ */
-.section-tag {
+.mono {
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+.display {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.88;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
   letter-spacing: 0.06em;
-  display: flex;
+  padding: 3px 7px;
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+.link {
+  display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  margin-bottom: 2.5rem;
+  gap: 0.35em;
+  color: var(--color-text);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-line-strong);
+  transition: color 160ms ease, border-color 160ms ease;
 }
-.section-tag::before { content: '$'; color: var(--green); text-shadow: 0 0 8px var(--green-glow); }
-
-/* section divider line */
-.section-divider {
-  border: none;
-  border-top: 1px solid var(--border);
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
+@media (hover: hover) and (pointer: fine) {
+  .link:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
 }
 
-@media (max-width: 640px) {
-  section { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+.press {
+  transition: transform 160ms var(--ease-out-expo);
 }
+
+/* Glass pill button: every clickable control outside the nav uses this. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1.15rem 0.7rem 1rem;
+  border-radius: 9999px;
+  color: var(--color-text);
+  text-decoration: none;
+}
+.press:active {
+  transform: scale(0.97);
+}
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

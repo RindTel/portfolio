@@ -2,20 +2,18 @@ import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV === "development";
 
-// Two dev-only allowances, neither of which reaches production:
+// Dev-only allowances, neither of which reaches production:
 //  - 'unsafe-eval': `next dev` uses eval-based sourcemaps and React Refresh.
-//  - va.vercel-scripts.com: Speed Insights loads its debug script from there in
-//    dev. In prod it resolves to /_vercel/speed-insights/script.js (same-origin,
-//    proxied by Vercel), so 'self' already covers it.
+//  - va.vercel-scripts.com: Speed Insights loads its debug script from there in dev.
+//    In prod it resolves to /_vercel/speed-insights/script.js (same-origin).
 const devScript = isDev ? " 'unsafe-eval' https://va.vercel-scripts.com" : "";
 const devConnect = isDev ? " https://va.vercel-scripts.com" : "";
 
 // Strict policy for the app itself. No CDN origins, no 'unsafe-eval' in prod.
-// - 'unsafe-inline' (script): the App Router emits inline hydration scripts
-//   (self.__next_f.push). Dropping it requires a nonce + middleware.
-// - No font hosts: next/font/google self-hosts Inter + JetBrains Mono into
-//   /_next/static at build time, so 'self' covers them. The app now makes zero
-//   cross-origin requests apart from the contact form.
+// - 'unsafe-inline' (script): the App Router emits inline hydration scripts.
+// - 'unsafe-inline' (style): Motion and Lenis set inline styles.
+// - No font hosts: next/font self-hosts Archivo and JetBrains Mono into /_next/static.
+// - img-src data: the grain overlay is an SVG data URI.
 // - api.emailjs.com: the contact form posts to it from the browser.
 const appCsp = [
   "default-src 'self'",
@@ -30,35 +28,28 @@ const appCsp = [
   "object-src 'none'",
 ].join("; ");
 
-// The demo pages in public/ are standalone HTML that pull charting libs from
-// CDNs. They get their own, looser policy so the app above doesn't inherit it.
+// The demo pages in public/demos are standalone HTML that pull charting libs from CDNs,
+// so they get their own, looser policy and the app above does not inherit it.
 // - 'unsafe-eval': Plotly uses new Function() internally.
-// - 'unsafe-inline' (script): rag_demo.html uses onclick=/onkeydown= attribute
-//   handlers, some generated at runtime — hashes can't cover those.
-// - img-src https:: Leaflet pulls map tiles from {s}.basemaps.cartocdn.com.
+// - 'unsafe-inline' (script): the RAG demo uses attribute handlers, some generated at runtime.
+// - img-src https:: Leaflet pulls map tiles from cartocdn.
+// - connect-src cdn.plot.ly: the scattergeo map fetches its topojson at runtime.
 const demoCsp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.plot.ly https://unpkg.com https://cdn.jsdelivr.net",
   "style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com",
   "img-src 'self' data: https:",
   "font-src 'self' data: https://fonts.gstatic.com",
-  // Plotly doesn't bundle topojson: the scattergeo map in demo.html fetches its
-  // geometry from cdn.plot.ly at runtime, which connect-src (not script-src)
-  // governs. Without this the script loads but the map renders blank.
   "connect-src 'self' https://cdn.plot.ly",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "object-src 'none'",
 ].join("; ");
 
-const DEMO_FILES = ["demo.html", "demo_fundforge.html", "rag_demo.html"];
-
 const nextConfig: NextConfig = {
+  devIndicators: false,
   images: {
     formats: ["image/avif", "image/webp"],
-  },
-  experimental: {
-    optimizeCss: true,
   },
   headers: async () => [
     {
@@ -69,50 +60,33 @@ const nextConfig: NextConfig = {
         { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
         {
           key: "Permissions-Policy",
-          value:
-            "camera=(), microphone=(), geolocation=(), interest-cohort=(), browsing-topics=()",
+          value: "camera=(), microphone=(), geolocation=(), interest-cohort=(), browsing-topics=()",
         },
-        // Nothing opens a cross-origin popup, so severing window.opener costs
-        // nothing. CORP stops other origins loading our assets as subresources;
-        // it doesn't affect top-level navigation (the resume PDF, the demo
-        // links) or server-side link-preview crawlers fetching og-image.png.
+        // Nothing opens a cross-origin popup; CORP stops other origins loading our assets
+        // as subresources without affecting top-level navigation or link-preview crawlers.
         { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
         { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
-        // Closes the plaintext first-hop window: once a visitor has loaded the
-        // site over HTTPS, their browser refuses http:// for a year, so an
-        // SSL-strip on hostile wifi can't intercept the initial redirect.
-        // Deliberately no includeSubDomains (keeps future subdomains free to
-        // serve HTTP) and no preload (that one is not cleanly reversible).
-        // Browsers ignore this over http://localhost, so it's inert in dev.
+        // One year of HSTS, no includeSubDomains, no preload. Inert over http://localhost.
         { key: "Strict-Transport-Security", value: "max-age=31536000" },
       ],
     },
-    // headers() merges every matching rule rather than stopping at the first,
-    // so these two sources must stay mutually exclusive — two values for one
-    // header key on the same path would conflict. Applies to CSP and COEP
-    // alike, which is why both are set per-source rather than above.
+    // headers() merges every matching rule, so these two sources stay mutually exclusive:
+    // everything except /demos/* gets the app policy, /demos/* gets the demo policy.
     {
-      source: `/((?!${DEMO_FILES.map((f) => f.replace(".", "\\.")).join("|")}).*)`,
+      source: "/((?!demos/).*)",
       headers: [
         { key: "Content-Security-Policy", value: appCsp },
-        // Verified: every cross-origin resource the app loads sends
-        // CORP: cross-origin (both Google Fonts hosts), and the EmailJS call is
-        // a CORS-mode XHR, which COEP doesn't restrict. So require-corp holds
-        // here with no changes. Caveat: any cross-origin asset added later
-        // without a CORP header will be silently blocked.
+        // Every cross-origin resource the app loads is a CORS XHR (EmailJS), so require-corp
+        // holds. Any cross-origin asset added later without a CORP header will be blocked.
         { key: "Cross-Origin-Embedder-Policy", value: "require-corp" },
       ],
     },
     {
-      source: `/:demo(${DEMO_FILES.map((f) => f.replace(".", "\\.")).join("|")})`,
+      source: "/demos/:file(foviq\\.html|transit-lens\\.html|rag\\.html)",
       headers: [
         { key: "Content-Security-Policy", value: demoCsp },
-        // The demos can't take require-corp: cdn.plot.ly (Plotly) and
-        // *.basemaps.cartocdn.com (Leaflet tiles) send no CORP header, so it
-        // would blank the charts and the map. credentialless loads them without
-        // credentials instead and demands no CORP — neither needs cookies.
-        // Safari ignores this value (treats it as unsafe-none): the demos just
-        // aren't isolated there, they still render.
+        // cdn.plot.ly and cartocdn tiles send no CORP header, so the demos use credentialless
+        // (Safari treats it as unsafe-none; the demos still render there).
         { key: "Cross-Origin-Embedder-Policy", value: "credentialless" },
       ],
     },

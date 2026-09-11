@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-11T00:00:00Z",
+  "title": "Design System: Rindrit Telaku Portfolio",
+  "extensions": {
+    "colorMeta": {
+      "ice": { "role": "primary", "displayName": "Ice", "canonical": "#8fd3e4" },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#0a0b0d" },
+      "surface": { "role": "neutral", "displayName": "Surface", "canonical": "#111316" },
+      "graphite": { "role": "neutral", "displayName": "Graphite", "canonical": "#1a1d21" },
+      "text": { "role": "neutral", "displayName": "Off-white", "canonical": "#e8eaed" },
+      "muted": { "role": "neutral", "displayName": "Muted", "canonical": "#9aa1aa" },
+      "dim": { "role": "neutral", "displayName": "Dim", "canonical": "#7b828c" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The name only; width axis 118 to 100 on scroll." },
+      "headline": { "displayName": "Headline", "purpose": "Project names." },
+      "title": { "displayName": "Title", "purpose": "Section titles." },
+      "body": { "displayName": "Body", "purpose": "Descriptions, 46 to 62ch." },
+      "label": { "displayName": "Label", "purpose": "Mono metadata only." }
+    },
+    "shadows": [
+      { "name": "glass", "value": "inset 0 1px 0 rgb(255 255 255 / 0.09), inset 0 -1px 0 rgb(0 0 0 / 0.25), 0 20px 60px -20px rgb(0 0 0 / 0.75)", "purpose": "The only shadow; belongs to glass surfaces." }
+    ],
+    "motion": [
+      { "name": "ease-out-expo", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Image and press transitions." },
+      { "name": "spring-nav", "value": "spring stiffness 380 damping 32", "purpose": "Active nav pill." },
+      { "name": "spring-pointer", "value": "spring stiffness 220 damping 26 mass 0.6", "purpose": "Nav tilt and sheen following the cursor." },
+      { "name": "packet-step", "value": "0.34s per edge, paced", "purpose": "Pipeline packet travel." }
+    ],
+    "breakpoints": [
+      { "name": "md", "value": "768px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Navigation pill",
+      "kind": "nav",
+      "refersTo": "nav-pill",
+      "description": "Floating bottom glass navigation with a live-state dot and a sliding active pill.",
+      "html": "<nav class=\"ds-nav\"><span class=\"ds-dot\"></span><a class=\"ds-nav-item is-active\" href=\"#work\">WORK</a><a class=\"ds-nav-item\" href=\"#experience\">EXPERIENCE</a><a class=\"ds-nav-item\" href=\"#about\">ABOUT</a><a class=\"ds-nav-item\" href=\"#contact\">CONTACT</a></nav>",
+      "css": ".ds-nav{display:inline-flex;align-items:center;gap:2px;padding:6px;border-radius:9999px;background:rgb(255 255 255 / 0.04);backdrop-filter:blur(20px) saturate(150%);border:1px solid rgb(255 255 255 / 0.1);box-shadow:inset 0 1px 0 rgb(255 255 255 / 0.09),inset 0 -1px 0 rgb(0 0 0 / 0.25),0 20px 60px -20px rgb(0 0 0 / 0.75)}.ds-dot{width:6px;height:6px;border-radius:9999px;background:var(--color-accent,#8fd3e4);margin:0 8px 0 12px}.ds-nav-item{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-muted,#9aa1aa);text-decoration:none;padding:8px 14px;border-radius:9999px;transition:color 200ms ease,transform 160ms cubic-bezier(0.16,1,0.3,1)}.ds-nav-item:hover{color:var(--color-text,#e8eaed)}.ds-nav-item:active{transform:scale(0.97)}.ds-nav-item.is-active{color:var(--color-text,#e8eaed);background:rgb(255 255 255 / 0.08)}.ds-nav-item:focus-visible{outline:2px solid var(--color-accent,#8fd3e4);outline-offset:3px}"
+    },
+    {
+      "name": "Tag",
+      "kind": "chip",
+      "refersTo": "tag",
+      "description": "Technology tag in mono with a hairline border.",
+      "html": "<span class=\"ds-tag\">DuckDB</span>",
+      "css": ".ds-tag{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.06em;padding:3px 7px;border:1px solid rgb(255 255 255 / 0.08);border-radius:4px;color:var(--color-muted,#9aa1aa);white-space:nowrap}"
+    },
+    {
+      "name": "Utility link",
+      "kind": "custom",
+      "refersTo": "link",
+      "description": "Mono link with a hairline underline that turns Ice on hover.",
+      "html": "<a class=\"ds-link\" href=\"#\">GITHUB <svg width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M7 7h10v10\"/><path d=\"M7 17 17 7\"/></svg></a>",
+      "css": ".ds-link{display:inline-flex;align-items:center;gap:0.35em;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-text,#e8eaed);text-decoration:none;padding:4px 0;border-bottom:1px solid rgb(255 255 255 / 0.16);transition:color 160ms ease,border-color 160ms ease}.ds-link:hover{color:var(--color-accent,#8fd3e4);border-color:var(--color-accent,#8fd3e4)}.ds-link:focus-visible{outline:2px solid var(--color-accent,#8fd3e4);outline-offset:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Instrument Panel at Night",
+    "overview": "A dark room, one instrument lit. Near-black ground, off-white type, one cold accent marking live state. The name fills the first viewport alone; everything else arrives on scroll. Glass is a material used on three floating things only; sections are separated by hairlines and space, never cards.",
+    "keyCharacteristics": ["Name-first, scroll-revealed opening", "One accent, used only for live state and motion", "Hairlines and negative space instead of cards", "Monospace strictly for metadata", "Real system diagrams as the engineering signature"],
+    "rules": [
+      { "name": "The Live State Rule", "body": "Ice marks something currently true or currently moving; static elements never get the accent.", "section": "colors" },
+      { "name": "The Mono Is Data Rule", "body": "Monospace sets numbers, identifiers, dates and stack names, never headings or sentences.", "section": "typography" },
+      { "name": "The Three Glass Surfaces Rule", "body": "Glass is used on the nav pill, metadata chips and image frames. Nothing else.", "section": "elevation" }
+    ],
+    "dos": ["Do start every surface from Ink with off-white type and let scale carry hierarchy.", "Do keep the accent to live state.", "Do separate content with hairlines and 112 to 160px of space.", "Do honor reduced motion and reduced transparency."],
+    "donts": ["Don't add cards, glows, gradient text, or a second accent.", "Don't put an eyebrow label above a heading.", "Don't use monospace for prose or headings.", "Don't add terminal, matrix, cyberpunk or AI brain imagery, skill bars, testimonials, or a biography."]
+  }
+}
