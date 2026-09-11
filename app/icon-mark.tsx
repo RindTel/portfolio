@@ -1,38 +1,46 @@
 import { ImageResponse } from "next/og";
 
-// The "R" mark at any canvas size, shared by the apple icon and the PWA icon routes so they
-// cannot drift apart. Ratios are fractions of the inner box, so glyph, border and radius scale
-// together. `inset` is the inner box as a fraction of the canvas; Android maskable icons are
-// cropped to a centre circle of ~80% diameter, and a 0.55 box keeps the corners inside it.
-const BORDER = 6 / 132;
-const RADIUS = 28 / 132;
-const FONT = 76 / 132;
-const TRACKING = -4 / 132;
+// Archivo fetched as a text-subsetted TTF at build time; null if the fetch fails, in which case
+// the renderer's default sans is used.
+export async function archivo(weight: 400 | 800, text: string) {
+  try {
+    const css = await (await fetch(`https://fonts.googleapis.com/css2?family=Archivo:wght@${weight}&text=${encodeURIComponent(text)}`)).text();
+    const url = css.match(/src: url\((.+?)\) format\('(?:opentype|truetype)'\)/)?.[1];
+    if (!url) return null;
+    const res = await fetch(url);
+    return res.ok ? await res.arrayBuffer() : null;
+  } catch {
+    return null;
+  }
+}
 
-export function iconMark(canvas: number, inset = 132 / 180) {
-  const box = Math.round(canvas * inset);
+// The "RT" monogram at any canvas size, shared by the favicon, the Apple icon and the PWA icon
+// routes so they cannot drift apart. `inset` shrinks the lettering toward the centre; Android
+// maskable icons are cropped to a circle of ~80% diameter, so 0.62 keeps the letters inside it.
+export async function iconMark(canvas: number, inset = 0.78) {
+  const font = await archivo(800, "RT");
+  const fontSize = Math.round(canvas * inset * 0.62);
   return new ImageResponse(
     (
-      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0b0d" }}>
-        <div
-          style={{
-            width: box,
-            height: box,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            border: `${Math.round(box * BORDER)}px solid #8fd3e4`,
-            borderRadius: Math.round(box * RADIUS),
-            fontSize: Math.round(box * FONT),
-            fontWeight: 700,
-            color: "#8fd3e4",
-            letterSpacing: Math.round(box * TRACKING),
-          }}
-        >
-          R
-        </div>
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#0a0b0d",
+          borderRadius: Math.round(canvas * 0.22),
+          fontFamily: font ? "Archivo" : undefined,
+          fontSize,
+          fontWeight: 800,
+          letterSpacing: -fontSize * 0.06,
+          color: "#e8eaed",
+        }}
+      >
+        RT
       </div>
     ),
-    { width: canvas, height: canvas }
+    { width: canvas, height: canvas, fonts: font ? [{ name: "Archivo", data: font, weight: 800, style: "normal" }] : undefined }
   );
 }

@@ -1,23 +1,10 @@
 import { ImageResponse } from "next/og";
+import { archivo } from "@/app/icon-mark";
 import { person } from "@/content/site";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = `${person.name}, ${person.role}`;
-
-// Archivo, fetched as text-subsetted TTFs at build time (800 for the initials, 400 for the
-// rest). If a fetch fails the card still renders in the renderer's default sans.
-async function archivo(weight: 400 | 800, text: string) {
-  try {
-    const css = await (await fetch(`https://fonts.googleapis.com/css2?family=Archivo:wght@${weight}&text=${encodeURIComponent(text)}`)).text();
-    const url = css.match(/src: url\((.+?)\) format\('(?:opentype|truetype)'\)/)?.[1];
-    if (!url) return null;
-    const res = await fetch(url);
-    return res.ok ? await res.arrayBuffer() : null;
-  } catch {
-    return null;
-  }
-}
 
 export default async function OpengraphImage() {
   const initials = person.first[0] + person.last[0];
