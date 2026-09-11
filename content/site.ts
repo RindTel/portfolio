@@ -48,7 +48,7 @@ export const projects: Project[] = [
     stack: ["Python", "DuckDB", "dbt", "Streamlit", "Plotly", "watchdog", "Pillow"],
     github: "https://github.com/RindTel/FovIQ",
     demo: "/demos/foviq.html",
-    image: { src: "/projects/exif.png", width: 1920, height: 1080, alt: "FovIQ dashboard showing EXIF analytics charts" },
+    image: { src: "/projects/foviq.png", width: 3200, height: 2000, alt: "FovIQ dashboard: shots by hour of day, a capture-location map and gear tables from the DuckDB warehouse" },
     pipeline: {
       rows: 1,
       cols: 5,
@@ -82,7 +82,7 @@ export const projects: Project[] = [
     stack: ["Python", "DuckDB", "dbt", "Streamlit", "GTFS", "Pandas"],
     github: "https://github.com/RindTel/transit-lens",
     demo: "/demos/transit-lens.html",
-    image: { src: "/projects/transit.jpg", width: 1857, height: 903, alt: "Transit Lens map of delayed routes across a city" },
+    image: { src: "/projects/transit-lens.png", width: 3200, height: 2000, alt: "Transit Lens dashboard for Budapest: routes, stops and delay KPIs, delay by hour, most delayed routes and a map of the busiest stops" },
     pipeline: {
       rows: 2,
       cols: 5,
@@ -118,7 +118,7 @@ export const projects: Project[] = [
     stack: ["Python", "LangChain", "FAISS", "Ollama", "Qwen 2.5", "Streamlit"],
     github: "https://github.com/RindTel/rag_terminal_1.0.0",
     demo: "/demos/rag.html",
-    image: { src: "/projects/rag.png", width: 1920, height: 1080, alt: "RAG Knowledge System terminal interface with a cited answer" },
+    image: { src: "/projects/rag.png", width: 3200, height: 2000, alt: "RAG Knowledge System answering a question from an indexed document, with the cited source chunk expanded below" },
     pipeline: {
       rows: 2,
       cols: 5,
