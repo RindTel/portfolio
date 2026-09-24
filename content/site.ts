@@ -39,11 +39,11 @@ export const projects: Project[] = [
     name: "Backtesting Engine",
     category: "Data · Quant",
     description:
-      "Trading backtester that structurally cannot see the future, with a deliberately leaky twin to prove it. Strategies replay Bitcoin daily bars one day at a time and fill at the next open with realistic costs. The leaky copy turns the same breakout strategy's +726% into +9,730%.",
+      "Most trading backtests lie by accident: one line of code lets a strategy peek at tomorrow's price, and the results look brilliant. This engine makes that impossible. Strategies trade Bitcoin day by day, see only the past, and pay real fees, spreads and market impact. Run the same strategy through a deliberately flawed copy and +726% becomes +9,730%.",
     notes: [
-      { label: "No look-ahead", detail: "A strategy only ever receives a history slice ending at today, built by one audited function that re-checks itself on every bar." },
-      { label: "Proven by test", detail: "A future-poisoning test replaces every later price with garbage and requires earlier decisions to stay identical; it catches the leaky engine." },
-      { label: "Realistic fills", detail: "Next-bar-open execution, fee, half-spread, square-root market impact and a daily volume cap. +598% at $10k becomes +292% at $1B." },
+      { label: "Sees only the past", detail: "Strategies receive only a history slice ending at the current bar, built by one audited function that verifies itself on every step." },
+      { label: "Proven, not assumed", detail: "A future-poisoning test overwrites every later price with noise and requires each earlier decision to stay identical. It catches the leaky engine." },
+      { label: "Capacity-aware", detail: "Square-root market impact and a daily volume cap model real execution: the same strategy returns +598% at $10k and +292% at $1B." },
     ],
     stack: ["Python", "Polars", "Parquet", "MLflow", "Streamlit", "pytest"],
     github: "https://github.com/RindTel/backtesting",
