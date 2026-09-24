@@ -82,7 +82,7 @@ const nextConfig: NextConfig = {
       ],
     },
     {
-      source: "/demos/:file(foviq\\.html|transit-lens\\.html|rag\\.html)",
+      source: "/demos/:file(backtesting\\.html|transit-lens\\.html|rag\\.html)",
       headers: [
         { key: "Content-Security-Policy", value: demoCsp },
         // cdn.plot.ly and cartocdn tiles send no CORP header, so the demos use credentialless

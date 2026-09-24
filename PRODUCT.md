@@ -29,7 +29,7 @@ Visitors read on laptops and phones. Projects link to GitHub repositories and to
 ## Capabilities and Constraints
 
 - Single route `/` with anchored sections: work, experience, about, contact.
-- Three real projects: FovIQ (EXIF analytics ETL), Transit Lens (GTFS delay dashboard), RAG Knowledge System (local retrieval augmented generation).
+- Three real projects: Backtesting Engine (look-ahead-safe trading backtester), Transit Lens (GTFS delay dashboard), RAG Knowledge System (local retrieval augmented generation).
 - One real role: ProQu, Junior Ingestion Specialist, May 2026 to present, remote.
 - No CMS; all copy lives in `content/site.ts`.
 - No Three.js, no GSAP (user decision).
@@ -43,8 +43,8 @@ Visitors read on laptops and phones. Projects link to GitHub repositories and to
 
 ## Evidence on Hand
 
-- Project screenshots: `public/projects/exif.png`, `public/projects/transit.jpg`, `public/projects/rag.png` (from the previous site).
-- Live demos: `public/demos/foviq.html`, `public/demos/transit-lens.html`, `public/demos/rag.html`.
+- Project screenshots: `public/projects/backtesting.png`, `public/projects/transit-lens.png`, `public/projects/rag.png` (captures of the running apps).
+- Live demos: `public/demos/backtesting.html`, `public/demos/transit-lens.html`, `public/demos/rag.html`.
 - CV: `public/RindritTelakuCV.pdf`.
 - Links: github.com/RindTel, linkedin.com/in/rindrittelaku, rindritelaku@gmail.com.
 - No testimonials, no metrics, no client logos. Do not fabricate any.
