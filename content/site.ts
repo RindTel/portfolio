@@ -82,7 +82,7 @@ export const projects: Project[] = [
     stack: ["Python", "DuckDB", "dbt", "Streamlit", "GTFS", "Pandas"],
     github: "https://github.com/RindTel/transit-lens",
     demo: "/demos/transit-lens.html",
-    image: { src: "/projects/transit-lens.png", width: 3200, height: 2000, alt: "Transit Lens dashboard for Budapest: routes, stops and delay KPIs, delay by hour, most delayed routes and a map of the busiest stops" },
+    image: { src: "/projects/transit-lens.png", width: 1856, height: 1072, alt: "Transit Lens overview comparing Budapest, Helsinki, Praha and Zürich: average delay per city, delay through the day with peak hours, and a table of network size, most delayed route and busiest stop" },
     pipeline: {
       rows: 2,
       cols: 5,

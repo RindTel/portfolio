@@ -3,250 +3,337 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Transit Lens · Live Demo</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
-        integrity="sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4"
-        crossorigin="anonymous"></script>
+<meta name="color-scheme" content="dark" />
+<title>Transit Lens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&display=swap" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
   :root {
-    --bg:#0B0F1A; --card:#121829; --line:#222B40; --muted:#8B95A7;
-    --text:#F4F7FF; --soft:#C7D0E0; --teal:#00B5A0; --cyan:#33C3FF; --orange:#FF6319;
+    --bg:#0E0E0D; --raised:#1A1A18; --line:#262624; --line-strong:#3A3A36;
+    --paper:#EDEDEA; --muted:#8F8E89; --faint:#5E5D59;
+    --accent:#EDEDEA; --on-accent:#0E0E0D; --badge-r:4px;
+    --ease-out:cubic-bezier(0.23,1,0.32,1);
   }
   * { box-sizing:border-box; }
-  body {
-    margin:0; color:var(--text); font-family:Inter,-apple-system,"Segoe UI",Roboto,sans-serif;
-    background:
-      radial-gradient(1200px 600px at 15% -10%, #16203a 0%, rgba(11,15,26,0) 60%),
-      radial-gradient(1000px 500px at 110% 0%, #0f2b2b 0%, rgba(11,15,26,0) 55%),
-      var(--bg);
-    min-height:100vh;
-  }
-  .wrap { max-width:1180px; margin:0 auto; padding:28px 22px 60px; }
-  .topbar { display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:14px; }
-  h1 {
-    font-size:2.2rem; font-weight:800; letter-spacing:-0.5px; margin:0;
-    background:linear-gradient(90deg,#00B5A0 0%,#33C3FF 50%,#7B6CFF 100%);
-    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  }
-  .sub { color:var(--muted); font-size:0.95rem; margin-top:4px; }
-  .demo-tag { font-size:0.7rem; letter-spacing:1.5px; text-transform:uppercase;
-    color:var(--teal); border:1px solid var(--teal); border-radius:999px; padding:3px 10px; }
-  select {
-    background:var(--card); color:var(--text); border:1px solid var(--line);
-    border-radius:10px; padding:9px 14px; font-size:0.95rem; font-weight:600; cursor:pointer;
-  }
-  .line { height:5px; border-radius:5px; margin:18px 0 24px;
-    background:linear-gradient(90deg,#007AC9 0 18%,#00985F 18% 36%,#FF6319 36% 54%,
-      #8C4799 54% 72%,#00B9E4 72% 90%,#00B5A0 90% 100%); }
-  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:14px;
-    padding:16px 18px; position:relative; overflow:hidden; }
-  .card::before { content:""; position:absolute; left:0; top:0; bottom:0; width:5px;
-    background:var(--accent,var(--teal)); }
-  .lbl { color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:1.5px; }
-  .val { color:var(--text); font-size:1.9rem; font-weight:800; font-variant-numeric:tabular-nums;
-    font-family:"DM Mono",ui-monospace,monospace; margin-top:4px; line-height:1.1; }
-  .hint { color:#6C7689; font-size:0.78rem; margin-top:2px; }
-  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:26px; }
-  .panel { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px; }
-  .section { color:var(--soft); font-weight:700; font-size:1.05rem; margin:0 0 14px;
-    padding-left:10px; border-left:3px solid var(--teal); }
+  html { background:var(--bg); transition:background-color 400ms ease; }
+  body { margin:0; background:transparent; color:var(--paper); font:15px/1.5 Archivo,system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased; }
+  ::selection { background:var(--accent); color:var(--on-accent); }
+  :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .num { font-variant-numeric:tabular-nums; }
+  .wrap { max-width:1200px; margin:0 auto; padding:32px 24px 64px; }
+
+  .top { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+  .wordmark { font-size:0.8125rem; color:var(--muted); }
+  .switch { display:inline-flex; border:1px solid var(--line-strong); border-radius:4px; overflow:hidden; }
+  .switch button { font:inherit; font-size:0.875rem; color:var(--paper); background:transparent;
+    border:0; border-left:1px solid var(--line-strong); padding:0.4rem 0.95rem; cursor:pointer;
+    transition:background-color 150ms ease, color 150ms ease, transform 160ms var(--ease-out); }
+  .switch button:first-child { border-left:0; }
+  @media (hover:hover) and (pointer:fine) { .switch button:hover { background:var(--raised); } }
+  .switch button:active { transform:scale(0.97); }
+  .switch button[aria-pressed="true"] { background:var(--body); color:var(--ink); }
+
+  #livery, #train { margin:20px 0 48px; }
+  .ov-section { margin-top:48px; }
+  .ov-section:first-of-type { margin-top:0; }
+  .minis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:24px; }
+  .mini-box { position:relative; height:150px; }
+  .tl-table a, .tl-table th { color:var(--paper); }
+  @media (max-width: 860px) { .minis { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media (max-width: 520px) { .minis { grid-template-columns:1fr; } }
+  .grid { display:grid; grid-template-columns:7fr 5fr; gap:48px; }
+  .stops-section { margin-top:48px; }
+  h2 { font-size:1.05rem; font-weight:600; margin:0 0 0.2rem; }
+  .sub { color:var(--muted); font-size:0.8125rem; margin:0 0 1rem; padding-left:calc(22px + 0.6rem); }
+  .sub .pt { display:inline-block; width:0.5rem; height:0.5rem; border-radius:50%; background:var(--accent); margin-right:0.35rem; }
   .chart-box { position:relative; height:300px; }
-  .peak { color:var(--orange); font-size:0.82rem; margin-top:10px; }
-  .maprow { display:grid; grid-template-columns:2fr 1fr; gap:22px; margin-top:26px; }
-  #map { height:420px; border-radius:12px; border:1px solid var(--line); background:#0e1422; }
-  .board { max-height:420px; overflow:auto; }
-  .board table { width:100%; border-collapse:collapse; font-size:0.86rem; }
-  .board th { text-align:left; color:var(--muted); font-weight:600; font-size:0.72rem;
-    text-transform:uppercase; letter-spacing:1px; padding:6px 8px; position:sticky; top:0;
-    background:var(--card); }
-  .board td { padding:7px 8px; border-top:1px solid var(--line); color:var(--soft); }
-  .board td.num { font-variant-numeric:tabular-nums; color:var(--text); font-weight:600; }
-  .bar { height:6px; border-radius:4px; background:linear-gradient(90deg,var(--teal),var(--cyan)); }
-  .legend { display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
-  .badge { font-size:0.72rem; font-weight:600; color:#0B0F1A; border-radius:999px; padding:2px 9px; }
-  .foot { color:#6C7689; font-size:0.8rem; margin-top:34px; text-align:center; }
-  .foot a { color:var(--cyan); text-decoration:none; }
-  @media (max-width:860px){ .kpis{grid-template-columns:repeat(2,1fr)} .grid2,.maprow{grid-template-columns:1fr} }
+
+  .badge { display:inline-block; min-width:2.6em; text-align:center; padding:0.15rem 0.45rem;
+    border-radius:var(--badge-r); color:#fff; font-variant-numeric:tabular-nums; font-weight:600; letter-spacing:0.01em;
+    font-size:0.8125rem; line-height:1.35; white-space:nowrap; }
+  .routes, .stops { list-style:none; margin:0; padding:0; }
+  .routes li { display:grid; grid-template-columns:4.5rem 5.5rem 1fr 4.5rem; align-items:center; gap:0.75rem;
+    padding:0.5rem 0; border-top:1px solid var(--line); }
+  .routes li:first-child { border-top:0; }
+  .routes .badge { justify-self:start; }
+  .routes .mode { color:var(--muted); font-size:0.8125rem; }
+  .routes .bar { height:4px; background:var(--paper); opacity:0.75; }
+  .routes li:first-child .bar { background:var(--accent); opacity:1; }
+  .routes .v { text-align:right; font-size:0.875rem; }
+
+  #map { height:440px; background:var(--raised); border-radius:4px; }
+  .leaflet-container { font-family:Archivo,system-ui,sans-serif; }
+  .leaflet-tooltip { background:var(--raised); color:var(--paper); border:1px solid var(--line-strong);
+    border-radius:4px; box-shadow:0 4px 16px rgb(0 0 0 / .4); font-size:12px; padding:6px 8px; }
+  .leaflet-tooltip::before { display:none; }
+  .leaflet-bar a { background:var(--raised); color:var(--paper); border-color:var(--line) !important; }
+  .leaflet-bar { border:1px solid var(--line-strong) !important; border-radius:4px; }
+  .leaflet-control-attribution { background:rgb(14 14 13 / .7) !important; color:var(--faint) !important; font-size:10px; }
+  .stops { max-height:440px; overflow:auto; padding-right:0.25rem; scrollbar-width:thin; scrollbar-color:var(--line) transparent; }
+  .stops li { padding:0.55rem 0 0.5rem; border-top:1px solid var(--line); }
+  .stops li:first-child { border-top:0; padding-top:0; }
+  .stops .row { display:flex; gap:0.75rem; align-items:baseline; font-size:0.875rem; }
+  .stops .rk { color:var(--faint); width:1.5rem; flex:none; }
+  .stops .nm { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .stops .ev { color:var(--muted); }
+  .stops .bar { height:2px; background:var(--accent); margin:0.4rem 0 0 2.25rem; }
+  .empty { color:var(--muted); font-size:0.875rem; padding:1.5rem 0; border-top:1px solid var(--line); }
+
+  .foot { color:var(--faint); font-size:0.75rem; margin-top:48px; padding-top:1rem; border-top:1px solid var(--line); }
+  .foot code { font-family:ui-monospace,SFMono-Regular,monospace; font-size:0.9em; color:var(--muted); }
+
+  main { transition:opacity 200ms var(--ease-out); }
+  main.swap { opacity:0.35; transition-duration:0ms; }
+  @media (prefers-reduced-motion: reduce) { main, .switch button { transition:none; } }
+
+  @media (max-width: 860px) {
+    .grid { grid-template-columns:1fr; gap:40px; }
+  }
+  @media (max-width: 520px) {
+    .wrap { padding:24px 16px 48px; }
+    .switch { width:100%; }
+    .switch button { flex:1; padding:0.45rem 0.25rem; }
+    .routes li { grid-template-columns:4rem 4.5rem 1fr 3.5rem; gap:0.5rem; }
+    #map, .stops { max-height:none; }
+    #map { height:320px; }
+  }
+.tl-livery { position:relative; border-radius:10px 10px 4px 4px; overflow:hidden; background:var(--body); color:var(--ink); isolation:isolate; box-shadow:0 1px 0 rgb(255 255 255 / .06) inset, 0 24px 48px -24px rgb(0 0 0 / .7); } .tl-roof { display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:0.85rem 1.5rem 0.75rem; background:var(--top); color:var(--top-ink); font-size:0.8125rem; border-bottom:1px solid rgb(0 0 0 / .18); } .tl-mark { font-weight:600; letter-spacing:0.01em; } .tl-note { opacity:0.72; } .tl-windows { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; padding:10px; background:var(--top); } .tl-pane { position:relative; min-width:0; padding:1rem 1.15rem 1.05rem; border-radius:6px; background:linear-gradient(118deg, rgb(255 255 255 / .04) 0 34%, transparent 34%), #111315; color:#EDEDEA; box-shadow:inset 0 2px 6px rgb(0 0 0 / .55), inset 0 0 0 1px rgb(0 0 0 / .4); } .tl-pane .lbl { color:#9C9B95; font-size:0.8125rem; } .tl-pane .val { font-size:2.1rem; font-weight:500; letter-spacing:-0.02em; line-height:1.15; margin-top:0.35rem; font-variant-numeric:tabular-nums; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .tl-pane .val small { font-size:0.9rem; color:#9C9B95; margin-left:0.2rem; letter-spacing:0; } .tl-pane .val .tl-badge { font-size:1.35rem; padding:0.15rem 0.55rem; vertical-align:0.2rem; } .tl-pane .hint { color:#6F6E69; font-size:0.8125rem; margin-top:0.15rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .tl-belt { height:12px; background:var(--stripe); box-shadow:0 1px 0 rgb(0 0 0 / .2), 0 -1px 0 rgb(0 0 0 / .2); } .tl-body { padding:1.3rem 1.5rem 1.25rem; background:linear-gradient(180deg, rgb(255 255 255 / .07), transparent 40%, rgb(0 0 0 / .14)), var(--body); } .tl-fleet { margin:0; padding:0; font-size:5.5rem; line-height:0.95; font-weight:600; font-stretch:var(--wdth); letter-spacing:-0.035em; color:var(--ink); } .tl-fleet .alt { font-weight:400; opacity:0.55; margin-left:0.8rem; font-size:0.5em; letter-spacing:-0.01em; } .tl-meta { display:flex; flex-wrap:wrap; gap:0.25rem 1.25rem; margin-top:0.7rem; font-size:0.875rem; opacity:0.8; } .tl-skirt { height:14px; background:#1A1A18; background-image:linear-gradient(180deg, rgb(0 0 0 / .35), transparent); } /* A new city arrives like a vehicle pulling into the stop. */ @media (prefers-reduced-motion: no-preference) { .tl-enter { animation:720ms cubic-bezier(0.77,0,0.175,1) both; } .tl-enter .tl-fleet, .tl-enter .tl-pane, .tl-enter .tl-plate-name { animation:520ms 260ms cubic-bezier(0.23,1,0.32,1) both; } } /* Overview: the cities coupled into one train. */ .tl-train { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; position:relative; padding-bottom:14px; } .tl-car { display:block; border-radius:10px 10px 4px 4px; overflow:hidden; background:var(--body); color:var(--ink) !important; text-decoration:none !important; position:relative; box-shadow:0 1px 0 rgb(255 255 255 / .06) inset, 0 20px 40px -24px rgb(0 0 0 / .8); transition:transform 200ms cubic-bezier(0.23,1,0.32,1); } @media (hover:hover) and (pointer:fine) { .tl-car:hover { transform:translateY(-3px); } } .tl-car:active { transform:scale(0.985); } .tl-car + .tl-car::before { content:""; position:absolute; left:-10px; bottom:18px; width:10px; height:8px; background:#1A1A18; } .tl-car .tl-roof { padding:0.6rem 1rem 0.55rem; } .tl-car .tl-windows { grid-template-columns:1fr; padding:8px; } .tl-car .tl-pane .val { font-size:1.9rem; } .tl-car .tl-body { padding:0.9rem 1rem 1.1rem; } .tl-car .tl-fleet { font-size:2.4rem; } .tl-rail { position:absolute; left:0; right:0; bottom:0; height:6px; border-radius:3px; background:linear-gradient(180deg, #2A2A27, #151514); } @media (prefers-reduced-motion: no-preference) { .tl-enter .tl-car .tl-fleet, .tl-enter .tl-car .tl-pane { animation-delay:calc(240ms + var(--i) * 70ms); } } /* Overview */ [data-testid="stMarkdownContainer"]:has(.tl-train, .tl-table, .tl-mixrow) { width:100%; } .tl-mini-h { font-size:0.875rem; font-weight:600; } .tl-mini-sub { color:var(--muted); font-size:0.75rem; margin:0.15rem 0 0.4rem; padding-left:calc(22px + 0.6rem); min-height:1.1rem; } .tl-table-wrap { overflow-x:auto; scrollbar-width:thin; scrollbar-color:var(--line) transparent; } table.tl-table { width:100%; border-collapse:collapse; font-size:0.8125rem; min-width:880px; display:table; } .tl-table th, .tl-table td { border:0; border-top:1px solid var(--line); padding:0.7rem 0.6rem; text-align:left; vertical-align:middle; background:none; } .tl-table thead th { color:var(--faint); font-weight:400; font-size:0.75rem; border-top:0; padding-top:0; } .tl-table .r { text-align:right; } .tl-table th[scope=row] a { display:flex; align-items:center; gap:0.6rem; color:var(--paper) !important; text-decoration:none !important; font-weight:600; font-size:0.9rem; white-space:nowrap; } .tl-table th[scope=row] a:hover { color:var(--accent) !important; } .tl-table .lv { width:1.6rem; height:1.05rem; border-radius:3px; flex:none; box-shadow:0 0 0 1px rgb(255 255 255 / .1); } .tl-table td.avg { min-width:8rem; } .tl-table td.avg .bar { display:block; height:3px; margin-top:0.35rem; background:var(--accent); } .tl-table td.pk { color:var(--muted); } .tl-table .num { font-variant-numeric:tabular-nums; } .tl-table .s { color:var(--muted); margin-left:0.5rem; } .tl-table td.bs { max-width:15rem; } .tl-mixrow { display:grid; grid-template-columns:6.5rem 1fr 14rem; gap:1rem; align-items:center; padding:0.55rem 0; border-top:1px solid var(--line); font-size:0.8125rem; } .tl-mixrow:first-of-type { border-top:0; } .tl-mixrow .nm { font-weight:600; } .tl-mixrow .tl-mix-bar { display:flex; gap:2px; overflow:hidden; margin:0; height:10px; border-radius:2px; } .tl-mixrow .tl-mix-bar span { min-width:3px; } .tl-mixrow .num, .tl-mini-sub { font-variant-numeric:tabular-nums; } .tl-mixrow .top { color:var(--muted); font-size:0.75rem; } .tl-mix-legend { display:flex; flex-wrap:wrap; gap:0.4rem 1.1rem; margin-top:0.9rem; color:var(--muted); font-size:0.75rem; } .tl-mix-legend i { display:inline-block; width:0.6rem; height:0.6rem; border-radius:2px; margin-right:0.4rem; } @media (max-width: 760px) { .tl-mixrow { grid-template-columns:5rem 1fr; } .tl-mixrow .num, .tl-mini-sub { font-variant-numeric:tabular-nums; } .tl-mixrow .top { grid-column:2; } } /* Echo of the livery on section headings: body color over the belt stripe. */ .tl-chip { display:inline-block; width:22px; height:9px; margin-right:0.6rem; vertical-align:0.05rem; border-radius:2px; background:linear-gradient(180deg, var(--body) 0 62%, var(--stripe) 62% 78%, var(--body) 78%); box-shadow:0 0 0 1px rgb(255 255 255 / .08); } @media (max-width: 760px) { .tl-windows { grid-template-columns:repeat(2,minmax(0,1fr)); } .tl-pane .val { font-size:1.65rem; } .tl-fleet { font-size:3.25rem; } .tl-pane .hint { white-space:normal; } .tl-train { grid-template-columns:repeat(2,minmax(0,1fr)); } .tl-car:nth-child(odd)::before { display:none; } .tl-car .tl-fleet { font-size:1.9rem; } .tl-roof, .tl-body { padding-left:1rem; padding-right:1rem; } } @keyframes tl-arrive-other { from { clip-path:inset(0 100% 0 0 round 10px); } to { clip-path:inset(0 0 0 0 round 10px); } }@keyframes tl-settle-other { from { opacity:0; transform:translateX(-12px); } to { opacity:1; transform:none; } }@media (prefers-reduced-motion: no-preference) { .tl-enter { animation-name:tl-arrive-other; } .tl-enter .tl-fleet, .tl-enter .tl-pane, .tl-enter .tl-plate-name { animation-name:tl-settle-other; } }@keyframes tl-arrive-helsinki { from { clip-path:inset(0 100% 0 0 round 10px); } to { clip-path:inset(0 0 0 0 round 10px); } }@keyframes tl-settle-helsinki { from { opacity:0; transform:translateX(-12px); } to { opacity:1; transform:none; } }@media (prefers-reduced-motion: no-preference) { .tl-enter[data-city="helsinki"] { animation-name:tl-arrive-helsinki; } .tl-enter[data-city="helsinki"] .tl-fleet, .tl-enter[data-city="helsinki"] .tl-pane, .tl-enter[data-city="helsinki"] .tl-plate-name { animation-name:tl-settle-helsinki; } }@keyframes tl-arrive-zurich { from { clip-path:inset(0 100% 0 0 round 10px); } to { clip-path:inset(0 0 0 0 round 10px); } }@keyframes tl-settle-zurich { from { opacity:0; transform:translateX(-12px); } to { opacity:1; transform:none; } }@media (prefers-reduced-motion: no-preference) { .tl-enter[data-city="zurich"] { animation-name:tl-arrive-zurich; } .tl-enter[data-city="zurich"] .tl-fleet, .tl-enter[data-city="zurich"] .tl-pane, .tl-enter[data-city="zurich"] .tl-plate-name { animation-name:tl-settle-zurich; } }@keyframes tl-arrive-prague { from { clip-path:inset(0 100% 0 0 round 10px); } to { clip-path:inset(0 0 0 0 round 10px); } }@keyframes tl-settle-prague { from { opacity:0; transform:translateX(-12px); } to { opacity:1; transform:none; } }@media (prefers-reduced-motion: no-preference) { .tl-enter[data-city="prague"] { animation-name:tl-arrive-prague; } .tl-enter[data-city="prague"] .tl-fleet, .tl-enter[data-city="prague"] .tl-pane, .tl-enter[data-city="prague"] .tl-plate-name { animation-name:tl-settle-prague; } }@keyframes tl-arrive-budapest { from { clip-path:inset(0 100% 0 0 round 10px); } to { clip-path:inset(0 0 0 0 round 10px); } }@keyframes tl-settle-budapest { from { opacity:0; transform:translateX(-12px); } to { opacity:1; transform:none; } }@media (prefers-reduced-motion: no-preference) { .tl-enter[data-city="budapest"] { animation-name:tl-arrive-budapest; } .tl-enter[data-city="budapest"] .tl-fleet, .tl-enter[data-city="budapest"] .tl-pane, .tl-enter[data-city="budapest"] .tl-plate-name { animation-name:tl-settle-budapest; } }
 </style>
+<style id="chipCss"></style>
 </head>
 <body>
 <div class="wrap">
-  <div class="topbar">
-    <div>
-      <h1>Transit Lens</h1>
-      <div class="sub" id="subtitle">GTFS delay intelligence</div>
-    </div>
-    <div style="display:flex; gap:12px; align-items:center;">
-      <span class="demo-tag">Static demo</span>
-      <select id="city"></select>
-    </div>
-  </div>
-  <div class="line"></div>
-
-  <div class="kpis" id="kpis"></div>
-
-  <div class="grid2">
-    <div class="panel">
-      <div class="section">Average delay by hour</div>
-      <div class="chart-box"><canvas id="hourChart"></canvas></div>
-      <div class="peak" id="peakNote"></div>
-    </div>
-    <div class="panel">
-      <div class="section">Top 10 most delayed routes</div>
-      <div class="chart-box"><canvas id="routeChart"></canvas></div>
-    </div>
+  <div class="top">
+    <div class="wordmark">Static snapshot</div>
+    <div class="switch" id="switch" role="group" aria-label="City"></div>
   </div>
 
-  <div class="maprow">
-    <div class="panel">
-      <div class="section">Busiest stops</div>
-      <div id="map"></div>
+  <main id="main">
+    <div id="overview" hidden>
+      <div id="train"></div>
+      <section class="ov-section">
+        <h2><span class="tl-chip"></span>Delay through the day</h2>
+        <p class="sub">Average delay in seconds by hour. Each city on its own scale; points mark its peak hours.</p>
+        <div class="minis" id="minis"></div>
+      </section>
+      <section class="ov-section">
+        <h2><span class="tl-chip"></span>How the cities compare</h2>
+        <p class="sub">Network size, delay and hotspots from each feed</p>
+        <div id="compare"></div>
+      </section>
+      <section class="ov-section">
+        <h2><span class="tl-chip"></span>Route mix</h2>
+        <p class="sub">Share of each city's routes by transit mode</p>
+        <div id="mix"></div>
+      </section>
     </div>
-    <div class="panel">
-      <div class="section">Top stops</div>
-      <div class="board"><table id="stopTable">
-        <thead><tr><th>#</th><th>Stop</th><th>Events</th></tr></thead>
-        <tbody></tbody>
-      </table></div>
-    </div>
-  </div>
 
-  <div class="legend" id="legend"></div>
+    <div id="cityView">
+    <div id="livery"></div>
+
+    <div class="grid">
+      <section>
+        <h2><span class="tl-chip"></span>Average delay by hour</h2>
+        <p class="sub"><span class="pt"></span>Peak hours sit at or above the daily mean (dashed line)</p>
+        <div class="chart-box"><canvas id="hourChart" aria-label="Average delay by hour of day" role="img"></canvas></div>
+      </section>
+      <section>
+        <h2><span class="tl-chip"></span>Most delayed routes</h2>
+        <p class="sub">Top 10 by average delay in seconds</p>
+        <ul class="routes" id="routes"></ul>
+      </section>
+    </div>
+
+    <section class="stops-section">
+      <h2><span class="tl-chip"></span>Busiest stops</h2>
+      <p class="sub">Scheduled stop events per stop</p>
+      <div class="grid">
+        <div id="map" role="img" aria-label="Map of the busiest stops"></div>
+        <ul class="stops" id="stops"></ul>
+      </div>
+    </section>
+    </div>
+  </main>
+
   <div class="foot">
-    Static snapshot of the dbt marts, built by <code>dashboard/build_demo.py</code>.
-    The live app is the Streamlit dashboard (<code>python main.py</code>).
+    Built from the dbt marts by <code>dashboard/build_demo.py</code>. The live dashboard runs with <code>python main.py</code>.
   </div>
 </div>
 
 <script>
-const DATA = {"budapest":{"title":"Budapest","total_stops":6210,"top_routes":[{"route_id":"3600","route_short_name":"60","route_type":0,"avg_delay_seconds":16.5,"num_stop_events":2040,"mode":"Tram","color":"#00985F","name":"60"},{"route_id":"9180","route_short_name":"918","route_type":3,"avg_delay_seconds":15.0,"num_stop_events":3514,"mode":"Bus","color":"#007AC9","name":"918"},{"route_id":"9790","route_short_name":"979","route_type":3,"avg_delay_seconds":14.0,"num_stop_events":2076,"mode":"Bus","color":"#007AC9","name":"979"},{"route_id":"9230","route_short_name":"923","route_type":3,"avg_delay_seconds":13.7,"num_stop_events":6265,"mode":"Bus","color":"#007AC9","name":"923"},{"route_id":"2660","route_short_name":"266","route_type":3,"avg_delay_seconds":12.8,"num_stop_events":7774,"mode":"Bus","color":"#007AC9","name":"266"},{"route_id":"9560","route_short_name":"956","route_type":3,"avg_delay_seconds":12.3,"num_stop_events":3682,"mode":"Bus","color":"#007AC9","name":"956"},{"route_id":"9501","route_short_name":"950A","route_type":3,"avg_delay_seconds":12.1,"num_stop_events":2393,"mode":"Bus","color":"#007AC9","name":"950A"},{"route_id":"9010","route_short_name":"901","route_type":3,"avg_delay_seconds":11.9,"num_stop_events":3385,"mode":"Bus","color":"#007AC9","name":"901"},{"route_id":"9730","route_short_name":"973","route_type":3,"avg_delay_seconds":11.7,"num_stop_events":5100,"mode":"Bus","color":"#007AC9","name":"973"},{"route_id":"9310","route_short_name":"931","route_type":3,"avg_delay_seconds":11.4,"num_stop_events":3226,"mode":"Bus","color":"#007AC9","name":"931"}],"hours":[{"hour_of_day":0,"avg_delay_seconds":2.9,"num_stop_events":52853,"is_peak_window":true},{"hour_of_day":1,"avg_delay_seconds":6.7,"num_stop_events":28166,"is_peak_window":true},{"hour_of_day":2,"avg_delay_seconds":7.3,"num_stop_events":25072,"is_peak_window":true},{"hour_of_day":3,"avg_delay_seconds":7.1,"num_stop_events":25558,"is_peak_window":true},{"hour_of_day":4,"avg_delay_seconds":2.1,"num_stop_events":84478,"is_peak_window":false},{"hour_of_day":5,"avg_delay_seconds":1.4,"num_stop_events":194046,"is_peak_window":false},{"hour_of_day":6,"avg_delay_seconds":1.4,"num_stop_events":273431,"is_peak_window":false},{"hour_of_day":7,"avg_delay_seconds":1.3,"num_stop_events":324312,"is_peak_window":false},{"hour_of_day":8,"avg_delay_seconds":1.3,"num_stop_events":313363,"is_peak_window":false},{"hour_of_day":9,"avg_delay_seconds":1.4,"num_stop_events":276027,"is_peak_window":false},{"hour_of_day":10,"avg_delay_seconds":1.4,"num_stop_events":265621,"is_peak_window":false},{"hour_of_day":11,"avg_delay_seconds":1.4,"num_stop_events":264176,"is_peak_window":false},{"hour_of_day":12,"avg_delay_seconds":1.4,"num_stop_events":264995,"is_peak_window":false},{"hour_of_day":13,"avg_delay_seconds":1.5,"num_stop_events":276623,"is_peak_window":false},{"hour_of_day":14,"avg_delay_seconds":1.5,"num_stop_events":302367,"is_peak_window":false},{"hour_of_day":15,"avg_delay_seconds":1.5,"num_stop_events":319799,"is_peak_window":false},{"hour_of_day":16,"avg_delay_seconds":1.5,"num_stop_events":328495,"is_peak_window":false},{"hour_of_day":17,"avg_delay_seconds":1.5,"num_stop_events":325428,"is_peak_window":false},{"hour_of_day":18,"avg_delay_seconds":1.5,"num_stop_events":301976,"is_peak_window":false},{"hour_of_day":19,"avg_delay_seconds":1.5,"num_stop_events":268430,"is_peak_window":false},{"hour_of_day":20,"avg_delay_seconds":1.5,"num_stop_events":236774,"is_peak_window":false},{"hour_of_day":21,"avg_delay_seconds":1.6,"num_stop_events":198889,"is_peak_window":false},{"hour_of_day":22,"avg_delay_seconds":1.7,"num_stop_events":171239,"is_peak_window":false},{"hour_of_day":23,"avg_delay_seconds":1.5,"num_stop_events":129494,"is_peak_window":false}],"stops":[{"stop_name":"Keleti p\u00e1lyaudvar M","stop_lat":47.500466,"stop_lon":19.081955,"total_scheduled_stops":8629,"busy_rank":1},{"stop_name":"Mechwart liget","stop_lat":47.510767,"stop_lon":19.031447,"total_scheduled_stops":8560,"busy_rank":2},{"stop_name":"Sz\u00e9na t\u00e9r","stop_lat":47.50814,"stop_lon":19.026735,"total_scheduled_stops":8560,"busy_rank":3},{"stop_name":"Sz\u00e9na t\u00e9r","stop_lat":47.508491,"stop_lon":19.027319,"total_scheduled_stops":8547,"busy_rank":4},{"stop_name":"Mechwart liget","stop_lat":47.510965,"stop_lon":19.032111,"total_scheduled_stops":8547,"busy_rank":5},{"stop_name":"Margit h\u00edd, budai h\u00eddf\u0151 H","stop_lat":47.514564,"stop_lon":19.038894,"total_scheduled_stops":8343,"busy_rank":6},{"stop_name":"M\u00f3ricz Zsigmond k\u00f6rt\u00e9r M","stop_lat":47.477496,"stop_lon":19.048347,"total_scheduled_stops":7978,"busy_rank":7},{"stop_name":"Corvin-negyed M","stop_lat":47.48621,"stop_lon":19.070057,"total_scheduled_stops":7492,"busy_rank":8},{"stop_name":"Harminckettesek tere","stop_lat":47.489592,"stop_lon":19.070589,"total_scheduled_stops":7492,"busy_rank":9},{"stop_name":"Mester utca / Ferenc k\u00f6r\u00fat","stop_lat":47.482199,"stop_lon":19.068463,"total_scheduled_stops":7492,"busy_rank":10},{"stop_name":"Pet\u0151fi h\u00edd, budai h\u00eddf\u0151","stop_lat":47.476695,"stop_lon":19.058975,"total_scheduled_stops":7492,"busy_rank":11},{"stop_name":"R\u00e1k\u00f3czi t\u00e9r M","stop_lat":47.49239,"stop_lon":19.071001,"total_scheduled_stops":7492,"busy_rank":12},{"stop_name":"Bor\u00e1ros t\u00e9r H","stop_lat":47.480149,"stop_lon":19.066074,"total_scheduled_stops":7492,"busy_rank":13},{"stop_name":"Pet\u0151fi h\u00edd, budai h\u00eddf\u0151","stop_lat":47.476956,"stop_lon":19.059572,"total_scheduled_stops":7423,"busy_rank":14},{"stop_name":"Bor\u00e1ros t\u00e9r H","stop_lat":47.4804,"stop_lon":19.066697,"total_scheduled_stops":7423,"busy_rank":15},{"stop_name":"Blaha Lujza t\u00e9r M","stop_lat":47.497519,"stop_lon":19.071495,"total_scheduled_stops":7413,"busy_rank":16},{"stop_name":"Nyugati p\u00e1lyaudvar M","stop_lat":47.5103,"stop_lon":19.056167,"total_scheduled_stops":7401,"busy_rank":17},{"stop_name":"Blaha Lujza t\u00e9r M","stop_lat":47.49677,"stop_lon":19.070725,"total_scheduled_stops":7401,"busy_rank":18},{"stop_name":"Kir\u00e1ly utca / Erzs\u00e9bet k\u00f6r\u00fat","stop_lat":47.503256,"stop_lon":19.065856,"total_scheduled_stops":7401,"busy_rank":19},{"stop_name":"Margit h\u00edd, budai h\u00eddf\u0151 H","stop_lat":47.514653,"stop_lon":19.038164,"total_scheduled_stops":7401,"busy_rank":20}]},"helsinki":{"title":"Helsinki","total_stops":5,"top_routes":[{"route_id":"R2","route_short_name":"9","route_type":0,"avg_delay_seconds":75.0,"num_stop_events":2,"mode":"Tram","color":"#00985F","name":"9"},{"route_id":"R4","route_short_name":"615","route_type":3,"avg_delay_seconds":75.0,"num_stop_events":2,"mode":"Bus","color":"#007AC9","name":"615"},{"route_id":"R3","route_short_name":"M1","route_type":1,"avg_delay_seconds":55.0,"num_stop_events":2,"mode":"Metro","color":"#FF6319","name":"M1"},{"route_id":"R1","route_short_name":"550","route_type":3,"avg_delay_seconds":51.0,"num_stop_events":5,"mode":"Bus","color":"#007AC9","name":"550"}],"hours":[{"hour_of_day":1,"avg_delay_seconds":90.0,"num_stop_events":1,"is_peak_window":true},{"hour_of_day":6,"avg_delay_seconds":45.0,"num_stop_events":2,"is_peak_window":false},{"hour_of_day":7,"avg_delay_seconds":45.0,"num_stop_events":1,"is_peak_window":false},{"hour_of_day":8,"avg_delay_seconds":30.0,"num_stop_events":1,"is_peak_window":false},{"hour_of_day":9,"avg_delay_seconds":55.0,"num_stop_events":2,"is_peak_window":false},{"hour_of_day":16,"avg_delay_seconds":75.0,"num_stop_events":2,"is_peak_window":true},{"hour_of_day":17,"avg_delay_seconds":75.0,"num_stop_events":2,"is_peak_window":true}],"stops":[{"stop_name":"Rautatientori","stop_lat":60.1709,"stop_lon":24.9414,"total_scheduled_stops":4,"busy_rank":1},{"stop_name":"Pasila","stop_lat":60.1986,"stop_lon":24.9333,"total_scheduled_stops":2,"busy_rank":2},{"stop_name":"Hakaniemi","stop_lat":60.1797,"stop_lon":24.9512,"total_scheduled_stops":2,"busy_rank":3},{"stop_name":"Kamppi","stop_lat":60.1689,"stop_lon":24.9326,"total_scheduled_stops":2,"busy_rank":4},{"stop_name":"Itakeskus","stop_lat":60.2103,"stop_lon":25.0782,"total_scheduled_stops":1,"busy_rank":5}]},"prague":{"title":"Prague","total_stops":18982,"top_routes":[{"route_id":"L1103","route_short_name":"T3","route_type":2,"avg_delay_seconds":62.0,"num_stop_events":60,"mode":"Rail","color":"#8C4799","name":"T3"},{"route_id":"L1333","route_short_name":"S33","route_type":2,"avg_delay_seconds":49.5,"num_stop_events":493,"mode":"Rail","color":"#8C4799","name":"S33"},{"route_id":"L1308","route_short_name":"S8","route_type":2,"avg_delay_seconds":47.9,"num_stop_events":2065,"mode":"Rail","color":"#8C4799","name":"S8"},{"route_id":"L405","route_short_name":"405","route_type":3,"avg_delay_seconds":43.8,"num_stop_events":1014,"mode":"Bus","color":"#007AC9","name":"405"},{"route_id":"L1365","route_short_name":"S65","route_type":2,"avg_delay_seconds":43.1,"num_stop_events":880,"mode":"Rail","color":"#8C4799","name":"S65"},{"route_id":"L1108","route_short_name":"T8","route_type":2,"avg_delay_seconds":43.1,"num_stop_events":62,"mode":"Rail","color":"#8C4799","name":"T8"},{"route_id":"L1302","route_short_name":"S2","route_type":2,"avg_delay_seconds":42.5,"num_stop_events":3567,"mode":"Rail","color":"#8C4799","name":"S2"},{"route_id":"L1110","route_short_name":"T10","route_type":2,"avg_delay_seconds":40.9,"num_stop_events":171,"mode":"Rail","color":"#8C4799","name":"T10"},{"route_id":"L1101","route_short_name":"T1","route_type":2,"avg_delay_seconds":39.8,"num_stop_events":104,"mode":"Rail","color":"#8C4799","name":"T1"},{"route_id":"L1328","route_short_name":"S28","route_type":2,"avg_delay_seconds":36.9,"num_stop_events":1039,"mode":"Rail","color":"#8C4799","name":"S28"}],"hours":[{"hour_of_day":0,"avg_delay_seconds":2.7,"num_stop_events":13143,"is_peak_window":false},{"hour_of_day":1,"avg_delay_seconds":5.6,"num_stop_events":5569,"is_peak_window":true},{"hour_of_day":2,"avg_delay_seconds":5.4,"num_stop_events":5191,"is_peak_window":true},{"hour_of_day":3,"avg_delay_seconds":5.5,"num_stop_events":5285,"is_peak_window":true},{"hour_of_day":4,"avg_delay_seconds":3.4,"num_stop_events":23048,"is_peak_window":true},{"hour_of_day":5,"avg_delay_seconds":2.6,"num_stop_events":65266,"is_peak_window":false},{"hour_of_day":6,"avg_delay_seconds":2.6,"num_stop_events":100310,"is_peak_window":false},{"hour_of_day":7,"avg_delay_seconds":2.5,"num_stop_events":118379,"is_peak_window":false},{"hour_of_day":8,"avg_delay_seconds":2.4,"num_stop_events":111722,"is_peak_window":false},{"hour_of_day":9,"avg_delay_seconds":2.4,"num_stop_events":99215,"is_peak_window":false},{"hour_of_day":10,"avg_delay_seconds":2.6,"num_stop_events":88875,"is_peak_window":false},{"hour_of_day":11,"avg_delay_seconds":2.5,"num_stop_events":82386,"is_peak_window":false},{"hour_of_day":12,"avg_delay_seconds":2.6,"num_stop_events":84470,"is_peak_window":false},{"hour_of_day":13,"avg_delay_seconds":2.6,"num_stop_events":94735,"is_peak_window":false},{"hour_of_day":14,"avg_delay_seconds":2.7,"num_stop_events":103420,"is_peak_window":false},{"hour_of_day":15,"avg_delay_seconds":2.6,"num_stop_events":111363,"is_peak_window":false},{"hour_of_day":16,"avg_delay_seconds":2.7,"num_stop_events":110796,"is_peak_window":false},{"hour_of_day":17,"avg_delay_seconds":2.8,"num_stop_events":106959,"is_peak_window":false},{"hour_of_day":18,"avg_delay_seconds":2.7,"num_stop_events":97312,"is_peak_window":false},{"hour_of_day":19,"avg_delay_seconds":2.6,"num_stop_events":80918,"is_peak_window":false},{"hour_of_day":20,"avg_delay_seconds":2.5,"num_stop_events":59105,"is_peak_window":false},{"hour_of_day":21,"avg_delay_seconds":2.4,"num_stop_events":43092,"is_peak_window":false},{"hour_of_day":22,"avg_delay_seconds":2.0,"num_stop_events":35326,"is_peak_window":false},{"hour_of_day":23,"avg_delay_seconds":1.5,"num_stop_events":29086,"is_peak_window":false}],"stops":[{"stop_name":"Hor\u010di\u010dkova","stop_lat":50.032001,"stop_lon":14.534417,"total_scheduled_stops":2417,"busy_rank":1},{"stop_name":"H\u00e1je","stop_lat":50.030666,"stop_lon":14.529568,"total_scheduled_stops":2417,"busy_rank":2},{"stop_name":"Hrad\u010dansk\u00e1","stop_lat":50.09721,"stop_lon":14.403853,"total_scheduled_stops":2080,"busy_rank":3},{"stop_name":"Hrad\u010dansk\u00e1","stop_lat":50.097298,"stop_lon":14.404873,"total_scheduled_stops":2029,"busy_rank":4},{"stop_name":"Pra\u0161n\u00fd most","stop_lat":50.09473,"stop_lon":14.393871,"total_scheduled_stops":1784,"busy_rank":5},{"stop_name":"Palmovka","stop_lat":50.102474,"stop_lon":14.473387,"total_scheduled_stops":1777,"busy_rank":6},{"stop_name":"Karlovo n\u00e1m\u011bst\u00ed","stop_lat":50.075302,"stop_lon":14.419109,"total_scheduled_stops":1767,"busy_rank":7},{"stop_name":"Mor\u00e1\u0148","stop_lat":50.074024,"stop_lon":14.418731,"total_scheduled_stops":1743,"busy_rank":8},{"stop_name":"Strossmayerovo n\u00e1m\u011bst\u00ed","stop_lat":50.098564,"stop_lon":14.433307,"total_scheduled_stops":1718,"busy_rank":9},{"stop_name":"Palmovka","stop_lat":50.104248,"stop_lon":14.475662,"total_scheduled_stops":1660,"busy_rank":10},{"stop_name":"V\u00edt\u011bzn\u00e9 n\u00e1m\u011bst\u00ed","stop_lat":50.099449,"stop_lon":14.395474,"total_scheduled_stops":1656,"busy_rank":11},{"stop_name":"N\u00e1b\u0159e\u017e\u00ed Kapit\u00e1na Jaro\u0161e","stop_lat":50.096321,"stop_lon":14.431299,"total_scheduled_stops":1645,"busy_rank":12},{"stop_name":"Novom\u011bstsk\u00e1 radnice","stop_lat":50.077518,"stop_lon":14.419602,"total_scheduled_stops":1624,"busy_rank":13},{"stop_name":"Karlovo n\u00e1m\u011bst\u00ed","stop_lat":50.076477,"stop_lon":14.419256,"total_scheduled_stops":1600,"busy_rank":14},{"stop_name":"N\u00e1m\u011bst\u00ed M\u00edru","stop_lat":50.074921,"stop_lon":14.436891,"total_scheduled_stops":1598,"busy_rank":15},{"stop_name":"Malostransk\u00e1","stop_lat":50.090363,"stop_lon":14.410101,"total_scheduled_stops":1537,"busy_rank":16},{"stop_name":"\u0160t\u011bp\u00e1nsk\u00e1","stop_lat":50.075687,"stop_lon":14.422432,"total_scheduled_stops":1521,"busy_rank":17},{"stop_name":"Karlovo n\u00e1m\u011bst\u00ed","stop_lat":50.075901,"stop_lon":14.419612,"total_scheduled_stops":1521,"busy_rank":18},{"stop_name":"I. P. Pavlova","stop_lat":50.075539,"stop_lon":14.430594,"total_scheduled_stops":1521,"busy_rank":19},{"stop_name":"I. P. Pavlova","stop_lat":50.075405,"stop_lon":14.431689,"total_scheduled_stops":1520,"busy_rank":20}]},"zurich":{"title":"Zurich","total_stops":102717,"top_routes":[{"route_id":"91-5C-Y-j26-1","route_short_name":"EXT","route_type":117,"avg_delay_seconds":492.0,"num_stop_events":5,"mode":"Other","color":"#9AA4B2","name":"EXT"},{"route_id":"91-2P-Y-j26-1","route_short_name":"NJ","route_type":105,"avg_delay_seconds":382.6,"num_stop_events":318,"mode":"Other","color":"#9AA4B2","name":"NJ"},{"route_id":"91-2Z-Y-j26-1","route_short_name":"NJ","route_type":105,"avg_delay_seconds":363.4,"num_stop_events":589,"mode":"Other","color":"#9AA4B2","name":"NJ"},{"route_id":"91-621-I-j26-1","route_short_name":"621I","route_type":101,"avg_delay_seconds":318.0,"num_stop_events":430,"mode":"Other","color":"#9AA4B2","name":"621I"},{"route_id":"91-3R-Y-j26-1","route_short_name":"EC","route_type":102,"avg_delay_seconds":315.3,"num_stop_events":334,"mode":"Other","color":"#9AA4B2","name":"EC"},{"route_id":"91-1G-j26-1","route_short_name":"001G","route_type":101,"avg_delay_seconds":312.7,"num_stop_events":308,"mode":"Other","color":"#9AA4B2","name":"001G"},{"route_id":"91-GEX-A-j26-1","route_short_name":"GEX","route_type":107,"avg_delay_seconds":308.6,"num_stop_events":42,"mode":"Other","color":"#9AA4B2","name":"GEX"},{"route_id":"91-8Y-Y-j26-1","route_short_name":"EXT","route_type":117,"avg_delay_seconds":300.0,"num_stop_events":6,"mode":"Other","color":"#9AA4B2","name":"EXT"},{"route_id":"91-5D-j26-1","route_short_name":"005D","route_type":101,"avg_delay_seconds":298.9,"num_stop_events":276,"mode":"Other","color":"#9AA4B2","name":"005D"},{"route_id":"94-380-1-j26-1","route_short_name":"3801","route_type":1000,"avg_delay_seconds":297.7,"num_stop_events":52,"mode":"Ferry","color":"#00B9E4","name":"3801"}],"hours":[{"hour_of_day":0,"avg_delay_seconds":10.7,"num_stop_events":665076,"is_peak_window":true},{"hour_of_day":1,"avg_delay_seconds":7.3,"num_stop_events":224607,"is_peak_window":false},{"hour_of_day":2,"avg_delay_seconds":7.2,"num_stop_events":121624,"is_peak_window":false},{"hour_of_day":3,"avg_delay_seconds":7.7,"num_stop_events":98040,"is_peak_window":false},{"hour_of_day":4,"avg_delay_seconds":9.5,"num_stop_events":119677,"is_peak_window":false},{"hour_of_day":5,"avg_delay_seconds":10.2,"num_stop_events":582733,"is_peak_window":true},{"hour_of_day":6,"avg_delay_seconds":10.3,"num_stop_events":1152062,"is_peak_window":true},{"hour_of_day":7,"avg_delay_seconds":10.4,"num_stop_events":1362245,"is_peak_window":true},{"hour_of_day":8,"avg_delay_seconds":10.3,"num_stop_events":1344731,"is_peak_window":true},{"hour_of_day":9,"avg_delay_seconds":10.1,"num_stop_events":1304631,"is_peak_window":true},{"hour_of_day":10,"avg_delay_seconds":10.4,"num_stop_events":1279539,"is_peak_window":true},{"hour_of_day":11,"avg_delay_seconds":10.2,"num_stop_events":1316830,"is_peak_window":true},{"hour_of_day":12,"avg_delay_seconds":10.2,"num_stop_events":1362041,"is_peak_window":true},{"hour_of_day":13,"avg_delay_seconds":10.1,"num_stop_events":1369020,"is_peak_window":true},{"hour_of_day":14,"avg_delay_seconds":10.2,"num_stop_events":1330776,"is_peak_window":true},{"hour_of_day":15,"avg_delay_seconds":9.9,"num_stop_events":1397829,"is_peak_window":false},{"hour_of_day":16,"avg_delay_seconds":10.1,"num_stop_events":1514885,"is_peak_window":true},{"hour_of_day":17,"avg_delay_seconds":10.4,"num_stop_events":1529851,"is_peak_window":true},{"hour_of_day":18,"avg_delay_seconds":10.7,"num_stop_events":1465990,"is_peak_window":true},{"hour_of_day":19,"avg_delay_seconds":10.7,"num_stop_events":1286357,"is_peak_window":true},{"hour_of_day":20,"avg_delay_seconds":11.0,"num_stop_events":1049744,"is_peak_window":true},{"hour_of_day":21,"avg_delay_seconds":10.9,"num_stop_events":879898,"is_peak_window":true},{"hour_of_day":22,"avg_delay_seconds":11.2,"num_stop_events":822039,"is_peak_window":true},{"hour_of_day":23,"avg_delay_seconds":11.6,"num_stop_events":811632,"is_peak_window":true}],"stops":[{"stop_name":"Schwyz, Zentrum","stop_lat":47.02116241,"stop_lon":8.65134213,"total_scheduled_stops":44862,"busy_rank":1},{"stop_name":"Schwyz, Bahnhof","stop_lat":47.0267289,"stop_lon":8.63216309,"total_scheduled_stops":24326,"busy_rank":2},{"stop_name":"Brunnen, Bahnhof","stop_lat":46.99955233,"stop_lon":8.61000166,"total_scheduled_stops":24178,"busy_rank":3},{"stop_name":"Ibach, Mythen Center","stop_lat":47.01563209,"stop_lon":8.64818006,"total_scheduled_stops":23355,"busy_rank":4},{"stop_name":"Schwyz, Steisteg","stop_lat":47.01966812,"stop_lon":8.65173738,"total_scheduled_stops":23350,"busy_rank":5},{"stop_name":"Schwyz, L\u00fccken","stop_lat":47.01860861,"stop_lon":8.65145891,"total_scheduled_stops":20581,"busy_rank":6},{"stop_name":"Ibach, Mythen Center","stop_lat":47.01577296,"stop_lon":8.64845853,"total_scheduled_stops":20576,"busy_rank":7},{"stop_name":"K\u00fcssnacht am Rigi, Bahnhof","stop_lat":47.08310201,"stop_lon":8.43316829,"total_scheduled_stops":19035,"busy_rank":8},{"stop_name":"Schwyz, Zentrum","stop_lat":47.0212114,"stop_lon":8.65136009,"total_scheduled_stops":18559,"busy_rank":9},{"stop_name":"Yverdon-les-Bains, gare","stop_lat":46.78148799,"stop_lon":6.63973573,"total_scheduled_stops":18078,"busy_rank":10},{"stop_name":"Brunnen, Kantonalbank","stop_lat":46.99670953,"stop_lon":8.60739654,"total_scheduled_stops":17917,"busy_rank":11},{"stop_name":"Yverdon-les-Bains, gare","stop_lat":46.78116811,"stop_lon":6.63986149,"total_scheduled_stops":17815,"busy_rank":12},{"stop_name":"Brunnen, Kantonalbank","stop_lat":46.99662988,"stop_lon":8.60721688,"total_scheduled_stops":17475,"busy_rank":13},{"stop_name":"Weggis, Dorfplatz","stop_lat":47.03228256,"stop_lon":8.43548595,"total_scheduled_stops":17382,"busy_rank":14},{"stop_name":"Goldau, L\u00f6wenplatz","stop_lat":47.05063554,"stop_lon":8.55064997,"total_scheduled_stops":16620,"busy_rank":15},{"stop_name":"Goldau, Tierpark","stop_lat":47.05176785,"stop_lon":8.55350661,"total_scheduled_stops":16620,"busy_rank":16},{"stop_name":"Seewen SZ, Seewen Markt","stop_lat":47.03246012,"stop_lon":8.6277344,"total_scheduled_stops":16523,"busy_rank":17},{"stop_name":"Goldau, L\u00f6wenplatz","stop_lat":47.0506539,"stop_lon":8.55075776,"total_scheduled_stops":16466,"busy_rank":18},{"stop_name":"Goldau, Tierpark","stop_lat":47.05169441,"stop_lon":8.55341678,"total_scheduled_stops":16466,"busy_rank":19},{"stop_name":"Basel, Markthalle","stop_lat":47.54875262,"stop_lon":7.58719784,"total_scheduled_stops":14728,"busy_rank":20}]}};
-const MODES = {
-  Tram:"#00985F", Metro:"#FF6319", Rail:"#8C4799", Bus:"#007AC9",
-  Ferry:"#00B9E4", "Suburban rail":"#8C4799", Other:"#9AA4B2"
-};
-let hourChart, routeChart, map, markerLayer;
+const PAYLOAD = {"cities":{"budapest":{"events":5251612,"mix":[["Bus",315],["Tram",41],["Trolleybus",14],["Rail",5],["Metro",4],["Ferry",1]],"style":{"name":"Budapest","alt":"","note":"BKK network","top":"#F0BF00","top_ink":"#1A1606","body":"#F0BF00","ink":"#1A1606","stripe":"#1A1606","accent":"#F0BF00","on_accent":"#0E0E0D","bg":"#0F0E0A","wdth":118,"badge":"5px"},"vars":"--top:#F0BF00;--top-ink:#1A1606;--body:#F0BF00;--ink:#1A1606;--stripe:#1A1606;--accent:#F0BF00;--on-accent:#0E0E0D;--bg:#0F0E0A;--wdth:118%;--badge-r:5px;","livery":"<section class=\"tl-livery tl-enter\" data-city=\"budapest\" aria-label=\"Budapest overview\"><div class=\"tl-roof\"><span class=\"tl-mark\">Transit Lens</span><span class=\"tl-note\">BKK network</span></div><div class=\"tl-windows\"><div class=\"tl-pane\"><div class=\"lbl\">Routes</div><div class=\"val\">380</div><div class=\"hint\">in the network</div></div><div class=\"tl-pane\"><div class=\"lbl\">Stops</div><div class=\"val\">6,210</div><div class=\"hint\">in the scheduled network</div></div><div class=\"tl-pane\"><div class=\"lbl\">Average delay</div><div class=\"val\">1.6<small>s</small></div><div class=\"hint\">mean across routes</div></div><div class=\"tl-pane\"><div class=\"lbl\">Most delayed route</div><div class=\"val\"><span class=\"tl-badge badge\" style=\"background:#1E7F48\">60</span></div><div class=\"hint\">16.5 s average, tram</div></div></div><div class=\"tl-belt\"></div><div class=\"tl-body\"><h1 class=\"tl-fleet\">Budapest</h1><div class=\"tl-meta\"><span>GTFS delay analysis</span><span>4 cities in snapshot</span></div></div><div class=\"tl-skirt\"></div></section>","total_routes":380,"avg_delay_seconds":1.6,"total_stops":6210,"top_routes":[{"route_id":"3600","route_short_name":"60","route_type":0,"avg_delay_seconds":16.5,"num_stop_events":2040,"mode":"Tram","name":"60"},{"route_id":"9180","route_short_name":"918","route_type":3,"avg_delay_seconds":15.0,"num_stop_events":3514,"mode":"Bus","name":"918"},{"route_id":"9790","route_short_name":"979","route_type":3,"avg_delay_seconds":14.0,"num_stop_events":2076,"mode":"Bus","name":"979"},{"route_id":"9230","route_short_name":"923","route_type":3,"avg_delay_seconds":13.7,"num_stop_events":6265,"mode":"Bus","name":"923"},{"route_id":"2660","route_short_name":"266","route_type":3,"avg_delay_seconds":12.8,"num_stop_events":7774,"mode":"Bus","name":"266"},{"route_id":"9560","route_short_name":"956","route_type":3,"avg_delay_seconds":12.3,"num_stop_events":3682,"mode":"Bus","name":"956"},{"route_id":"9501","route_short_name":"950A","route_type":3,"avg_delay_seconds":12.1,"num_stop_events":2393,"mode":"Bus","name":"950A"},{"route_id":"9010","route_short_name":"901","route_type":3,"avg_delay_seconds":11.9,"num_stop_events":3385,"mode":"Bus","name":"901"},{"route_id":"9730","route_short_name":"973","route_type":3,"avg_delay_seconds":11.7,"num_stop_events":5100,"mode":"Bus","name":"973"},{"route_id":"9310","route_short_name":"931","route_type":3,"avg_delay_seconds":11.4,"num_stop_events":3226,"mode":"Bus","name":"931"}],"hours":[{"hour_of_day":0,"avg_delay_seconds":2.9,"num_stop_events":52853,"is_peak_window":true},{"hour_of_day":1,"avg_delay_seconds":6.7,"num_stop_events":28166,"is_peak_window":true},{"hour_of_day":2,"avg_delay_seconds":7.3,"num_stop_events":25072,"is_peak_window":true},{"hour_of_day":3,"avg_delay_seconds":7.1,"num_stop_events":25558,"is_peak_window":true},{"hour_of_day":4,"avg_delay_seconds":2.1,"num_stop_events":84478,"is_peak_window":false},{"hour_of_day":5,"avg_delay_seconds":1.4,"num_stop_events":194046,"is_peak_window":false},{"hour_of_day":6,"avg_delay_seconds":1.4,"num_stop_events":273431,"is_peak_window":false},{"hour_of_day":7,"avg_delay_seconds":1.3,"num_stop_events":324312,"is_peak_window":false},{"hour_of_day":8,"avg_delay_seconds":1.3,"num_stop_events":313363,"is_peak_window":false},{"hour_of_day":9,"avg_delay_seconds":1.4,"num_stop_events":276027,"is_peak_window":false},{"hour_of_day":10,"avg_delay_seconds":1.4,"num_stop_events":265621,"is_peak_window":false},{"hour_of_day":11,"avg_delay_seconds":1.4,"num_stop_events":264176,"is_peak_window":false},{"hour_of_day":12,"avg_delay_seconds":1.4,"num_stop_events":264995,"is_peak_window":false},{"hour_of_day":13,"avg_delay_seconds":1.5,"num_stop_events":276623,"is_peak_window":false},{"hour_of_day":14,"avg_delay_seconds":1.5,"num_stop_events":302367,"is_peak_window":false},{"hour_of_day":15,"avg_delay_seconds":1.5,"num_stop_events":319799,"is_peak_window":false},{"hour_of_day":16,"avg_delay_seconds":1.5,"num_stop_events":328495,"is_peak_window":false},{"hour_of_day":17,"avg_delay_seconds":1.5,"num_stop_events":325428,"is_peak_window":false},{"hour_of_day":18,"avg_delay_seconds":1.5,"num_stop_events":301976,"is_peak_window":false},{"hour_of_day":19,"avg_delay_seconds":1.5,"num_stop_events":268430,"is_peak_window":false},{"hour_of_day":20,"avg_delay_seconds":1.5,"num_stop_events":236774,"is_peak_window":false},{"hour_of_day":21,"avg_delay_seconds":1.6,"num_stop_events":198889,"is_peak_window":false},{"hour_of_day":22,"avg_delay_seconds":1.7,"num_stop_events":171239,"is_peak_window":false},{"hour_of_day":23,"avg_delay_seconds":1.5,"num_stop_events":129494,"is_peak_window":false}],"stops":[{"stop_name":"Keleti p\u00e1lyaudvar M","stop_lat":47.500466,"stop_lon":19.081955,"total_scheduled_stops":8629,"busy_rank":1},{"stop_name":"Mechwart liget","stop_lat":47.510767,"stop_lon":19.031447,"total_scheduled_stops":8560,"busy_rank":2},{"stop_name":"Sz\u00e9na t\u00e9r","stop_lat":47.50814,"stop_lon":19.026735,"total_scheduled_stops":8560,"busy_rank":3},{"stop_name":"Sz\u00e9na t\u00e9r","stop_lat":47.508491,"stop_lon":19.027319,"total_scheduled_stops":8547,"busy_rank":4},{"stop_name":"Mechwart liget","stop_lat":47.510965,"stop_lon":19.032111,"total_scheduled_stops":8547,"busy_rank":5},{"stop_name":"Margit h\u00edd, budai h\u00eddf\u0151 H","stop_lat":47.514564,"stop_lon":19.038894,"total_scheduled_stops":8343,"busy_rank":6},{"stop_name":"M\u00f3ricz Zsigmond k\u00f6rt\u00e9r M","stop_lat":47.477496,"stop_lon":19.048347,"total_scheduled_stops":7978,"busy_rank":7},{"stop_name":"Corvin-negyed M","stop_lat":47.48621,"stop_lon":19.070057,"total_scheduled_stops":7492,"busy_rank":8},{"stop_name":"Harminckettesek tere","stop_lat":47.489592,"stop_lon":19.070589,"total_scheduled_stops":7492,"busy_rank":9},{"stop_name":"Mester utca / Ferenc k\u00f6r\u00fat","stop_lat":47.482199,"stop_lon":19.068463,"total_scheduled_stops":7492,"busy_rank":10},{"stop_name":"Pet\u0151fi h\u00edd, budai h\u00eddf\u0151","stop_lat":47.476695,"stop_lon":19.058975,"total_scheduled_stops":7492,"busy_rank":11},{"stop_name":"R\u00e1k\u00f3czi t\u00e9r M","stop_lat":47.49239,"stop_lon":19.071001,"total_scheduled_stops":7492,"busy_rank":12},{"stop_name":"Bor\u00e1ros t\u00e9r H","stop_lat":47.480149,"stop_lon":19.066074,"total_scheduled_stops":7492,"busy_rank":13},{"stop_name":"Pet\u0151fi h\u00edd, budai h\u00eddf\u0151","stop_lat":47.476956,"stop_lon":19.059572,"total_scheduled_stops":7423,"busy_rank":14},{"stop_name":"Bor\u00e1ros t\u00e9r H","stop_lat":47.4804,"stop_lon":19.066697,"total_scheduled_stops":7423,"busy_rank":15},{"stop_name":"Blaha Lujza t\u00e9r M","stop_lat":47.497519,"stop_lon":19.071495,"total_scheduled_stops":7413,"busy_rank":16},{"stop_name":"Nyugati p\u00e1lyaudvar M","stop_lat":47.5103,"stop_lon":19.056167,"total_scheduled_stops":7401,"busy_rank":17},{"stop_name":"Blaha Lujza t\u00e9r M","stop_lat":47.49677,"stop_lon":19.070725,"total_scheduled_stops":7401,"busy_rank":18},{"stop_name":"Kir\u00e1ly utca / Erzs\u00e9bet k\u00f6r\u00fat","stop_lat":47.503256,"stop_lon":19.065856,"total_scheduled_stops":7401,"busy_rank":19},{"stop_name":"Margit h\u00edd, budai h\u00eddf\u0151 H","stop_lat":47.514653,"stop_lon":19.038164,"total_scheduled_stops":7401,"busy_rank":20}]},"helsinki":{"events":11,"mix":[["Bus",2],["Tram",1],["Metro",1]],"style":{"name":"Helsinki","alt":"Helsingfors","note":"HSL region","top":"#E9E8DE","top_ink":"#16211B","body":"#0A7F4F","ink":"#FFFFFF","stripe":"#E9E8DE","accent":"#3DBA80","on_accent":"#0E0E0D","bg":"#0B0F0D","wdth":88,"badge":"999px"},"vars":"--top:#E9E8DE;--top-ink:#16211B;--body:#0A7F4F;--ink:#FFFFFF;--stripe:#E9E8DE;--accent:#3DBA80;--on-accent:#0E0E0D;--bg:#0B0F0D;--wdth:88%;--badge-r:999px;","livery":"<section class=\"tl-livery tl-enter\" data-city=\"helsinki\" aria-label=\"Helsinki overview\"><div class=\"tl-roof\"><span class=\"tl-mark\">Transit Lens</span><span class=\"tl-note\">HSL region</span></div><div class=\"tl-windows\"><div class=\"tl-pane\"><div class=\"lbl\">Routes</div><div class=\"val\">4</div><div class=\"hint\">in the network</div></div><div class=\"tl-pane\"><div class=\"lbl\">Stops</div><div class=\"val\">5</div><div class=\"hint\">in the scheduled network</div></div><div class=\"tl-pane\"><div class=\"lbl\">Average delay</div><div class=\"val\">64.0<small>s</small></div><div class=\"hint\">mean across routes</div></div><div class=\"tl-pane\"><div class=\"lbl\">Most delayed route</div><div class=\"val\"><span class=\"tl-badge badge\" style=\"background:#1E7F48\">9</span></div><div class=\"hint\">75.0 s average, tram</div></div></div><div class=\"tl-belt\"></div><div class=\"tl-body\"><h1 class=\"tl-fleet\">Helsinki<span class=\"alt\">Helsingfors</span></h1><div class=\"tl-meta\"><span>GTFS delay analysis</span><span>4 cities in snapshot</span></div></div><div class=\"tl-skirt\"></div></section>","total_routes":4,"avg_delay_seconds":64.0,"total_stops":5,"top_routes":[{"route_id":"R2","route_short_name":"9","route_type":0,"avg_delay_seconds":75.0,"num_stop_events":2,"mode":"Tram","name":"9"},{"route_id":"R4","route_short_name":"615","route_type":3,"avg_delay_seconds":75.0,"num_stop_events":2,"mode":"Bus","name":"615"},{"route_id":"R3","route_short_name":"M1","route_type":1,"avg_delay_seconds":55.0,"num_stop_events":2,"mode":"Metro","name":"M1"},{"route_id":"R1","route_short_name":"550","route_type":3,"avg_delay_seconds":51.0,"num_stop_events":5,"mode":"Bus","name":"550"}],"hours":[{"hour_of_day":1,"avg_delay_seconds":90.0,"num_stop_events":1,"is_peak_window":true},{"hour_of_day":6,"avg_delay_seconds":45.0,"num_stop_events":2,"is_peak_window":false},{"hour_of_day":7,"avg_delay_seconds":45.0,"num_stop_events":1,"is_peak_window":false},{"hour_of_day":8,"avg_delay_seconds":30.0,"num_stop_events":1,"is_peak_window":false},{"hour_of_day":9,"avg_delay_seconds":55.0,"num_stop_events":2,"is_peak_window":false},{"hour_of_day":16,"avg_delay_seconds":75.0,"num_stop_events":2,"is_peak_window":true},{"hour_of_day":17,"avg_delay_seconds":75.0,"num_stop_events":2,"is_peak_window":true}],"stops":[{"stop_name":"Rautatientori","stop_lat":60.1709,"stop_lon":24.9414,"total_scheduled_stops":4,"busy_rank":1},{"stop_name":"Pasila","stop_lat":60.1986,"stop_lon":24.9333,"total_scheduled_stops":2,"busy_rank":2},{"stop_name":"Hakaniemi","stop_lat":60.1797,"stop_lon":24.9512,"total_scheduled_stops":2,"busy_rank":3},{"stop_name":"Kamppi","stop_lat":60.1689,"stop_lon":24.9326,"total_scheduled_stops":2,"busy_rank":4},{"stop_name":"Itakeskus","stop_lat":60.2103,"stop_lon":25.0782,"total_scheduled_stops":1,"busy_rank":5}]},"prague":{"events":1674971,"mix":[["Bus",742],["Rail",91],["Tram",40],["Ferry",5],["Trolleybus",4],["Metro",3]],"style":{"name":"Praha","alt":"Prague","note":"PID network","top":"#B8141F","top_ink":"#F3E7CC","body":"#B8141F","ink":"#F3E7CC","stripe":"#EADBB8","accent":"#E4575B","on_accent":"#0E0E0D","bg":"#100C0B","wdth":108,"badge":"2px"},"vars":"--top:#B8141F;--top-ink:#F3E7CC;--body:#B8141F;--ink:#F3E7CC;--stripe:#EADBB8;--accent:#E4575B;--on-accent:#0E0E0D;--bg:#100C0B;--wdth:108%;--badge-r:2px;","livery":"<section class=\"tl-livery tl-enter\" data-city=\"prague\" aria-label=\"Praha overview\"><div class=\"tl-roof\"><span class=\"tl-mark\">Transit Lens</span><span class=\"tl-note\">PID network</span></div><div class=\"tl-windows\"><div class=\"tl-pane\"><div class=\"lbl\">Routes</div><div class=\"val\">885</div><div class=\"hint\">in the network</div></div><div class=\"tl-pane\"><div class=\"lbl\">Stops</div><div class=\"val\">18,982</div><div class=\"hint\">in the scheduled network</div></div><div class=\"tl-pane\"><div class=\"lbl\">Average delay</div><div class=\"val\">3.3<small>s</small></div><div class=\"hint\">mean across routes</div></div><div class=\"tl-pane\"><div class=\"lbl\">Most delayed route</div><div class=\"val\"><span class=\"tl-badge badge\" style=\"background:#7B4AA3\">T3</span></div><div class=\"hint\">62.0 s average, rail</div></div></div><div class=\"tl-belt\"></div><div class=\"tl-body\"><h1 class=\"tl-fleet\">Praha<span class=\"alt\">Prague</span></h1><div class=\"tl-meta\"><span>GTFS delay analysis</span><span>4 cities in snapshot</span></div></div><div class=\"tl-skirt\"></div></section>","total_routes":885,"avg_delay_seconds":3.3,"total_stops":18982,"top_routes":[{"route_id":"L1103","route_short_name":"T3","route_type":2,"avg_delay_seconds":62.0,"num_stop_events":60,"mode":"Rail","name":"T3"},{"route_id":"L1333","route_short_name":"S33","route_type":2,"avg_delay_seconds":49.5,"num_stop_events":493,"mode":"Rail","name":"S33"},{"route_id":"L1308","route_short_name":"S8","route_type":2,"avg_delay_seconds":47.9,"num_stop_events":2065,"mode":"Rail","name":"S8"},{"route_id":"L405","route_short_name":"405","route_type":3,"avg_delay_seconds":43.8,"num_stop_events":1014,"mode":"Bus","name":"405"},{"route_id":"L1365","route_short_name":"S65","route_type":2,"avg_delay_seconds":43.1,"num_stop_events":880,"mode":"Rail","name":"S65"},{"route_id":"L1108","route_short_name":"T8","route_type":2,"avg_delay_seconds":43.1,"num_stop_events":62,"mode":"Rail","name":"T8"},{"route_id":"L1302","route_short_name":"S2","route_type":2,"avg_delay_seconds":42.5,"num_stop_events":3567,"mode":"Rail","name":"S2"},{"route_id":"L1110","route_short_name":"T10","route_type":2,"avg_delay_seconds":40.9,"num_stop_events":171,"mode":"Rail","name":"T10"},{"route_id":"L1101","route_short_name":"T1","route_type":2,"avg_delay_seconds":39.8,"num_stop_events":104,"mode":"Rail","name":"T1"},{"route_id":"L1328","route_short_name":"S28","route_type":2,"avg_delay_seconds":36.9,"num_stop_events":1039,"mode":"Rail","name":"S28"}],"hours":[{"hour_of_day":0,"avg_delay_seconds":2.7,"num_stop_events":13143,"is_peak_window":false},{"hour_of_day":1,"avg_delay_seconds":5.6,"num_stop_events":5569,"is_peak_window":true},{"hour_of_day":2,"avg_delay_seconds":5.4,"num_stop_events":5191,"is_peak_window":true},{"hour_of_day":3,"avg_delay_seconds":5.5,"num_stop_events":5285,"is_peak_window":true},{"hour_of_day":4,"avg_delay_seconds":3.4,"num_stop_events":23048,"is_peak_window":true},{"hour_of_day":5,"avg_delay_seconds":2.6,"num_stop_events":65266,"is_peak_window":false},{"hour_of_day":6,"avg_delay_seconds":2.6,"num_stop_events":100310,"is_peak_window":false},{"hour_of_day":7,"avg_delay_seconds":2.5,"num_stop_events":118379,"is_peak_window":false},{"hour_of_day":8,"avg_delay_seconds":2.4,"num_stop_events":111722,"is_peak_window":false},{"hour_of_day":9,"avg_delay_seconds":2.4,"num_stop_events":99215,"is_peak_window":false},{"hour_of_day":10,"avg_delay_seconds":2.6,"num_stop_events":88875,"is_peak_window":false},{"hour_of_day":11,"avg_delay_seconds":2.5,"num_stop_events":82386,"is_peak_window":false},{"hour_of_day":12,"avg_delay_seconds":2.6,"num_stop_events":84470,"is_peak_window":false},{"hour_of_day":13,"avg_delay_seconds":2.6,"num_stop_events":94735,"is_peak_window":false},{"hour_of_day":14,"avg_delay_seconds":2.7,"num_stop_events":103420,"is_peak_window":false},{"hour_of_day":15,"avg_delay_seconds":2.6,"num_stop_events":111363,"is_peak_window":false},{"hour_of_day":16,"avg_delay_seconds":2.7,"num_stop_events":110796,"is_peak_window":false},{"hour_of_day":17,"avg_delay_seconds":2.8,"num_stop_events":106959,"is_peak_window":false},{"hour_of_day":18,"avg_delay_seconds":2.7,"num_stop_events":97312,"is_peak_window":false},{"hour_of_day":19,"avg_delay_seconds":2.6,"num_stop_events":80918,"is_peak_window":false},{"hour_of_day":20,"avg_delay_seconds":2.5,"num_stop_events":59105,"is_peak_window":false},{"hour_of_day":21,"avg_delay_seconds":2.4,"num_stop_events":43092,"is_peak_window":false},{"hour_of_day":22,"avg_delay_seconds":2.0,"num_stop_events":35326,"is_peak_window":false},{"hour_of_day":23,"avg_delay_seconds":1.5,"num_stop_events":29086,"is_peak_window":false}],"stops":[{"stop_name":"Hor\u010di\u010dkova","stop_lat":50.032001,"stop_lon":14.534417,"total_scheduled_stops":2417,"busy_rank":1},{"stop_name":"H\u00e1je","stop_lat":50.030666,"stop_lon":14.529568,"total_scheduled_stops":2417,"busy_rank":2},{"stop_name":"Hrad\u010dansk\u00e1","stop_lat":50.09721,"stop_lon":14.403853,"total_scheduled_stops":2080,"busy_rank":3},{"stop_name":"Hrad\u010dansk\u00e1","stop_lat":50.097298,"stop_lon":14.404873,"total_scheduled_stops":2029,"busy_rank":4},{"stop_name":"Pra\u0161n\u00fd most","stop_lat":50.09473,"stop_lon":14.393871,"total_scheduled_stops":1784,"busy_rank":5},{"stop_name":"Palmovka","stop_lat":50.102474,"stop_lon":14.473387,"total_scheduled_stops":1777,"busy_rank":6},{"stop_name":"Karlovo n\u00e1m\u011bst\u00ed","stop_lat":50.075302,"stop_lon":14.419109,"total_scheduled_stops":1767,"busy_rank":7},{"stop_name":"Mor\u00e1\u0148","stop_lat":50.074024,"stop_lon":14.418731,"total_scheduled_stops":1743,"busy_rank":8},{"stop_name":"Strossmayerovo n\u00e1m\u011bst\u00ed","stop_lat":50.098564,"stop_lon":14.433307,"total_scheduled_stops":1718,"busy_rank":9},{"stop_name":"Palmovka","stop_lat":50.104248,"stop_lon":14.475662,"total_scheduled_stops":1660,"busy_rank":10},{"stop_name":"V\u00edt\u011bzn\u00e9 n\u00e1m\u011bst\u00ed","stop_lat":50.099449,"stop_lon":14.395474,"total_scheduled_stops":1656,"busy_rank":11},{"stop_name":"N\u00e1b\u0159e\u017e\u00ed Kapit\u00e1na Jaro\u0161e","stop_lat":50.096321,"stop_lon":14.431299,"total_scheduled_stops":1645,"busy_rank":12},{"stop_name":"Novom\u011bstsk\u00e1 radnice","stop_lat":50.077518,"stop_lon":14.419602,"total_scheduled_stops":1624,"busy_rank":13},{"stop_name":"Karlovo n\u00e1m\u011bst\u00ed","stop_lat":50.076477,"stop_lon":14.419256,"total_scheduled_stops":1600,"busy_rank":14},{"stop_name":"N\u00e1m\u011bst\u00ed M\u00edru","stop_lat":50.074921,"stop_lon":14.436891,"total_scheduled_stops":1598,"busy_rank":15},{"stop_name":"Malostransk\u00e1","stop_lat":50.090363,"stop_lon":14.410101,"total_scheduled_stops":1537,"busy_rank":16},{"stop_name":"\u0160t\u011bp\u00e1nsk\u00e1","stop_lat":50.075687,"stop_lon":14.422432,"total_scheduled_stops":1521,"busy_rank":17},{"stop_name":"Karlovo n\u00e1m\u011bst\u00ed","stop_lat":50.075901,"stop_lon":14.419612,"total_scheduled_stops":1521,"busy_rank":18},{"stop_name":"I. P. Pavlova","stop_lat":50.075539,"stop_lon":14.430594,"total_scheduled_stops":1521,"busy_rank":19},{"stop_name":"I. P. Pavlova","stop_lat":50.075405,"stop_lon":14.431689,"total_scheduled_stops":1520,"busy_rank":20}]},"zurich":{"events":24391857,"mix":[["Bus",3655],["Rail",895],["Aerial lift",295],["Ferry",104],["Funicular",53],["Tram",50],["Other",3],["Metro",2],["Coach",1]],"style":{"name":"Z\u00fcrich","alt":"","note":"Swiss national timetable","top":"#F1F1EC","top_ink":"#0F1A2A","body":"#1B5AA6","ink":"#FFFFFF","stripe":"#F1F1EC","accent":"#5E9CE8","on_accent":"#0E0E0D","bg":"#0B0D10","wdth":100,"badge":"0px"},"vars":"--top:#F1F1EC;--top-ink:#0F1A2A;--body:#1B5AA6;--ink:#FFFFFF;--stripe:#F1F1EC;--accent:#5E9CE8;--on-accent:#0E0E0D;--bg:#0B0D10;--wdth:100%;--badge-r:0px;","livery":"<section class=\"tl-livery tl-enter\" data-city=\"zurich\" aria-label=\"Z\u00fcrich overview\"><div class=\"tl-roof\"><span class=\"tl-mark\">Transit Lens</span><span class=\"tl-note\">Swiss national timetable</span></div><div class=\"tl-windows\"><div class=\"tl-pane\"><div class=\"lbl\">Routes</div><div class=\"val\">5,058</div><div class=\"hint\">in the network</div></div><div class=\"tl-pane\"><div class=\"lbl\">Stops</div><div class=\"val\">102,717</div><div class=\"hint\">in the scheduled network</div></div><div class=\"tl-pane\"><div class=\"lbl\">Average delay</div><div class=\"val\">12.6<small>s</small></div><div class=\"hint\">mean across routes</div></div><div class=\"tl-pane\"><div class=\"lbl\">Most delayed route</div><div class=\"val\"><span class=\"tl-badge badge\" style=\"background:#7B4AA3\">EXT</span></div><div class=\"hint\">492.0 s average, rail</div></div></div><div class=\"tl-belt\"></div><div class=\"tl-body\"><h1 class=\"tl-fleet\">Z\u00fcrich</h1><div class=\"tl-meta\"><span>GTFS delay analysis</span><span>4 cities in snapshot</span></div></div><div class=\"tl-skirt\"></div></section>","total_routes":5058,"avg_delay_seconds":12.6,"total_stops":102717,"top_routes":[{"route_id":"91-5C-Y-j26-1","route_short_name":"EXT","route_type":117,"avg_delay_seconds":492.0,"num_stop_events":5,"mode":"Rail","name":"EXT"},{"route_id":"91-2P-Y-j26-1","route_short_name":"NJ","route_type":105,"avg_delay_seconds":382.6,"num_stop_events":318,"mode":"Rail","name":"NJ"},{"route_id":"91-2Z-Y-j26-1","route_short_name":"NJ","route_type":105,"avg_delay_seconds":363.4,"num_stop_events":589,"mode":"Rail","name":"NJ"},{"route_id":"91-621-I-j26-1","route_short_name":"621I","route_type":101,"avg_delay_seconds":318.0,"num_stop_events":430,"mode":"Rail","name":"621I"},{"route_id":"91-3R-Y-j26-1","route_short_name":"EC","route_type":102,"avg_delay_seconds":315.3,"num_stop_events":334,"mode":"Rail","name":"EC"},{"route_id":"91-1G-j26-1","route_short_name":"001G","route_type":101,"avg_delay_seconds":312.7,"num_stop_events":308,"mode":"Rail","name":"001G"},{"route_id":"91-GEX-A-j26-1","route_short_name":"GEX","route_type":107,"avg_delay_seconds":308.6,"num_stop_events":42,"mode":"Rail","name":"GEX"},{"route_id":"91-8Y-Y-j26-1","route_short_name":"EXT","route_type":117,"avg_delay_seconds":300.0,"num_stop_events":6,"mode":"Rail","name":"EXT"},{"route_id":"91-5D-j26-1","route_short_name":"005D","route_type":101,"avg_delay_seconds":298.9,"num_stop_events":276,"mode":"Rail","name":"005D"},{"route_id":"94-380-1-j26-1","route_short_name":"3801","route_type":1000,"avg_delay_seconds":297.7,"num_stop_events":52,"mode":"Ferry","name":"3801"}],"hours":[{"hour_of_day":0,"avg_delay_seconds":10.7,"num_stop_events":665076,"is_peak_window":true},{"hour_of_day":1,"avg_delay_seconds":7.3,"num_stop_events":224607,"is_peak_window":false},{"hour_of_day":2,"avg_delay_seconds":7.2,"num_stop_events":121624,"is_peak_window":false},{"hour_of_day":3,"avg_delay_seconds":7.7,"num_stop_events":98040,"is_peak_window":false},{"hour_of_day":4,"avg_delay_seconds":9.5,"num_stop_events":119677,"is_peak_window":false},{"hour_of_day":5,"avg_delay_seconds":10.2,"num_stop_events":582733,"is_peak_window":true},{"hour_of_day":6,"avg_delay_seconds":10.3,"num_stop_events":1152062,"is_peak_window":true},{"hour_of_day":7,"avg_delay_seconds":10.4,"num_stop_events":1362245,"is_peak_window":true},{"hour_of_day":8,"avg_delay_seconds":10.3,"num_stop_events":1344731,"is_peak_window":true},{"hour_of_day":9,"avg_delay_seconds":10.1,"num_stop_events":1304631,"is_peak_window":true},{"hour_of_day":10,"avg_delay_seconds":10.4,"num_stop_events":1279539,"is_peak_window":true},{"hour_of_day":11,"avg_delay_seconds":10.2,"num_stop_events":1316830,"is_peak_window":true},{"hour_of_day":12,"avg_delay_seconds":10.2,"num_stop_events":1362041,"is_peak_window":true},{"hour_of_day":13,"avg_delay_seconds":10.1,"num_stop_events":1369020,"is_peak_window":true},{"hour_of_day":14,"avg_delay_seconds":10.2,"num_stop_events":1330776,"is_peak_window":true},{"hour_of_day":15,"avg_delay_seconds":9.9,"num_stop_events":1397829,"is_peak_window":false},{"hour_of_day":16,"avg_delay_seconds":10.1,"num_stop_events":1514885,"is_peak_window":true},{"hour_of_day":17,"avg_delay_seconds":10.4,"num_stop_events":1529851,"is_peak_window":true},{"hour_of_day":18,"avg_delay_seconds":10.7,"num_stop_events":1465990,"is_peak_window":true},{"hour_of_day":19,"avg_delay_seconds":10.7,"num_stop_events":1286357,"is_peak_window":true},{"hour_of_day":20,"avg_delay_seconds":11.0,"num_stop_events":1049744,"is_peak_window":true},{"hour_of_day":21,"avg_delay_seconds":10.9,"num_stop_events":879898,"is_peak_window":true},{"hour_of_day":22,"avg_delay_seconds":11.2,"num_stop_events":822039,"is_peak_window":true},{"hour_of_day":23,"avg_delay_seconds":11.6,"num_stop_events":811632,"is_peak_window":true}],"stops":[{"stop_name":"Schwyz, Zentrum","stop_lat":47.02116241,"stop_lon":8.65134213,"total_scheduled_stops":44862,"busy_rank":1},{"stop_name":"Schwyz, Bahnhof","stop_lat":47.0267289,"stop_lon":8.63216309,"total_scheduled_stops":24326,"busy_rank":2},{"stop_name":"Brunnen, Bahnhof","stop_lat":46.99955233,"stop_lon":8.61000166,"total_scheduled_stops":24178,"busy_rank":3},{"stop_name":"Ibach, Mythen Center","stop_lat":47.01563209,"stop_lon":8.64818006,"total_scheduled_stops":23355,"busy_rank":4},{"stop_name":"Schwyz, Steisteg","stop_lat":47.01966812,"stop_lon":8.65173738,"total_scheduled_stops":23350,"busy_rank":5},{"stop_name":"Schwyz, L\u00fccken","stop_lat":47.01860861,"stop_lon":8.65145891,"total_scheduled_stops":20581,"busy_rank":6},{"stop_name":"Ibach, Mythen Center","stop_lat":47.01577296,"stop_lon":8.64845853,"total_scheduled_stops":20576,"busy_rank":7},{"stop_name":"K\u00fcssnacht am Rigi, Bahnhof","stop_lat":47.08310201,"stop_lon":8.43316829,"total_scheduled_stops":19035,"busy_rank":8},{"stop_name":"Schwyz, Zentrum","stop_lat":47.0212114,"stop_lon":8.65136009,"total_scheduled_stops":18559,"busy_rank":9},{"stop_name":"Yverdon-les-Bains, gare","stop_lat":46.78148799,"stop_lon":6.63973573,"total_scheduled_stops":18078,"busy_rank":10},{"stop_name":"Brunnen, Kantonalbank","stop_lat":46.99670953,"stop_lon":8.60739654,"total_scheduled_stops":17917,"busy_rank":11},{"stop_name":"Yverdon-les-Bains, gare","stop_lat":46.78116811,"stop_lon":6.63986149,"total_scheduled_stops":17815,"busy_rank":12},{"stop_name":"Brunnen, Kantonalbank","stop_lat":46.99662988,"stop_lon":8.60721688,"total_scheduled_stops":17475,"busy_rank":13},{"stop_name":"Weggis, Dorfplatz","stop_lat":47.03228256,"stop_lon":8.43548595,"total_scheduled_stops":17382,"busy_rank":14},{"stop_name":"Goldau, L\u00f6wenplatz","stop_lat":47.05063554,"stop_lon":8.55064997,"total_scheduled_stops":16620,"busy_rank":15},{"stop_name":"Goldau, Tierpark","stop_lat":47.05176785,"stop_lon":8.55350661,"total_scheduled_stops":16620,"busy_rank":16},{"stop_name":"Seewen SZ, Seewen Markt","stop_lat":47.03246012,"stop_lon":8.6277344,"total_scheduled_stops":16523,"busy_rank":17},{"stop_name":"Goldau, L\u00f6wenplatz","stop_lat":47.0506539,"stop_lon":8.55075776,"total_scheduled_stops":16466,"busy_rank":18},{"stop_name":"Goldau, Tierpark","stop_lat":47.05169441,"stop_lon":8.55341678,"total_scheduled_stops":16466,"busy_rank":19},{"stop_name":"Basel, Markthalle","stop_lat":47.54875262,"stop_lon":7.58719784,"total_scheduled_stops":14728,"busy_rank":20}]}},"modes":{"Tram":"#1E7F48","Metro":"#B84A17","Rail":"#7B4AA3","Bus":"#1F6BAE","Ferry":"#137E9E","Trolleybus":"#4F7D24","Coach":"#4A6680","Aerial lift":"#8A6A0A","Funicular":"#9A4A41","Other":"#5A5955"},"overview":{"vars":"--top:#3A3A36;--top-ink:#EDEDEA;--body:#2A2A27;--ink:#EDEDEA;--stripe:#5E5D59;--accent:#EDEDEA;--on-accent:#0E0E0D;--bg:#0E0E0D;--wdth:100%;--badge-r:4px;","train":"<section class=\"tl-train tl-enter\" data-city=\"overview\" aria-label=\"All cities\"><a class=\"tl-car\" href=\"#budapest\" target=\"_self\" style=\"--top:#F0BF00;--top-ink:#1A1606;--body:#F0BF00;--ink:#1A1606;--stripe:#1A1606;--accent:#F0BF00;--on-accent:#0E0E0D;--bg:#0F0E0A;--wdth:118%;--badge-r:5px;--i:0;\" aria-label=\"Open Budapest\"><div class=\"tl-roof\"><span class=\"tl-note\">BKK network</span></div><div class=\"tl-windows\"><div class=\"tl-pane\"><div class=\"lbl\">Average delay</div><div class=\"val\">1.6<small>s</small></div><div class=\"hint\">380 routes, 6,210 stops</div></div></div><div class=\"tl-belt\"></div><div class=\"tl-body\"><div class=\"tl-fleet\">Budapest</div></div></a><a class=\"tl-car\" href=\"#helsinki\" target=\"_self\" style=\"--top:#E9E8DE;--top-ink:#16211B;--body:#0A7F4F;--ink:#FFFFFF;--stripe:#E9E8DE;--accent:#3DBA80;--on-accent:#0E0E0D;--bg:#0B0F0D;--wdth:88%;--badge-r:999px;--i:1;\" aria-label=\"Open Helsinki\"><div class=\"tl-roof\"><span class=\"tl-note\">HSL region</span></div><div class=\"tl-windows\"><div class=\"tl-pane\"><div class=\"lbl\">Average delay</div><div class=\"val\">64.0<small>s</small></div><div class=\"hint\">4 routes, 5 stops</div></div></div><div class=\"tl-belt\"></div><div class=\"tl-body\"><div class=\"tl-fleet\">Helsinki</div></div></a><a class=\"tl-car\" href=\"#prague\" target=\"_self\" style=\"--top:#B8141F;--top-ink:#F3E7CC;--body:#B8141F;--ink:#F3E7CC;--stripe:#EADBB8;--accent:#E4575B;--on-accent:#0E0E0D;--bg:#100C0B;--wdth:108%;--badge-r:2px;--i:2;\" aria-label=\"Open Praha\"><div class=\"tl-roof\"><span class=\"tl-note\">PID network</span></div><div class=\"tl-windows\"><div class=\"tl-pane\"><div class=\"lbl\">Average delay</div><div class=\"val\">3.3<small>s</small></div><div class=\"hint\">885 routes, 18,982 stops</div></div></div><div class=\"tl-belt\"></div><div class=\"tl-body\"><div class=\"tl-fleet\">Praha</div></div></a><a class=\"tl-car\" href=\"#zurich\" target=\"_self\" style=\"--top:#F1F1EC;--top-ink:#0F1A2A;--body:#1B5AA6;--ink:#FFFFFF;--stripe:#F1F1EC;--accent:#5E9CE8;--on-accent:#0E0E0D;--bg:#0B0D10;--wdth:100%;--badge-r:0px;--i:3;\" aria-label=\"Open Z\u00fcrich\"><div class=\"tl-roof\"><span class=\"tl-note\">Swiss national timetable</span></div><div class=\"tl-windows\"><div class=\"tl-pane\"><div class=\"lbl\">Average delay</div><div class=\"val\">12.6<small>s</small></div><div class=\"hint\">5,058 routes, 102,717 stops</div></div></div><div class=\"tl-belt\"></div><div class=\"tl-body\"><div class=\"tl-fleet\">Z\u00fcrich</div></div></a><div class=\"tl-rail\"></div></section>","table":"<div class=\"tl-table-wrap\"><table class=\"tl-table\"><thead><tr><th>City</th><th class=\"r\">Routes</th><th class=\"r\">Stops</th><th class=\"r\">Stop events</th><th>Average delay</th><th>Peak hours</th><th>Most delayed route</th><th>Busiest stop</th></tr></thead><tbody><tr style=\"--top:#F0BF00;--top-ink:#1A1606;--body:#F0BF00;--ink:#1A1606;--stripe:#1A1606;--accent:#F0BF00;--on-accent:#0E0E0D;--bg:#0F0E0A;--wdth:118%;--badge-r:5px;\"><th scope=\"row\"><a href=\"#budapest\" target=\"_self\"><span class=\"lv\" style=\"background:linear-gradient(180deg,#F0BF00 0 30%,#111315 30% 58%,#1A1606 58% 68%,#F0BF00 68%)\"></span>Budapest</a></th><td class=\"num r\">380</td><td class=\"num r\">6,210</td><td class=\"num r\">5,251,612</td><td class=\"avg\"><span class=\"num\">1.6 s</span><span class=\"bar\" style=\"width:3%\"></span></td><td class=\"num pk\">00:00 to 03:59</td><td class=\"wr\"><span class=\"tl-badge badge\" style=\"background:#1E7F48\">60</span><span class=\"num s\">16.5 s</span></td><td class=\"bs\">Keleti p\u00e1lyaudvar M<span class=\"num s\">8,629</span></td></tr><tr style=\"--top:#E9E8DE;--top-ink:#16211B;--body:#0A7F4F;--ink:#FFFFFF;--stripe:#E9E8DE;--accent:#3DBA80;--on-accent:#0E0E0D;--bg:#0B0F0D;--wdth:88%;--badge-r:999px;\"><th scope=\"row\"><a href=\"#helsinki\" target=\"_self\"><span class=\"lv\" style=\"background:linear-gradient(180deg,#E9E8DE 0 30%,#111315 30% 58%,#E9E8DE 58% 68%,#0A7F4F 68%)\"></span>Helsinki</a></th><td class=\"num r\">4</td><td class=\"num r\">5</td><td class=\"num r\">11</td><td class=\"avg\"><span class=\"num\">64.0 s</span><span class=\"bar\" style=\"width:100%\"></span></td><td class=\"num pk\">01:00, 16:00 to 17:59</td><td class=\"wr\"><span class=\"tl-badge badge\" style=\"background:#1E7F48\">9</span><span class=\"num s\">75.0 s</span></td><td class=\"bs\">Rautatientori<span class=\"num s\">4</span></td></tr><tr style=\"--top:#B8141F;--top-ink:#F3E7CC;--body:#B8141F;--ink:#F3E7CC;--stripe:#EADBB8;--accent:#E4575B;--on-accent:#0E0E0D;--bg:#100C0B;--wdth:108%;--badge-r:2px;\"><th scope=\"row\"><a href=\"#prague\" target=\"_self\"><span class=\"lv\" style=\"background:linear-gradient(180deg,#B8141F 0 30%,#111315 30% 58%,#EADBB8 58% 68%,#B8141F 68%)\"></span>Praha</a></th><td class=\"num r\">885</td><td class=\"num r\">18,982</td><td class=\"num r\">1,674,971</td><td class=\"avg\"><span class=\"num\">3.3 s</span><span class=\"bar\" style=\"width:5%\"></span></td><td class=\"num pk\">01:00 to 04:59</td><td class=\"wr\"><span class=\"tl-badge badge\" style=\"background:#7B4AA3\">T3</span><span class=\"num s\">62.0 s</span></td><td class=\"bs\">Hor\u010di\u010dkova<span class=\"num s\">2,417</span></td></tr><tr style=\"--top:#F1F1EC;--top-ink:#0F1A2A;--body:#1B5AA6;--ink:#FFFFFF;--stripe:#F1F1EC;--accent:#5E9CE8;--on-accent:#0E0E0D;--bg:#0B0D10;--wdth:100%;--badge-r:0px;\"><th scope=\"row\"><a href=\"#zurich\" target=\"_self\"><span class=\"lv\" style=\"background:linear-gradient(180deg,#F1F1EC 0 30%,#111315 30% 58%,#F1F1EC 58% 68%,#1B5AA6 68%)\"></span>Z\u00fcrich</a></th><td class=\"num r\">5,058</td><td class=\"num r\">102,717</td><td class=\"num r\">24,391,857</td><td class=\"avg\"><span class=\"num\">12.6 s</span><span class=\"bar\" style=\"width:20%\"></span></td><td class=\"num pk\">00:00, 05:00 to 14:59, 16:00 to 23:59</td><td class=\"wr\"><span class=\"tl-badge badge\" style=\"background:#7B4AA3\">EXT</span><span class=\"num s\">492.0 s</span></td><td class=\"bs\">Schwyz, Zentrum<span class=\"num s\">44,862</span></td></tr></tbody></table></div>","mix":"<div class=\"tl-mixrow\"><span class=\"nm\">Budapest</span><div class=\"tl-mix-bar\"><span style=\"flex:315;background:#1F6BAE\" title=\"Bus: 315 routes (83%)\"></span><span style=\"flex:41;background:#1E7F48\" title=\"Tram: 41 routes (11%)\"></span><span style=\"flex:14;background:#4F7D24\" title=\"Trolleybus: 14 routes (4%)\"></span><span style=\"flex:5;background:#7B4AA3\" title=\"Rail: 5 routes (1%)\"></span><span style=\"flex:4;background:#B84A17\" title=\"Metro: 4 routes (1%)\"></span><span style=\"flex:1;background:#137E9E\" title=\"Ferry: 1 routes (<1%)\"></span></div><span class=\"num top\">Bus 83%, Tram 11%, Trolleybus 4%</span></div><div class=\"tl-mixrow\"><span class=\"nm\">Helsinki</span><div class=\"tl-mix-bar\"><span style=\"flex:2;background:#1F6BAE\" title=\"Bus: 2 routes (50%)\"></span><span style=\"flex:1;background:#1E7F48\" title=\"Tram: 1 routes (25%)\"></span><span style=\"flex:1;background:#B84A17\" title=\"Metro: 1 routes (25%)\"></span></div><span class=\"num top\">Bus 50%, Tram 25%, Metro 25%</span></div><div class=\"tl-mixrow\"><span class=\"nm\">Praha</span><div class=\"tl-mix-bar\"><span style=\"flex:742;background:#1F6BAE\" title=\"Bus: 742 routes (84%)\"></span><span style=\"flex:91;background:#7B4AA3\" title=\"Rail: 91 routes (10%)\"></span><span style=\"flex:40;background:#1E7F48\" title=\"Tram: 40 routes (5%)\"></span><span style=\"flex:5;background:#137E9E\" title=\"Ferry: 5 routes (<1%)\"></span><span style=\"flex:4;background:#4F7D24\" title=\"Trolleybus: 4 routes (<1%)\"></span><span style=\"flex:3;background:#B84A17\" title=\"Metro: 3 routes (<1%)\"></span></div><span class=\"num top\">Bus 84%, Rail 10%, Tram 5%</span></div><div class=\"tl-mixrow\"><span class=\"nm\">Z\u00fcrich</span><div class=\"tl-mix-bar\"><span style=\"flex:3655;background:#1F6BAE\" title=\"Bus: 3,655 routes (72%)\"></span><span style=\"flex:895;background:#7B4AA3\" title=\"Rail: 895 routes (18%)\"></span><span style=\"flex:295;background:#8A6A0A\" title=\"Aerial lift: 295 routes (6%)\"></span><span style=\"flex:104;background:#137E9E\" title=\"Ferry: 104 routes (2%)\"></span><span style=\"flex:53;background:#9A4A41\" title=\"Funicular: 53 routes (1%)\"></span><span style=\"flex:50;background:#1E7F48\" title=\"Tram: 50 routes (<1%)\"></span><span style=\"flex:3;background:#5A5955\" title=\"Other: 3 routes (<1%)\"></span><span style=\"flex:2;background:#B84A17\" title=\"Metro: 2 routes (<1%)\"></span><span style=\"flex:1;background:#4A6680\" title=\"Coach: 1 routes (<1%)\"></span></div><span class=\"num top\">Bus 72%, Rail 18%, Aerial lift 6%</span></div><div class=\"tl-mix-legend\"><span><i style=\"background:#8A6A0A\"></i>Aerial lift</span><span><i style=\"background:#1F6BAE\"></i>Bus</span><span><i style=\"background:#4A6680\"></i>Coach</span><span><i style=\"background:#137E9E\"></i>Ferry</span><span><i style=\"background:#9A4A41\"></i>Funicular</span><span><i style=\"background:#B84A17\"></i>Metro</span><span><i style=\"background:#5A5955\"></i>Other</span><span><i style=\"background:#7B4AA3\"></i>Rail</span><span><i style=\"background:#1E7F48\"></i>Tram</span><span><i style=\"background:#4F7D24\"></i>Trolleybus</span></div>","chip_css":":not(.tl-mini-h) > .tl-chip { background:linear-gradient(90deg,#F0BF00 0% 25%,#0A7F4F 25% 50%,#B8141F 50% 75%,#1B5AA6 75% 100%) !important; }","peaks":{"budapest":"00:00 to 03:59","helsinki":"01:00, 16:00 to 17:59","prague":"01:00 to 04:59","zurich":"00:00, 05:00 to 14:59, 16:00 to 23:59"}}};
+const DATA = PAYLOAD.cities, MODES = PAYLOAD.modes;
+const PAPER = "#EDEDEA", MUTED = "#8F8E89", LINE = "#262624";
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let hourChart, map, markerLayer, minis = [];
+const OV = PAYLOAD.overview;
 
-function kpis(d) {
-  const routes = d.top_routes;
-  const avg = routes.length ? routes.reduce((s,r)=>s+r.avg_delay_seconds,0)/routes.length : 0;
-  const worst = routes[0];
-  const cards = [
-    ["Top routes shown", routes.length.toLocaleString(), "by avg delay", "#007AC9"],
-    ["Stops", d.total_stops.toLocaleString(), "scheduled network", "#00985F"],
-    ["Avg delay", avg.toFixed(1)+"s", "across shown routes", "#FF6319"],
-    ["Worst route", worst ? worst.name : "-",
-      worst ? worst.avg_delay_seconds.toFixed(0)+"s avg" : "", worst ? worst.color : "#00B5A0"],
-  ];
-  document.getElementById("kpis").innerHTML = cards.map(([l,v,h,a])=>
-    `<div class="card" style="--accent:${a}"><div class="lbl">${l}</div>`+
-    `<div class="val">${v}</div><div class="hint">${h}</div></div>`).join("");
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = n => n.toLocaleString("en-US", {minimumFractionDigits:1, maximumFractionDigits:1});
+const badge = r => `<span class="badge" style="background:${MODES[r.mode] || MODES.Other}">${esc(r.name)}</span>`;
+
+Chart.defaults.font.family = "Archivo, system-ui, sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.color = MUTED;
+
+function header(city, d) {
+  document.documentElement.setAttribute("style", d.vars);
+  document.getElementById("livery").innerHTML = d.livery;
+  document.title = `${d.style.name} | Transit Lens`;
 }
 
 function hourGraph(d) {
-  const labels = d.hours.map(h=>String(h.hour_of_day).padStart(2,"0")+":00");
-  const vals = d.hours.map(h=>h.avg_delay_seconds);
-  const peaks = d.hours.map(h=>h.is_peak_window ? h.avg_delay_seconds : null);
-  const ctx = document.getElementById("hourChart").getContext("2d");
-  const grad = ctx.createLinearGradient(0,0,0,300);
-  grad.addColorStop(0,"rgba(51,195,255,0.45)"); grad.addColorStop(1,"rgba(51,195,255,0.04)");
+  const box = document.getElementById("hourChart");
   if (hourChart) hourChart.destroy();
-  hourChart = new Chart(ctx, {
-    type:"line",
-    data:{ labels, datasets:[
-      { data:vals, borderColor:"#33C3FF", backgroundColor:grad, borderWidth:2,
-        fill:true, tension:0.35, pointRadius:0 },
-      { data:peaks, borderColor:"transparent", backgroundColor:"#FF6319",
-        pointRadius:5, pointHoverRadius:7, showLine:false },
-    ]},
-    options:{ responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{display:false}, tooltip:{ callbacks:{
-        label:c=>` ${c.parsed.y}s avg delay` } } },
-      scales:{ x:{ grid:{color:"#1a2236"}, ticks:{color:"#8B95A7",maxRotation:0,autoSkip:true,maxTicksLimit:12} },
-        y:{ grid:{color:"#1a2236"}, ticks:{color:"#8B95A7"}, title:{display:true,text:"avg delay (s)",color:"#8B95A7"} } } }
+  const hours = d.hours;
+  const mean = hours.reduce((s, h) => s + h.avg_delay_seconds, 0) / Math.max(1, hours.length);
+  const accent = d.style.accent;
+  hourChart = new Chart(box.getContext("2d"), {
+    type: "line",
+    data: {
+      datasets: [
+        { data: hours.map(h => ({ x: h.hour_of_day, y: h.avg_delay_seconds })), borderColor: PAPER, borderWidth: 1.5,
+          tension: 0.35, cubicInterpolationMode: "monotone",
+          pointRadius: hours.map(h => h.is_peak_window ? 3.5 : 0),
+          pointHoverRadius: 5, pointBackgroundColor: accent, pointBorderWidth: 0,
+          pointHoverBackgroundColor: accent },
+        { data: hours.map(h => ({ x: h.hour_of_day, y: mean })), borderColor: MUTED, borderWidth: 1, borderDash: [3, 3],
+          pointRadius: 0, pointHoverRadius: 0 },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          filter: i => i.datasetIndex === 0, backgroundColor: "#1A1A18", borderColor: "#3A3A36",
+          borderWidth: 1, titleFont: { weight: "600" }, displayColors: false,
+          padding: 8, cornerRadius: 4,
+          callbacks: { title: c => String(c[0].parsed.x).padStart(2, "0") + ":00", label: c => ` ${fmt(c.parsed.y)} s average, ${hours[c.dataIndex].num_stop_events.toLocaleString("en-US")} stop events` },
+        },
+      },
+      scales: {
+        x: { type: "linear", grid: { display: false }, border: { display: false },
+             min: hours.length ? hours[0].hour_of_day : 0, max: hours.length ? hours[hours.length - 1].hour_of_day : 23,
+             ticks: { maxRotation: 0, stepSize: 1, autoSkip: true, autoSkipPadding: 16, callback: v => String(v).padStart(2, "0") + ":00" } },
+        y: { beginAtZero: true, grid: { color: LINE }, border: { display: false }, ticks: { maxTicksLimit: 5 },
+             title: { display: true, text: "seconds" } },
+      },
+    },
   });
-  const ph = d.hours.filter(h=>h.is_peak_window).map(h=>String(h.hour_of_day).padStart(2,"0")+":00");
-  document.getElementById("peakNote").textContent = ph.length ? "Peak windows: "+ph.join(", ") : "";
 }
 
-function routeGraph(d) {
-  const rows = d.top_routes;
-  const ctx = document.getElementById("routeChart").getContext("2d");
-  if (routeChart) routeChart.destroy();
-  routeChart = new Chart(ctx, {
-    type:"bar",
-    data:{ labels: rows.map(r=>r.name),
-      datasets:[{ data:rows.map(r=>r.avg_delay_seconds),
-        backgroundColor:rows.map(r=>r.color), borderRadius:5, barThickness:16 }] },
-    options:{ indexAxis:"y", responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{display:false}, tooltip:{ callbacks:{
-        label:c=>` ${c.parsed.x}s avg · ${rows[c.dataIndex].mode}` } } },
-      scales:{ x:{ grid:{color:"#1a2236"}, ticks:{color:"#8B95A7"}, title:{display:true,text:"avg delay (s)",color:"#8B95A7"} },
-        y:{ grid:{display:false}, ticks:{color:"#C7D0E0",font:{weight:"600"}} } } }
-  });
+function routes(d) {
+  const el = document.getElementById("routes");
+  if (!d.top_routes.length) { el.innerHTML = `<li class="empty">No routes in this feed.</li>`; return; }
+  const mx = Math.max(...d.top_routes.map(r => r.avg_delay_seconds)) || 1;
+  el.innerHTML = d.top_routes.map(r =>
+    `<li title="${esc(r.name)}: ${r.num_stop_events.toLocaleString("en-US")} stop events">${badge(r)}` +
+    `<span class="mode">${esc(r.mode)}</span>` +
+    `<span class="bar" style="width:${Math.max(2, 100 * r.avg_delay_seconds / mx).toFixed(1)}%"></span>` +
+    `<span class="v num">${fmt(r.avg_delay_seconds)}</span></li>`).join("");
 }
 
 function stopsView(d) {
-  const stops = d.stops.filter(s=>s.stop_lat!=null && s.stop_lon!=null);
-  const tbody = document.querySelector("#stopTable tbody");
-  const max = Math.max(1, ...d.stops.map(s=>s.total_scheduled_stops));
-  tbody.innerHTML = d.stops.map(s=>{
-    const w = Math.round(100*s.total_scheduled_stops/max);
-    return `<tr><td class="num">${s.busy_rank}</td><td>${s.stop_name||"-"}</td>`+
-      `<td><div class="num">${s.total_scheduled_stops.toLocaleString()}</div>`+
-      `<div class="bar" style="width:${w}%"></div></td></tr>`;
-  }).join("");
+  const mx = Math.max(1, ...d.stops.map(s => s.total_scheduled_stops));
+  document.getElementById("stops").innerHTML = d.stops.map(s =>
+    `<li><div class="row"><span class="rk num">${s.busy_rank}</span><span class="nm">${esc(s.stop_name || "Unnamed stop")}</span>` +
+    `<span class="ev num">${s.total_scheduled_stops.toLocaleString("en-US")}</span></div>` +
+    `<div class="bar" style="width:calc(${(100 * s.total_scheduled_stops / mx).toFixed(1)}% - 2.25rem)"></div></li>`).join("");
 
+  const pts = d.stops.filter(s => s.stop_lat != null && s.stop_lon != null);
   if (!map) {
-    map = L.map("map",{ zoomControl:true, attributionControl:false });
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-      { maxZoom:19 }).addTo(map);
+    map = L.map("map", { zoomControl: true, scrollWheelZoom: false });
+    map.attributionControl.setPrefix(false);
+    // Carto raster tiles now require an API key; Esri's dark canvas is keyless with attribution.
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+      { maxZoom: 16, attribution: "Esri, HERE, Garmin, OpenStreetMap contributors" }).addTo(map);
     markerLayer = L.layerGroup().addTo(map);
   }
   markerLayer.clearLayers();
-  if (!stops.length) { map.setView([0,0],2); return; }
-  const mx = Math.max(1, ...stops.map(s=>s.total_scheduled_stops));
-  const pts = [];
-  stops.forEach(s=>{
-    const t = s.total_scheduled_stops/mx;
-    const r = 6 + t*16;
-    L.circleMarker([s.stop_lat,s.stop_lon],{
-      radius:r, color:"#ffffff", weight:1, opacity:0.5,
-      fillColor:"#00B5A0", fillOpacity:0.35+0.5*t
-    }).bindTooltip(`${s.stop_name||"Stop"} · ${s.total_scheduled_stops.toLocaleString()} stop events`)
+  if (!pts.length) { map.setView([50, 10], 4); return; }
+  const pmx = Math.max(1, ...pts.map(s => s.total_scheduled_stops));
+  pts.forEach(s => {
+    L.circleMarker([s.stop_lat, s.stop_lon], {
+      radius: 4 + 10 * Math.sqrt(s.total_scheduled_stops / pmx), color: "#0E0E0D", weight: 1,
+      fillColor: d.style.accent, fillOpacity: 0.85,
+    }).bindTooltip(`${esc(s.stop_name || "Stop")}<br><span class="num">${s.total_scheduled_stops.toLocaleString("en-US")}</span> stop events`)
       .addTo(markerLayer);
-    pts.push([s.stop_lat,s.stop_lon]);
   });
-  map.fitBounds(pts, { padding:[30,30] });
+  map.fitBounds(pts.map(s => [s.stop_lat, s.stop_lon]), { padding: [32, 32], maxZoom: 14 });
 }
 
-function legend() {
-  document.getElementById("legend").innerHTML = Object.entries(MODES)
-    .filter(([k])=>k!=="Suburban rail")
-    .map(([k,c])=>`<span class="badge" style="background:${c}">${k}</span>`).join("");
-}
-
-function render(city) {
-  const d = DATA[city];
-  document.getElementById("subtitle").textContent =
-    `${d.title} · GTFS delay intelligence, ${Object.keys(DATA).length} cities loaded`;
-  kpis(d); hourGraph(d); routeGraph(d); stopsView(d);
-}
-
-(function init(){
-  const sel = document.getElementById("city");
-  Object.keys(DATA).sort().forEach(c=>{
-    const o = document.createElement("option");
-    o.value = c; o.textContent = DATA[c].title;
-    sel.appendChild(o);
+function miniCharts() {
+  minis.forEach(c => c.destroy());
+  const cities = Object.keys(DATA).sort();
+  const box = document.getElementById("minis");
+  box.innerHTML = cities.map(c =>
+    `<div style="${DATA[c].vars}"><div class="tl-mini-h"><span class="tl-chip" style="background:linear-gradient(180deg, var(--body) 0 62%, var(--stripe) 62% 78%, var(--body) 78%) !important"></span>${esc(DATA[c].style.name)}</div>` +
+    `<div class="tl-mini-sub">${esc(OV.peaks[c] || "no peaks flagged")}</div>` +
+    `<div class="mini-box"><canvas aria-label="Average delay by hour, ${esc(DATA[c].style.name)}" role="img"></canvas></div></div>`).join("");
+  minis = cities.map((c, i) => {
+    const hours = DATA[c].hours, accent = DATA[c].style.accent;
+    const mean = hours.reduce((s, h) => s + h.avg_delay_seconds, 0) / Math.max(1, hours.length);
+    return new Chart(box.querySelectorAll("canvas")[i].getContext("2d"), {
+      type: "line",
+      data: { datasets: [
+        { data: hours.map(h => ({ x: h.hour_of_day, y: h.avg_delay_seconds })), borderColor: accent, borderWidth: 1.5,
+          tension: 0.35, cubicInterpolationMode: "monotone", pointRadius: hours.map(h => h.is_peak_window ? 2.5 : 0),
+          pointBackgroundColor: accent, pointBorderWidth: 0 },
+        { data: [{ x: 0, y: mean }, { x: 23, y: mean }], borderColor: MUTED, borderWidth: 1, borderDash: [3, 3], pointRadius: 0 },
+      ] },
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: false,
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        scales: {
+          x: { type: "linear", min: 0, max: 23, grid: { display: false }, border: { display: false },
+               afterBuildTicks: ax => { ax.ticks = [0, 6, 12, 18, 23].map(v => ({ value: v })); },
+               ticks: { maxRotation: 0, callback: v => String(v).padStart(2, "0") } },
+          y: { beginAtZero: true, grid: { color: LINE }, border: { display: false }, ticks: { maxTicksLimit: 4 } },
+        },
+      },
+    });
   });
-  sel.addEventListener("change", e=>render(e.target.value));
-  legend();
-  render(sel.value);
+}
+
+function render(view) {
+  const main = document.getElementById("main");
+  if (!reduceMotion) { main.classList.add("swap"); main.offsetWidth; main.classList.remove("swap"); }
+  document.querySelectorAll("#switch button").forEach(b => b.setAttribute("aria-pressed", b.dataset.city === view));
+  const isOverview = view === "overview";
+  document.getElementById("overview").hidden = !isOverview;
+  document.getElementById("cityView").hidden = isOverview;
+  document.getElementById("chipCss").textContent = isOverview ? OV.chip_css : "";
+  if (isOverview) {
+    document.documentElement.setAttribute("style", OV.vars);
+    document.getElementById("train").innerHTML = OV.train;
+    document.getElementById("compare").innerHTML = OV.table;
+    document.getElementById("mix").innerHTML = OV.mix;
+    document.title = "Overview | Transit Lens";
+    miniCharts();
+  } else {
+    const d = DATA[view];
+    header(view, d); hourGraph(d); routes(d); stopsView(d);
+    map.invalidateSize();
+  }
+  if (location.hash.slice(1) !== view) history.replaceState(null, "", "#" + view);
+}
+
+(function init() {
+  const cities = Object.keys(DATA).sort();
+  const views = ["overview", ...cities];
+  const sw = document.getElementById("switch");
+  sw.innerHTML = views.map(c => `<button type="button" data-city="${c}">${esc(c === "overview" ? "Overview" : DATA[c].style.name)}</button>`).join("");
+  sw.addEventListener("click", e => { const b = e.target.closest("button"); if (b) render(b.dataset.city); });
+  const pick = () => { const h = location.hash.slice(1); return views.includes(h) ? h : "overview"; };
+  window.addEventListener("hashchange", () => render(pick()));
+  render(pick());
 })();
 </script>
 </body>

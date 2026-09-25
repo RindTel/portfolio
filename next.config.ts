@@ -36,8 +36,8 @@ const appCsp = [
 // - connect-src cdn.plot.ly: the scattergeo map fetches its topojson at runtime.
 const demoCsp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.plot.ly https://unpkg.com https://cdn.jsdelivr.net",
-  "style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.plot.ly https://cdn.jsdelivr.net",
+  "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com",
   "img-src 'self' data: https:",
   "font-src 'self' data: https://fonts.gstatic.com",
   "connect-src 'self' https://cdn.plot.ly",
