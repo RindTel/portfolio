@@ -48,7 +48,7 @@ export const projects: Project[] = [
     stack: ["Python", "Polars", "Parquet", "MLflow", "Streamlit", "pytest"],
     github: "https://github.com/RindTel/backtesting",
     demo: "/demos/backtesting.html",
-    image: { src: "/projects/backtesting.png", width: 3200, height: 2000, alt: "Backtester leak test: the same MA crossover on the same Bitcoin data returns +598.1% through the correct engine and +1285.7% through the leaky one, with both equity curves overlaid" },
+    image: { src: "/projects/backtesting.png", width: 3200, height: 2000, alt: "Backtester Backtest page: an MA crossover 10/30 on Bitcoin from 2020 to 2024 returns +598.1% with a 1.09 Sharpe and -64.3% max drawdown, its equity curve drawn against buy and hold" },
     pipeline: {
       rows: 1,
       cols: 5,
