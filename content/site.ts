@@ -4,7 +4,7 @@ export const person = {
   name: "Rindrit Telaku",
   first: "Rindrit",
   last: "Telaku",
-  role: "Data Engineer",
+  role: "Data & AI Engineer",
   statement: "Building data systems, pipelines and intelligent software.",
   email: "rindritelaku@gmail.com",
   github: "https://github.com/RindTel",
