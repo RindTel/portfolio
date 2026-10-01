@@ -4,7 +4,7 @@ export const person = {
   name: "Rindrit Telaku",
   first: "Rindrit",
   last: "Telaku",
-  role: "Data & AI Engineer",
+  role: "Data Engineer",
   statement: "Building data systems, pipelines and intelligent software.",
   email: "rindritelaku@gmail.com",
   github: "https://github.com/RindTel",
@@ -166,31 +166,31 @@ export const experience: Experience[] = [
     mode: "Remote",
     current: true,
     summary:
-      "Production ingestion on AWS: data from several upstream sources normalized into one pipeline, with a batch path, a streaming path, and automated checks in front of every downstream consumer.",
+      "Lakehouse ingestion on AWS: external data comes in through one framework and is refined into tables ready for analytics. Step Functions and EventBridge run it on schedule, Terraform defines the infrastructure, and SNS and CloudWatch raise the alarm when a run fails.",
     highlights: [
-      { label: "Batch ETL", detail: "AWS Glue jobs that land normalized data in S3 and expose it through Athena." },
-      { label: "Streaming", detail: "A streaming pipeline that turns incoming events into real-time notifications." },
-      { label: "Data quality", detail: "Automated tests that reject malformed or inconsistent records before anyone downstream sees them." },
-      { label: "Ownership", detail: "Designed and maintained the pipelines in production, not only built them." },
+      { label: "Config-first ingestion", detail: "Adding a new external source is mostly a matter of writing config. PySpark jobs on EMR Serverless handle the rest." },
+      { label: "Lakehouse layers", detail: "Raw data moves through Bronze, Silver and Gold Iceberg tables with incremental merges, and schema changes are absorbed without rewrites." },
+      { label: "Quality gates", detail: "Declarative freshness, null-rate, uniqueness and custom SQL checks stop bad loads, and more than 800 pytest tests sit behind them." },
+      { label: "Backend", detail: "Features shipped in the FastAPI and PostgreSQL backend: hybrid search, a Bedrock LLM assistant, news alerts and role-based access." },
     ],
-    stack: ["Python", "AWS Glue", "S3", "Athena", "SQL", "ETL"],
+    stack: ["Python", "PySpark", "EMR Serverless", "Apache Iceberg", "Step Functions", "Terraform", "FastAPI"],
   },
 ];
 
 export const about = {
   intro:
-    "Data & AI engineer in Pristina, Kosovo. I build data pipelines end to end and care most about the parts that decide whether they survive production.",
+    "Data engineer in Pristina, Kosovo. I build data pipelines end to end and care most about the parts that decide whether they survive production.",
   facts: [
     { label: "Based in", value: "Pristina, Kosovo (GMT+1)" },
     { label: "Currently", value: "Building production ingestion pipelines at ProQu" },
     { label: "Open to", value: "Remote data engineering and AI engineering roles" },
   ],
   strengths: [
-    { label: "Pipeline architecture", detail: "Ingest, stage, mart, serve. Idempotent loads keyed by content hash, isolated connections, every stage logged." },
-    { label: "Retrieval systems", detail: "Local RAG end to end: chunking, embeddings, a persistent FAISS index and answers that cite their chunks." },
-    { label: "Data modeling", detail: "dbt on DuckDB: staging views, analytical marts, macros for messy source formats, tenant keys where IDs collide." },
+    { label: "Cloud ingestion", detail: "Spark on AWS into Iceberg lakehouse layers. Sources are added through config, runs are orchestrated and alerted on, and every load passes quality gates." },
+    { label: "Analytics modeling", detail: "dbt on DuckDB: staging and mart layers, idempotent loads keyed by content hash, and city keys where source IDs collide." },
+    { label: "Retrieval systems", detail: "Local RAG end to end: BM25 plus vector search, cross-encoder reranking, and answers that cite the chunks they came from." },
   ],
-  stack: ["Python", "TypeScript", "SQL", "dbt", "DuckDB", "Docker"],
+  stack: ["Python", "SQL", "PySpark", "Polars", "dbt", "DuckDB", "PostgreSQL", "AWS", "Terraform"],
   interests: ["Retrieval augmented generation", "Distributed systems", "Analytics engineering", "Data modeling"],
 };
 
